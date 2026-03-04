@@ -49,8 +49,8 @@ const App: React.FC = () => (
               <Route exact path="/guest/cart" component={GuestCart} />
               
               {/* User Routes (Protected) */}
-              <ProtectedRoute exact path="/user/home" component={UserHome} requiredAuth={true} />
-              <ProtectedRoute exact path="/user/profile" component={UserProfile} requiredAuth={true} />
+              <Route exact path="/user/home" component={UserHome} />
+              <Route exact path="/user/profile" component={UserProfile}  />
               
               {/* Auth Routes */}
               <Route exact path="/login" component={Login} />

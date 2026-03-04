@@ -12,6 +12,7 @@ import {
 import { useHistory } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
+import { useCart } from '../../context/CartContext';
 import PageHeader from '../../components/PageHeader';
 import StallCard from '../../components/Stall/StallCard';
 import { Stall } from '../../types';
@@ -56,6 +57,7 @@ const MOCK_STALLS: Stall[] = [
 const UserHome: React.FC = () => {
   const history = useHistory();
   const { logout } = useAuth();
+  const { itemCount } = useCart();
   const [stalls, setStalls] = useState<Stall[]>(MOCK_STALLS);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -71,6 +73,8 @@ const UserHome: React.FC = () => {
   return (
     <IonPage>
       <PageHeader 
+        cartCount={itemCount}
+        onCartClick={() => history.push('/user/cart')}
         showLogo={true}
         onProfileClick={() => {
           logout();

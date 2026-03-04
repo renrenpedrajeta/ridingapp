@@ -20,8 +20,8 @@ import { useTheme } from '../../context/ThemeContext';
 
 const GuestCart: React.FC = () => {
   const history = useHistory();
-  const { items, updateQuantity, removeFromCart, total } = useCart();
-  const { isGuest } = useAuth();
+  const { items, updateQuantity, removeFromCart, total, itemCount } = useCart();
+  const { isGuest, logout } = useAuth();
   const { isDarkMode } = useTheme();
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
 
@@ -40,13 +40,31 @@ const GuestCart: React.FC = () => {
   return (
     <IonPage>
       <PageHeader 
-        showBack={true}
-        backHref="/guest/home"
-        title="Your Cart"
-        showLogo={false}
+        showLogo={true}
+        cartCount={itemCount}
+        onCartClick={() => history.push('/guest/cart')}
+        onProfileClick={() => {
+          if (isGuest) {
+            history.push('/login');
+          } else {
+            logout();
+            history.push('/login');
+          }
+        }}
       />
 
       <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
+        {/* Page Title */}
+        <div style={{ padding: '20px 16px 16px 16px' }}>
+          <h2 style={{ 
+            margin: 0, 
+            fontSize: '28px', 
+            fontWeight: 700, 
+            color: 'var(--ion-text-color)' 
+          }}>
+            Your Cart
+          </h2>
+        </div>
         {items.length === 0 ? (
           <div style={{ 
             display: 'flex', 
