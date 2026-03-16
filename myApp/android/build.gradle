@@ -10,7 +10,6 @@ subprojects { subproject ->
         }
     }
 }
-
 buildscript {
     
     repositories {
