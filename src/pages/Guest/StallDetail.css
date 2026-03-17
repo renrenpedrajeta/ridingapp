@@ -1,0 +1,447 @@
+/* StallDetail.css - Clean & Simple Design with CSS Variables */
+
+.stall-detail-page {
+  --background: var(--ion-background-color);
+}
+
+/* ==================== HEADER SECTION ==================== */
+.stall-detail-header {
+  position: relative;
+  z-index: 999;
+}
+
+/* ==================== HERO IMAGE SECTION ==================== */
+.stall-header-hero {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+  background: var(--ion-border-color);
+}
+
+.stall-hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.stall-header-overlay {
+  display: none;
+}
+
+.stall-header-info {
+  display: none;
+}
+
+/* ==================== STATS SECTION ==================== */
+.stall-stats-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px;
+  background: var(--ion-card-background);
+  border-bottom: 1px solid var(--ion-border-color);
+  margin: 0;
+  position: relative;
+  z-index: 50;
+}
+
+.stall-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--ion-background-color);
+  border-radius: 12px;
+  border: 1px solid var(--ion-border-color);
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.stall-stat-card:hover {
+  border-color: var(--ion-color-primary);
+  background: var(--ion-card-background);
+}
+
+.stat-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--ion-color-primary);
+  color: white;
+  font-size: 18px;
+}
+
+.stat-icon ion-icon {
+  font-size: 18px;
+}
+
+.rating-icon {
+  background: var(--ion-color-primary);
+}
+
+.delivery-icon {
+  background: var(--ion-color-primary);
+}
+
+.fee-icon {
+  background: var(--ion-color-primary);
+}
+
+.stat-content {
+  width: 100%;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  line-height: 1.2;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--ion-text-color-secondary);
+  font-weight: 500;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ==================== MENU SECTION ==================== */
+.menu-categories-section {
+  padding: 12px 16px;
+  background: var(--ion-card-background);
+  border-bottom: 1px solid var(--ion-border-color);
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  margin: 12px 0;
+}
+
+.menu-segment {
+  --background: transparent;
+  margin-bottom: 12px;
+}
+
+.menu-segment-button {
+  --border-radius: 8px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --color: var(--ion-text-color-secondary) !important;
+  --color-checked: white !important;
+  --indicator-color: transparent;
+  border: 1px solid var(--ion-border-color);
+  border-radius: 8px;
+  margin-right: 8px;
+  transition: all 0.2s ease;
+  background: var(--ion-background-color);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.menu-segment-button.segment-button-checked {
+  --background: var(--ion-color-primary) !important;
+  --color: white !important;
+  border-color: var(--ion-color-primary);
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2);
+}
+
+.menu-segment-button ion-label {
+  font-weight: 600;
+  text-transform: capitalize;
+  color: inherit;
+}
+
+/* ==================== MENU ITEMS ==================== */
+.menu-items-section {
+  padding: 16px;
+  background: var(--ion-background-color);
+}
+
+.menu-items-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== CONTENT PADDING FOR FAB ==================== */
+.stall-detail-content {
+  scroll-behavior: smooth;
+  padding-bottom: 100px;
+}
+
+/* ==================== FLOATING ACTION BUTTON ==================== */
+.stall-cart-fab {
+  z-index: 100;
+}
+
+.stall-cart-fab-button {
+  --background: var(--ion-color-primary);
+  --box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+  width: 64px;
+  height: 64px;
+  margin-bottom: 20px;
+  margin-right: 20px;
+  transition: all 0.2s ease;
+}
+
+.stall-cart-fab-button:hover {
+  --background: var(--ion-color-primary-shade);
+  --box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+  transform: scale(1.05);
+}
+
+.stall-cart-fab-button:active {
+  transform: scale(0.95);
+}
+
+.fab-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  width: 100%;
+  height: 100%;
+}
+
+.fab-icon {
+  font-size: 24px;
+  color: white;
+  line-height: 1;
+}
+
+.fab-price {
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  line-height: 1;
+}
+
+.fab-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  --background: var(--ion-color-danger);
+  --color: white;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  border: 2px solid white;
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+
+/* Tablets (min 768px) */
+@media (min-width: 768px) {
+  .stall-header-hero {
+    height: 300px;
+  }
+
+  .stall-name {
+    font-size: 36px;
+  }
+
+  .stall-stats-container {
+    gap: 16px;
+    padding: 20px;
+  }
+
+  .menu-items-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .menu-categories-section,
+  .menu-items-section {
+    padding: 16px 20px;
+  }
+
+  .stall-detail-content {
+    padding-bottom: 120px;
+  }
+
+  .stall-cart-fab-button {
+    width: 72px;
+    height: 72px;
+  }
+
+  .fab-icon {
+    font-size: 28px;
+  }
+
+  .fab-price {
+    font-size: 11px;
+  }
+}
+
+/* Large screens (min 1024px) */
+@media (min-width: 1024px) {
+  .stall-header-hero {
+    height: 360px;
+  }
+
+  .stall-name {
+    font-size: 44px;
+  }
+
+  .stall-stats-container {
+    gap: 20px;
+    padding: 24px;
+  }
+
+  .menu-items-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .menu-categories-section,
+  .menu-items-section {
+    padding: 20px 24px;
+  }
+
+  .stall-detail-content {
+    padding-bottom: 140px;
+  }
+}
+
+/* Large Desktops (min 1280px) */
+@media (min-width: 1280px) {
+  .stall-header-hero {
+    height: 400px;
+  }
+
+  .stall-stats-container {
+    gap: 24px;
+    padding: 32px;
+  }
+
+  .menu-items-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .menu-categories-section,
+  .menu-items-section {
+    padding: 24px 32px;
+  }
+
+  .stall-detail-content {
+    padding-bottom: 160px;
+  }
+}
+
+/* Small phones (max 480px) */
+@media (max-width: 480px) {
+  .stall-header-hero {
+    height: 200px;
+  }
+
+  .stall-name {
+    font-size: 20px;
+  }
+
+  .stall-header-info {
+    padding: 16px;
+  }
+
+  .stall-stats-container {
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .stall-stat-card {
+    padding: 10px;
+  }
+
+  .stat-icon {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+
+  .stat-value {
+    font-size: 12px;
+  }
+
+  .stat-label {
+    font-size: 10px;
+  }
+
+  .menu-categories-section,
+  .menu-items-section {
+    padding: 12px;
+  }
+
+  .section-title {
+    font-size: 14px;
+  }
+
+  .menu-segment-button {
+    --padding-start: 10px;
+    --padding-end: 10px;
+    font-size: 12px;
+  }
+
+  .stall-detail-content {
+    padding-bottom: 90px;
+  }
+
+  .stall-cart-fab-button {
+    width: 56px;
+    height: 56px;
+    margin-bottom: 16px;
+    margin-right: 16px;
+  }
+
+  .fab-icon {
+    font-size: 20px;
+  }
+
+  .fab-price {
+    font-size: 9px;
+  }
+
+  .fab-badge {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+    border-width: 1px;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .stall-stat-card {
+    padding: 12px;
+  }
+
+  ion-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
