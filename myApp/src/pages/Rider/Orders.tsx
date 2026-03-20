@@ -19,7 +19,14 @@ import { useAuth } from '../../context/AuthContext';
 
 const RiderOrders: React.FC = () => {
   const history = useHistory();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  // Protect this page - redirect if not a rider
+  if (!user || user.role !== 'rider') {
+    history.replace('/rider/login');
+    return null;
+  }
+
   const [selectedTab, setSelectedTab] = useState('active');
 
   const activeOrders = [
@@ -177,7 +184,7 @@ const RiderOrders: React.FC = () => {
 
         {/* Quick Access Menu */}
         <div style={{
-          padding: '0 16px 16px',
+          padding: '16px 16px 16px',
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '10px'

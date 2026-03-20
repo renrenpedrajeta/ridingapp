@@ -242,9 +242,6 @@ const GuestLocationPicker: React.FC = () => {
                 ]}
                 zoom={13}
                 style={{ width: '100%', height: '100%' }}
-                whenCreated={(map: L.Map) => {
-                  mapRef.current = map;
-                }}
               >
               <TileLayer
                 attribution="© OpenStreetMap contributors"

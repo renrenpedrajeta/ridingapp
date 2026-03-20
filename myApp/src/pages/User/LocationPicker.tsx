@@ -14,9 +14,18 @@ import {
 } from '@ionic/react';
 import { locationOutline, arrowBack } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const LocationPicker: React.FC = () => {
   const history = useHistory();
+  const { user } = useAuth();
+
+  // Protect this page - redirect if not logged in
+  if (!user || (user.role !== 'user' && user.role !== 'rider')) {
+    history.replace('/login');
+    return null;
+  }
+
   const [address, setAddress] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [loading, setLoading] = useState(false);

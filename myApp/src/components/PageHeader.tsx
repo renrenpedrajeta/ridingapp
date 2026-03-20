@@ -1,6 +1,6 @@
-import React from 'react';
-import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonBadge, IonBackButton } from '@ionic/react';
-import { moon, sunny, cartOutline, personOutline, arrowBack } from 'ionicons/icons';
+import React, { useState } from 'react';
+import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonBadge, IonBackButton, IonPopover, IonLabel, IonItem, IonList } from '@ionic/react';
+import { moon, sunny, cartOutline, personOutline, arrowBack, settingsOutline, logOutOutline, home } from 'ionicons/icons';
 import { useTheme } from '../context/ThemeContext';
 
 interface PageHeaderProps {
@@ -12,7 +12,13 @@ interface PageHeaderProps {
   cartCount?: number;
   onCartClick?: () => void;
   onProfileClick?: () => void;
+  onSettingsClick?: () => void;
+  onLogoutClick?: () => void;
+  onLoginClick?: () => void;
+  onRegisterClick?: () => void;
+  onHomeClick?: () => void;
   customClass?: string;
+  isLoggedIn?: boolean;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
@@ -24,9 +30,16 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   cartCount = 0,
   onCartClick,
   onProfileClick,
-  customClass = ''
+  onSettingsClick,
+  onLogoutClick,
+  onLoginClick,
+  onHomeClick,
+  onRegisterClick,
+  customClass = '',
+  isLoggedIn = false
 }) => {
   const { isDarkMode, toggleTheme } = useTheme();
+  const [showPopover, setShowPopover] = useState(false);
 
   return (
     <IonHeader className={`ion-no-border ${customClass}`}>
@@ -67,6 +80,11 @@ const PageHeader: React.FC<PageHeaderProps> = ({
         </IonTitle>
 
         <IonButtons slot="end">
+          {onHomeClick && (
+            <IonButton onClick={onHomeClick}>
+              <IonIcon icon={home} style={{ fontSize: '24px', color: '#6366F1' }} />
+            </IonButton>
+          )}
           {onCartClick && (
             <IonButton onClick={onCartClick}>
               <div style={{ position: 'relative' }}>
@@ -77,11 +95,73 @@ const PageHeader: React.FC<PageHeaderProps> = ({
               </div>
             </IonButton>
           )}
-          {onProfileClick && (
-            <IonButton onClick={onProfileClick}>
-              <IonIcon icon={personOutline} style={{ fontSize: '24px', color: 'var(--ion-text-color)' }} />
-            </IonButton>
-          )}
+          {isLoggedIn && onProfileClick ? (
+            <>
+              <IonButton onClick={() => setShowPopover(true)}>
+                <IonIcon icon={personOutline} style={{ fontSize: '24px', color: 'var(--ion-text-color)' }} />
+              </IonButton>
+              <IonPopover
+                isOpen={showPopover}
+                onDidDismiss={() => setShowPopover(false)}
+                side="bottom"
+                alignment="end"
+                style={{ '--width': '200px' }}
+              >
+                <IonList style={{ padding: '8px 0' }}>
+                  <IonItem
+                    button
+                    onClick={() => {
+                      onProfileClick();
+                      setShowPopover(false);
+                    }}
+                    style={{ '--padding-start': '16px', '--padding-end': '16px' }}
+                  >
+                    <IonIcon icon={personOutline} slot="start" style={{ color: '#6366F1', marginRight: '12px' }} />
+                    <IonLabel>Profile</IonLabel>
+                  </IonItem>
+                  {onSettingsClick && (
+                    <IonItem
+                      button
+                      onClick={() => {
+                        onSettingsClick();
+                        setShowPopover(false);
+                      }}
+                      style={{ '--padding-start': '16px', '--padding-end': '16px' }}
+                    >
+                      <IonIcon icon={settingsOutline} slot="start" style={{ color: '#6366F1', marginRight: '12px' }} />
+                      <IonLabel>Settings</IonLabel>
+                    </IonItem>
+                  )}
+                  {onLogoutClick && (
+                    <IonItem
+                      button
+                      onClick={() => {
+                        onLogoutClick();
+                        setShowPopover(false);
+                      }}
+                      style={{ '--padding-start': '16px', '--padding-end': '16px', '--color': '#EF4444' }}
+                    >
+                      <IonIcon icon={logOutOutline} slot="start" style={{ color: '#EF4444', marginRight: '12px' }} />
+                      <IonLabel style={{ color: '#EF4444' }}>Logout</IonLabel>
+                    </IonItem>
+                  )}
+                </IonList>
+              </IonPopover>
+            </>
+          ) : isLoggedIn ? null : onLoginClick || onRegisterClick ? (
+            <>
+              {onLoginClick && (
+                <IonButton onClick={onLoginClick} style={{ '--color': '#6366F1' }}>
+                  <IonLabel>Login</IonLabel>
+                </IonButton>
+              )}
+              {onRegisterClick && (
+                <IonButton onClick={onRegisterClick} fill="solid" style={{ '--background': '#6366F1', borderRadius: '8px', marginLeft: '8px' }}>
+                  <IonLabel>Register</IonLabel>
+                </IonButton>
+              )}
+            </>
+          ) : null}
         </IonButtons>
       </IonToolbar>
     </IonHeader>

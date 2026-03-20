@@ -84,7 +84,8 @@ const GuestHome: React.FC = () => {
         showLogo={true}
         cartCount={itemCount}
         onCartClick={() => history.push('/guest/cart')}
-        onProfileClick={() => history.push('/login')}
+        onLoginClick={() => history.push('/login')}
+        onRegisterClick={() => history.push('/register')}
       />
 
       <IonToolbar style={{ '--background': 'var(--ion-background-color)', padding: '16px 0 0 0' } as any}>

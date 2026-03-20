@@ -21,7 +21,13 @@ import { useAuth } from '../../context/AuthContext';
 
 const RiderHome: React.FC = () => {
   const history = useHistory();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  // Protect this page - redirect if not a rider
+  if (!user || user.role !== 'rider') {
+    history.replace('/rider/login');
+    return null;
+  }
   const [isAvailable, setIsAvailable] = useState(false);
   const [earnings, setEarnings] = useState(450.50);
   const [completedDeliveries, setCompletedDeliveries] = useState(12);
@@ -146,7 +152,7 @@ const RiderHome: React.FC = () => {
 
         {/* Quick Access Menu */}
         <div style={{
-          padding: '0 16px 16px',
+          padding: '16px 16px 16px',
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '10px'

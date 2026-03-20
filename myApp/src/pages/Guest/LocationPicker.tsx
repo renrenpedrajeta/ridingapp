@@ -7,11 +7,15 @@ import {
   IonInput,
   IonIcon,
   IonFooter,
-  IonButton
+  IonButton,
+  IonAlert,
+  IonButtons
 } from "@ionic/react";
 
-import { locationOutline } from "ionicons/icons";
+import { locationOutline, closeOutline } from "ionicons/icons";
 import { useState, useRef } from "react";
+import { useHistory } from "react-router-dom";
+import { useTheme } from "../../context/ThemeContext";
 
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -43,14 +47,30 @@ function ChangeMapView({ center }: any) {
 
 const GuestLocationPicker: React.FC = () => {
 
+  const history = useHistory();
+  const { isDarkMode } = useTheme();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<LocationResult[]>([]);
   const [marker, setMarker] = useState<[number, number] | null>(null);
   const [center, setCenter] = useState<[number, number]>([14.5995,120.9842]);
+  const [showAlert, setShowAlert] = useState(false);
 
 
   const handleConfirmLocation = () => {
-    console.log("check")
+    if (!marker || !query) {
+      setShowAlert(true);
+      return;
+    }
+
+    // Save location to sessionStorage
+    sessionStorage.setItem('selectedLocation', JSON.stringify({
+      lat: marker[0],
+      lng: marker[1]
+    }));
+    sessionStorage.setItem('locationName', query);
+
+    // Navigate back to where they came from
+    history.goBack();
   };
 
   
@@ -121,49 +141,70 @@ const GuestLocationPicker: React.FC = () => {
 
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonButton onClick={() => history.goBack()}>
+              <IonIcon slot="icon-only" icon={closeOutline} />
+            </IonButton>
+          </IonButtons>
           <IonTitle>Plan Your Route</IonTitle>
         </IonToolbar>
       </IonHeader>
 
-      <IonContent className="ion-padding">
+      <IonContent className="ion-padding" style={{ '--background': 'var(--ion-background-color)' } as any}>
 
         {/* INPUT */}
-        <div style={{marginBottom:"15px"}}>
-          <label style={{fontSize:"12px",color:"#888"}}>FROM</label>
+        <div style={{marginBottom:"15px", position: "relative"}}>
+          <label style={{fontSize:"12px",color:"var(--ion-text-color-secondary)"}}>FROM</label>
 
           <div style={{
             display:"flex",
             alignItems:"center",
-            border:"1px solid #ddd",
+            border:"1px solid var(--ion-border-color)",
             borderRadius:"8px",
-            padding:"8px"
+            padding:"8px",
+            background:"var(--ion-card-background)",
+            color:"var(--ion-text-color)"
           }}>
-            <IonIcon icon={locationOutline} style={{marginRight:"8px"}}/>
+            <IonIcon icon={locationOutline} style={{marginRight:"8px", color:"var(--ion-text-color)"}}/>
 
             <IonInput
               value={query}
               placeholder="Enter starting location"
               onIonInput={(e:any)=>searchLocation(e.target.value)}
+              style={{ '--color': 'var(--ion-text-color)', '--placeholder-color': 'var(--ion-text-color-secondary)' } as any}
             />
           </div>
 
           {/* AUTOCOMPLETE */}
           {results.length > 0 && (
             <div style={{
-              background:"#fff",
-              border:"1px solid #ddd",
+              position: "absolute",
+              top: "100%",
+              left: 0,
+              right: 0,
+              background:"var(--ion-card-background)",
+              border:"1px solid var(--ion-border-color)",
               borderRadius:"8px",
               marginTop:"4px",
               maxHeight:"200px",
-              overflow:"auto"
+              overflow:"auto",
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+              zIndex: 1000
             }}>
               {results.map((r,index)=>(
                 <div
                   key={index}
                   style={{
                     padding:"10px",
-                    borderBottom:"1px solid #eee",
-                    cursor:"pointer"
+                    borderBottom:"1px solid var(--ion-border-color)",
+                    cursor:"pointer",
+                    color:"var(--ion-text-color)"
+                  }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = isDarkMode ? 'rgba(99, 102, 241, 0.15)' : 'rgba(99, 102, 241, 0.08)';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = 'transparent';
                   }}
                   onClick={()=>chooseLocation(r)}
                 >
@@ -224,6 +265,14 @@ const GuestLocationPicker: React.FC = () => {
             Confirm Route
           </IonButton>
         </IonFooter>
+
+        <IonAlert
+          isOpen={showAlert}
+          onDidDismiss={() => setShowAlert(false)}
+          header="Select Location"
+          message="Please search and select a location before confirming your route."
+          buttons={['OK']}
+        />
 
     </IonPage>
   );

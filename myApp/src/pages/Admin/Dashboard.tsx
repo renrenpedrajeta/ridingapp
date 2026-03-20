@@ -24,7 +24,13 @@ import { useAuth } from '../../context/AuthContext';
 
 const AdminDashboard: React.FC = () => {
   const history = useHistory();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  // Protect this page - redirect if not admin
+  if (!user || user.role !== 'admin') {
+    history.replace('/login');
+    return null;
+  }
   const [showActivityDetails, setShowActivityDetails] = useState(false);
   const [selectedActivity, setSelectedActivity] = useState<any>(null);
 

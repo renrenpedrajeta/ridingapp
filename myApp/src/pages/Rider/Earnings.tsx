@@ -1,5 +1,5 @@
 // src/pages/Rider/Earnings.tsx
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   IonPage,
   IonContent,
@@ -17,42 +17,61 @@ import { useHistory } from 'react-router-dom';
 import PageHeader from '../../components/PageHeader';
 import { useAuth } from '../../context/AuthContext';
 
+// Move data outside component to prevent recreation
+const EARNINGS_DATA = {
+  today: { total: 450.50, trips: 12, average: 37.54 },
+  week: { total: 2150.75, trips: 58, average: 37.08 },
+  month: { total: 8925.30, trips: 245, average: 36.43 },
+};
+
+const WEEKLY_EARNINGS = [
+  { day: 'Mon', amount: 350, trips: 10 },
+  { day: 'Tue', amount: 420, trips: 12 },
+  { day: 'Wed', amount: 380, trips: 11 },
+  { day: 'Thu', amount: 450, trips: 13 },
+  { day: 'Fri', amount: 550, trips: 16 },
+  { day: 'Sat', amount: 600, trips: 18 },
+  { day: 'Sun', amount: 450, trips: 12 },
+];
+
+// Style constants
+const NAV_BUTTON_STYLE = {
+  expand: 'block' as const,
+  style: {
+    '--background': 'transparent',
+    '--color': 'var(--ion-text-color)',
+    height: '40px',
+    fontSize: '12px',
+    fontWeight: 600,
+    textTransform: 'none' as const,
+    flex: '1',
+    minWidth: '80px'
+  }
+};
+
+const ACTIVE_NAV_BUTTON_STYLE = {
+  ...NAV_BUTTON_STYLE,
+  style: {
+    ...NAV_BUTTON_STYLE.style,
+    '--background': '#6366F1',
+    '--color': '#FFFFFF',
+    border: 'none',
+  }
+};
+
 const RiderEarnings: React.FC = () => {
   const history = useHistory();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState('today');
 
-  const earningsData = {
-    today: {
-      total: 450.50,
-      trips: 12,
-      average: 37.54,
-    },
-    week: {
-      total: 2150.75,
-      trips: 58,
-      average: 37.08,
-    },
-    month: {
-      total: 8925.30,
-      trips: 245,
-      average: 36.43,
-    },
-  };
+  // Protect this page - redirect if not a rider
+  if (!user || user.role !== 'rider') {
+    history.replace('/rider/login');
+    return null;
+  }
 
-  const earnings = earningsData[selectedPeriod as keyof typeof earningsData];
-
-  const weeklyEarnings = [
-    { day: 'Mon', amount: 350, trips: 10 },
-    { day: 'Tue', amount: 420, trips: 12 },
-    { day: 'Wed', amount: 380, trips: 11 },
-    { day: 'Thu', amount: 450, trips: 13 },
-    { day: 'Fri', amount: 550, trips: 16 },
-    { day: 'Sat', amount: 600, trips: 18 },
-    { day: 'Sun', amount: 450, trips: 12 },
-  ];
-
-  const maxEarning = Math.max(...weeklyEarnings.map(e => e.amount));
+  const earnings = EARNINGS_DATA[selectedPeriod as keyof typeof EARNINGS_DATA];
+  const maxEarning = useMemo(() => Math.max(...WEEKLY_EARNINGS.map(e => e.amount)), []);
 
   return (
     <IonPage>
@@ -76,65 +95,28 @@ const RiderEarnings: React.FC = () => {
           borderBottomRightRadius: '12px'
         }}>
           <IonButton
-            expand="block"
+            {...NAV_BUTTON_STYLE}
             style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
+              ...NAV_BUTTON_STYLE.style,
               border: '1px solid #6366F1',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
+            } as any}
             onClick={() => history.push('/rider/home')}
           >
             🏠 Home
           </IonButton>
           <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
+            {...NAV_BUTTON_STYLE}
             onClick={() => history.push('/rider/orders')}
           >
             📦 Orders
           </IonButton>
           <IonButton
-            expand="block"
-            style={{
-              '--background': '#6366F1',
-              '--color': '#FFFFFF',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
+            {...ACTIVE_NAV_BUTTON_STYLE}
           >
             💰 Earnings
           </IonButton>
           <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
+            {...NAV_BUTTON_STYLE}
             onClick={() => history.push('/rider/profile')}
           >
             👤 Profile
@@ -143,7 +125,7 @@ const RiderEarnings: React.FC = () => {
 
         {/* Quick Access Menu */}
         <div style={{
-          padding: '0 16px 16px',
+          padding: '16px 16px 16px',
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
           gap: '10px'
@@ -183,15 +165,15 @@ const RiderEarnings: React.FC = () => {
           <IonSegment 
             value={selectedPeriod} 
             onIonChange={e => setSelectedPeriod(e.detail.value as string)}
-            style={{ '--background': 'transparent' }}
+            style={{ '--background': 'transparent' } as any}
           >
-            <IonSegmentButton value="today" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px' }}>
+            <IonSegmentButton value="today" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px' } as any}>
               <IonLabel style={{ fontSize: '12px' }}>Today</IonLabel>
             </IonSegmentButton>
-            <IonSegmentButton value="week" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px' }}>
+            <IonSegmentButton value="week" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px' } as any}>
               <IonLabel style={{ fontSize: '12px' }}>Week</IonLabel>
             </IonSegmentButton>
-            <IonSegmentButton value="month" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px' }}>
+            <IonSegmentButton value="month" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px' } as any}>
               <IonLabel style={{ fontSize: '12px' }}>Month</IonLabel>
             </IonSegmentButton>
           </IonSegment>
@@ -270,7 +252,7 @@ const RiderEarnings: React.FC = () => {
             <IonCard style={{ margin: 0, background: 'var(--ion-card-background)' }}>
               <IonCardContent style={{ padding: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: '150px', gap: '8px' }}>
-                  {weeklyEarnings.map((day, index) => (
+                  {WEEKLY_EARNINGS.map((day, index) => (
                     <div key={index} style={{ textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
                       <div 
                         style={{

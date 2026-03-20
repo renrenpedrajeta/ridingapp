@@ -25,6 +25,12 @@ const RiderLogin: React.FC = () => {
   const history = useHistory();
   const { login, user } = useAuth();
   const { isDarkMode } = useTheme();
+
+  // Redirect if already logged in
+  if (user) {
+    history.replace(user.role === 'rider' ? '/rider/home' : '/user/home');
+    return null;
+  }
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -47,12 +53,12 @@ const RiderLogin: React.FC = () => {
         if (userData.verificationStatus === 'pending') {
           setError('{pending}');
           setTimeout(() => {
-            history.push('/rider/pending-approval');
+            history.replace('/rider/pending-approval');
           }, 1000);
           return;
         }
       }
-      history.push('/rider/home');
+      history.replace('/rider/home');
     } catch (err) {
       setError('Invalid credentials');
     } finally {
@@ -168,6 +174,20 @@ const RiderLogin: React.FC = () => {
           >
             Sign In
           </IonButton>
+
+          {/* Test Credentials */}
+          <div style={{ 
+            background: 'var(--ion-card-background)', 
+            border: '1px solid var(--ion-border-color)',
+            borderRadius: '8px', 
+            padding: '12px', 
+            marginBottom: '16px',
+            textAlign: 'center'
+          }}>
+            <p style={{ fontSize: '12px', color: 'var(--ion-text-color-secondary)', margin: '0 0 8px 0', fontWeight: 600 }}>Test Credentials</p>
+            <p style={{ fontSize: '12px', color: 'var(--ion-text-color)', margin: '4px 0', fontFamily: 'monospace' }}>📧 rider@example.com</p>
+            <p style={{ fontSize: '12px', color: 'var(--ion-text-color)', margin: '4px 0', fontFamily: 'monospace' }}>🔑 Rider@123</p>
+          </div>
 
           {/* Sign Up Link */}
           <div style={{ textAlign: 'center' }}>

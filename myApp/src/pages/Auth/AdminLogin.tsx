@@ -23,8 +23,14 @@ import { useTheme } from '../../context/ThemeContext';
 
 const AdminLogin: React.FC = () => {
   const history = useHistory();
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const { isDarkMode } = useTheme();
+
+  // Redirect if already logged in
+  if (user) {
+    history.replace(user.role === 'admin' ? '/admin/dashboard' : '/user/home');
+    return null;
+  }
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -156,6 +162,20 @@ const AdminLogin: React.FC = () => {
           >
             Sign In
           </IonButton>
+
+          {/* Test Credentials */}
+          <div style={{ 
+            background: 'var(--ion-card-background)', 
+            border: '1px solid var(--ion-border-color)',
+            borderRadius: '8px', 
+            padding: '12px', 
+            marginBottom: '16px',
+            textAlign: 'center'
+          }}>
+            <p style={{ fontSize: '12px', color: 'var(--ion-text-color-secondary)', margin: '0 0 8px 0', fontWeight: 600 }}>Test Credentials</p>
+            <p style={{ fontSize: '12px', color: 'var(--ion-text-color)', margin: '4px 0', fontFamily: 'monospace' }}>📧 admin@example.com</p>
+            <p style={{ fontSize: '12px', color: 'var(--ion-text-color)', margin: '4px 0', fontFamily: 'monospace' }}>🔑 Admin@123</p>
+          </div>
 
           {/* Contact Support */}
           <div style={{ textAlign: 'center' }}>

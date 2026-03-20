@@ -10,6 +10,25 @@ export default defineConfig({
     react(),
     legacy()
   ],
+  build: {
+    target: 'es2020',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        dead_code: true,
+      },
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-ionic': ['@ionic/react', '@ionic/react-router', 'ionicons'],
+          'vendor-react': ['react', 'react-dom', 'react-router', 'react-router-dom'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
   server: {
     fs: {
       allow: ['..'],

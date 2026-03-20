@@ -20,7 +20,13 @@ import { useAuth } from '../../context/AuthContext';
 
 const AdminOrders: React.FC = () => {
   const history = useHistory();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  // Protect this page - redirect if not admin
+  if (!user || user.role !== 'admin') {
+    history.replace('/login');
+    return null;
+  }
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [orders, setOrders] = useState<any[]>([

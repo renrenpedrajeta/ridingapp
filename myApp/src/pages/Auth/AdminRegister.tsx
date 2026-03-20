@@ -24,8 +24,14 @@ import { useTheme } from '../../context/ThemeContext';
 
 const AdminRegister: React.FC = () => {
   const history = useHistory();
-  const { register } = useAuth();
+  const { register, user } = useAuth();
   const { isDarkMode } = useTheme();
+
+  // Redirect if already logged in
+  if (user) {
+    history.replace(user.role === 'admin' ? '/admin/dashboard' : '/user/home');
+    return null;
+  }
   const [formData, setFormData] = useState({
     name: '',
     email: '',

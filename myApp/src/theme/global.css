@@ -246,3 +246,64 @@ ion-card-subtitle {
 .slide-up {
   animation: slideUp 0.3s ease-out;
 }
+
+/* ==================== LIGHT MODE (DEFAULT) ==================== */
+:root {
+  --ion-background-color: #f8f9fa;
+  --ion-card-background: #ffffff;
+  --ion-text-color: #1a1a1a;
+  --ion-text-color-secondary: #666666;
+  --ion-border-color: #e5e5e5;
+  --ion-color-primary: #8b5cf6;
+  --ion-color-primary-rgb: 139, 92, 246;
+  --ion-color-secondary: #6366f1;
+  --ion-color-tertiary: #06b6d4;
+  --ion-color-success: #22c55e;
+  --ion-color-warning: #f97316;
+  --ion-color-danger: #ef4444;
+}
+
+/* ==================== DARK MODE ==================== */
+:root.dark-mode {
+  --ion-background-color: #1a1a1a;
+  --ion-card-background: #2d2d2d;
+  --ion-text-color: #ffffff;
+  --ion-text-color-secondary: #a0a0a0;
+  --ion-border-color: #404040;
+  --ion-color-primary: #a78bfa;
+  --ion-color-primary-rgb: 167, 139, 250;
+  --ion-color-secondary: #818cf8;
+  --ion-color-tertiary: #22d3ee;
+  --ion-color-success: #4ade80;
+  --ion-color-warning: #fb923c;
+  --ion-color-danger: #f87171;
+}
+
+/* Dark mode - smooth shadows */
+:root.dark-mode .stat-card,
+:root.dark-mode .chart-card,
+:root.dark-mode .orders-card,
+:root.dark-mode .rider-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+:root.dark-mode .stat-card:hover,
+:root.dark-mode .chart-card:hover,
+:root.dark-mode .orders-card:hover,
+:root.dark-mode .rider-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+/* Dark mode - high contrast text */
+:root.dark-mode ion-toolbar ion-title {
+  color: #ffffff !important;
+}
+
+:root.dark-mode ion-menu {
+  background: var(--ion-card-background);
+}
+
+/* Smooth theme transitions */
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

@@ -20,8 +20,14 @@ import { useTheme } from '../../context/ThemeContext';
 const UserCart: React.FC = () => {
   const history = useHistory();
   const { items, updateQuantity, removeFromCart, total, itemCount } = useCart();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const { isDarkMode } = useTheme();
+
+  // Protect this page - redirect if not logged in
+  if (!user || (user.role !== 'user' && user.role !== 'rider')) {
+    history.replace('/login');
+    return null;
+  }
 
   const deliveryFee = 2.99;
   const serviceFee = 1.49;
@@ -39,9 +45,13 @@ const UserCart: React.FC = () => {
         backHref="/user/home"
         cartCount={itemCount}
         onCartClick={() => history.push('/user/cart')}
-        onProfileClick={() => {
+        onHomeClick={() => history.push('/user/home')}
+        isLoggedIn={true}
+        onProfileClick={() => history.push('/user/profile')}
+        onSettingsClick={() => history.push('/user/settings')}
+        onLogoutClick={() => {
           logout();
-          history.push('/login');
+          history.push('/guest/home');
         }}
       />
 

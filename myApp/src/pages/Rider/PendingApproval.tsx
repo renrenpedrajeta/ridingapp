@@ -9,11 +9,19 @@ import {
 import { arrowBack, checkmarkCircleOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import PageHeader from '../../components/PageHeader';
+import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
 const PendingApproval: React.FC = () => {
   const history = useHistory();
   const { isDarkMode } = useTheme();
+  const { user } = useAuth();
+
+  // Protect this page - redirect if not a pending rider
+  if (!user || user.role !== 'rider') {
+    history.replace('/rider/login');
+    return null;
+  }
 
   return (
     <IonPage>

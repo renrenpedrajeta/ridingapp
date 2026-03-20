@@ -23,7 +23,13 @@ import { useAuth } from '../../context/AuthContext';
 const UserSettings: React.FC = () => {
   const history = useHistory();
   const { isDarkMode, toggleTheme } = useTheme();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  // Protect this page - redirect if not logged in
+  if (!user || (user.role !== 'user' && user.role !== 'rider')) {
+    history.replace('/login');
+    return null;
+  }
   const [settings, setSettings] = useState({
     notificationsEnabled: true,
     emailNotifications: true,
@@ -48,12 +54,23 @@ const UserSettings: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    history.push('/login');
+    history.push('/guest/home');
   };
 
   return (
     <IonPage>
-      <PageHeader title="Settings" showBack={true} backHref="/user/profile" />
+      <PageHeader 
+        title="Settings" 
+        showBack={false}
+        isLoggedIn={true}
+        onHomeClick={() => history.push('/user/home')}
+        onProfileClick={() => history.push('/user/profile')}
+        onSettingsClick={() => history.push('/user/settings')}
+        onLogoutClick={() => {
+          logout();
+          history.push('/guest/home');
+        }}
+      />
 
       <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
         <div style={{ padding: '16px' }}>

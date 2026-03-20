@@ -1,6 +1,7 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User } from '../types';
+import { MOCK_USERS, MOCK_RIDERS, MOCK_ADMINS } from '../data/mockData';
 
 interface AuthContextType {
   user: User | null;
@@ -18,28 +19,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isGuest, setIsGuest] = useState(false);
 
   const login = async (email: string, password: string) => {
-    // API call simulation
-    const mockUser: User = {
-      id: '1',
-      name: 'John Doe',
-      email,
-      phone: '+1234567890',
-      role: 'user',
-      token: 'mock-token'
-    };
+    // Check against mock users (users, riders, and admins)
+    const allMockUsers = [...MOCK_USERS, ...MOCK_RIDERS, ...MOCK_ADMINS];
+    const foundUser = allMockUsers.find(u => u.email === email && u.password === password);
+    
+    if (!foundUser) {
+      throw new Error('Invalid email or password');
+    }
+
+    // Remove password from the stored user object for security
+    const { password: _, ...userWithoutPassword } = foundUser;
+    const mockUser: User = userWithoutPassword;
+    
     setUser(mockUser);
     setIsGuest(false);
     localStorage.setItem('user', JSON.stringify(mockUser));
   };
 
   const register = async (userData: Partial<User>) => {
-    const mockUser: User = {
-      id: '1',
+    // Check if email already exists in mock data
+    const allMockUsers = [...MOCK_USERS, ...MOCK_RIDERS, ...MOCK_ADMINS];
+    const emailExists = allMockUsers.some(u => u.email === userData.email);
+    
+    if (emailExists) {
+      throw new Error('Email already registered');
+    }
+
+    // Create new mock user
+    const newUser: User = {
+      id: `user-${Date.now()}`,
       name: userData.name || '',
       email: userData.email || '',
       phone: userData.phone || '',
       role: userData.role || 'user',
-      token: 'mock-token',
+      token: `mock-token-${Date.now()}`,
       verificationStatus: userData.role === 'rider' ? 'pending' : undefined,
       vehicle: userData.vehicle,
       licensePlate: userData.licensePlate,
@@ -47,9 +60,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       bankAccount: userData.bankAccount,
       bankName: userData.bankName,
     };
-    setUser(mockUser);
+    
+    // In a real app, you would save this to a database
+    // For now, just add to the appropriate mock array
+    if (userData.role === 'rider') {
+      MOCK_RIDERS.push({ ...newUser, password: 'Password@123' } as any);
+    } else {
+      MOCK_USERS.push({ ...newUser, password: 'Password@123' } as any);
+    }
+    
+    setUser(newUser);
     setIsGuest(false);
-    localStorage.setItem('user', JSON.stringify(mockUser));
+    localStorage.setItem('user', JSON.stringify(newUser));
   };
 
   const logout = () => {

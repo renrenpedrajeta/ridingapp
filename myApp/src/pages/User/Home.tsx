@@ -9,14 +9,18 @@ import {
   IonLabel,
   IonToolbar,
   IonButton,
+  IonHeader,
+  IonButtons,
+  IonIcon,
+  IonBadge,
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
-import PageHeader from '../../components/PageHeader';
 import StallCard from '../../components/Stall/StallCard';
-import { Stall, User } from '../../types';
+import { Stall } from '../../types';
+import { cartOutline, personCircleOutline, settingsOutline, logOutOutline, moonOutline, sunnyOutline } from 'ionicons/icons';
 
 // Mock data - Same stalls as Guest
 const MOCK_STALLS: Stall[] = [
@@ -60,11 +64,19 @@ const MOCK_STALLS: Stall[] = [
 
 const UserHome: React.FC = () => {
   const history = useHistory();
-  const { logout, user } = useAuth();
+  const { user, logout } = useAuth();
   const { itemCount } = useCart();
+  const { isDarkMode, toggleTheme } = useTheme();
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [stalls, setStalls] = useState<Stall[]>(MOCK_STALLS);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Protect this page - redirect if not logged in or not a user
+  if (!user || (user.role !== 'user' && user.role !== 'rider')) {
+    history.replace('/login');
+    return null;
+  }
 
   const categories = ['All', 'Fast Food', 'Japanese', 'Italian', 'Chinese', 'Desserts'];
 
@@ -74,17 +86,153 @@ const UserHome: React.FC = () => {
     return matchesCategory && matchesSearch;
   });
 
+  const handleLogout = () => {
+    logout();
+    history.push('/guest/home');
+  };
+
   return (
     <IonPage>
-      <PageHeader 
-        cartCount={itemCount}
-        onCartClick={() => history.push('/user/cart')}
-        showLogo={true}
-        onProfileClick={() => {
-          logout();
-          history.push('/login');
-        }}
-      />
+      {/* Custom Header with Profile Dropdown */}
+      <IonHeader className="ion-no-border">
+        <IonToolbar style={{ '--background': 'var(--ion-card-background)' } as any}>
+          <IonButtons slot="start">
+            <IonButton onClick={toggleTheme} fill="clear">
+              <IonIcon icon={isDarkMode ? sunnyOutline : moonOutline} color="primary" />
+            </IonButton>
+          </IonButtons>
+
+          <div style={{ textAlign: 'center', flex: 1 }}>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, color: 'var(--ion-text-color)', margin: 0 }}>
+              <span style={{ color: '#6366F1' }}>Rider</span> App
+            </h1>
+          </div>
+
+          <IonButtons slot="end">
+            <IonButton onClick={() => history.push('/user/cart')} fill="clear">
+              <div style={{ position: 'relative' }}>
+                <IonIcon icon={cartOutline} color="primary" />
+                {itemCount > 0 && (
+                  <IonBadge style={{ 
+                    position: 'absolute', 
+                    top: '-5px', 
+                    right: '-5px', 
+                    background: '#EF4444',
+                    width: '20px',
+                    height: '20px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    fontWeight: 600
+                  }}>
+                    {itemCount}
+                  </IonBadge>
+                )}
+              </div>
+            </IonButton>
+            <IonButton onClick={() => setProfileMenuOpen(!profileMenuOpen)} fill="clear">
+              <IonIcon icon={personCircleOutline} color="primary" />
+            </IonButton>
+          </IonButtons>
+        </IonToolbar>
+      </IonHeader>
+
+      {/* Profile Dropdown Menu */}
+      {profileMenuOpen && (
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+          position: 'absolute',
+          top: '60px',
+          right: '16px',
+          background: 'var(--ion-card-background)',
+          border: '1px solid var(--ion-border-color)',
+          borderRadius: '12px',
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+          zIndex: 1000,
+          minWidth: '240px',
+          maxWidth: '280px'
+        }}>
+          {/* Profile Info */}
+          <div style={{
+            padding: '16px',
+            cursor: 'pointer',
+            borderBottom: '1px solid var(--ion-border-color)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}
+          onClick={() => history.push('/user/profile')}>
+            <div style={{
+              width: '48px',
+              height: '48px',
+              background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontSize: '24px'
+            }}>
+              👤
+            </div>
+            <div>
+              <p style={{ margin: 0, fontSize: '14px', fontWeight: 600, color: 'var(--ion-text-color)' }}>{user?.name}</p>
+              <p style={{ margin: 0, fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>{user?.email}</p>
+            </div>
+          </div>
+
+          {/* Settings Button */}
+          <button
+            onClick={() => {
+              history.push('/user/settings');
+              setProfileMenuOpen(false);
+            }}
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              border: 'none',
+              background: 'transparent',
+              color: 'var(--ion-text-color)',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 500,
+              borderBottom: '1px solid var(--ion-border-color)'
+            }}
+          >
+            <IonIcon icon={settingsOutline} style={{ color: '#6366F1', fontSize: '18px' }} />
+            <span>Settings</span>
+          </button>
+
+          {/* Logout Button */}
+          <button
+            onClick={() => {
+              handleLogout();
+              setProfileMenuOpen(false);
+            }}
+            style={{
+              width: '100%',
+              padding: '12px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              border: 'none',
+              background: 'transparent',
+              color: '#EF4444',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 500
+            }}
+          >
+            <IonIcon icon={logOutOutline} style={{ color: '#EF4444', fontSize: '18px' }} />
+            <span>Logout</span>
+          </button>
+        </div>
+      )}
 
       <IonToolbar style={{ '--background': 'var(--ion-background-color)', padding: '16px 0 0 0' } as any}>
         <div style={{ padding: '12px 16px 16px 16px' }}>
@@ -107,7 +255,7 @@ const UserHome: React.FC = () => {
         </div>
       </IonToolbar>
 
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
+      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any} onClick={() => setProfileMenuOpen(false)}>
         {/* Categories */}
         <div style={{ padding: '16px 0', background: 'var(--ion-card-background)', display: 'flex', justifyContent: 'center', borderBottom: '1px solid var(--ion-border-color)' }}>
           <div style={{ maxWidth: '100%', overflowX: 'auto', display: 'flex', justifyContent: 'center', paddingLeft: '16px', paddingRight: '16px' }}>
@@ -115,7 +263,7 @@ const UserHome: React.FC = () => {
               value={selectedCategory} 
               onIonChange={e => setSelectedCategory(e.detail.value as string)}
               scrollable
-              style={{ '--background': 'transparent', width: 'auto' }}
+              style={{ '--background': 'transparent', width: 'auto' } as any}
             >
               {categories.map(cat => (
                 <IonSegmentButton 
@@ -127,7 +275,7 @@ const UserHome: React.FC = () => {
                     '--color-checked': '#FFFFFF',
                     '--border-radius': '8px',
                     '--indicator-color': 'transparent'
-                  }}
+                  } as any}
                 >
                   <IonLabel style={{ fontSize: '14px', fontWeight: 600 }}>{cat}</IonLabel>
                 </IonSegmentButton>

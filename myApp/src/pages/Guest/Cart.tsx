@@ -1,5 +1,5 @@
 // src/pages/Guest/Cart.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   IonPage,
   IonContent,
@@ -24,6 +24,15 @@ const GuestCart: React.FC = () => {
   const { isGuest, logout } = useAuth();
   const { isDarkMode } = useTheme();
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState<string>('Current Location');
+
+  // Load selected location from sessionStorage
+  useEffect(() => {
+    const locationName = sessionStorage.getItem('locationName');
+    if (locationName) {
+      setSelectedLocation(locationName);
+    }
+  }, []);
 
   // static data for fees - in real app, these would likely come from an API or config
   const deliveryFee = 2.99;
@@ -136,7 +145,7 @@ const GuestCart: React.FC = () => {
               </div>
               <div style={{ flex: 1 }}>
                 <p style={{ margin: '0 0 4px', fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>Deliver to</p>
-                <p style={{ margin: 0, fontWeight: 600, color: 'var(--ion-text-color)' }}>Current Location</p>
+                <p style={{ margin: 0, fontWeight: 600, color: 'var(--ion-text-color)' }}>{selectedLocation}</p>
               </div>
               <IonButton fill="clear" style={{ '--color': '#6366F1' }} onClick={() => history.push('/guest/location')}>Change</IonButton>
             </div>

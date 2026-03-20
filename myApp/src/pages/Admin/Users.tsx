@@ -20,7 +20,13 @@ import { useAuth } from '../../context/AuthContext';
 
 const AdminUsers: React.FC = () => {
   const history = useHistory();
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  // Protect this page - redirect if not admin
+  if (!user || user.role !== 'admin') {
+    history.replace('/login');
+    return null;
+  }
   const [searchQuery, setSearchQuery] = useState('');
   const [users, setUsers] = useState([
     {
