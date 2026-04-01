@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
-import { IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonIcon, IonBadge, IonBackButton, IonPopover, IonLabel, IonItem, IonList } from '@ionic/react';
-import { moon, sunny, cartOutline, personOutline, arrowBack, settingsOutline, logOutOutline, home } from 'ionicons/icons';
-import { useTheme } from '../context/ThemeContext';
+import React from 'react';
+import { 
+  IonHeader, 
+  IonToolbar,
+  IonBackButton,
+  IonButtons,
+} from '@ionic/react';
+import { useHistory } from 'react-router-dom';
+import './Navbar.css';
 
 interface PageHeaderProps {
   title?: string;
@@ -9,16 +14,7 @@ interface PageHeaderProps {
   showBack?: boolean;
   showBackButton?: boolean;
   backHref?: string;
-  cartCount?: number;
-  onCartClick?: () => void;
-  onProfileClick?: () => void;
-  onSettingsClick?: () => void;
-  onLogoutClick?: () => void;
-  onLoginClick?: () => void;
-  onRegisterClick?: () => void;
-  onHomeClick?: () => void;
   customClass?: string;
-  isLoggedIn?: boolean;
 }
 
 const PageHeader: React.FC<PageHeaderProps> = ({
@@ -27,141 +23,34 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   showBack = false,
   showBackButton = false,
   backHref = '/guest/home',
-  cartCount = 0,
-  onCartClick,
-  onProfileClick,
-  onSettingsClick,
-  onLogoutClick,
-  onLoginClick,
-  onHomeClick,
-  onRegisterClick,
   customClass = '',
-  isLoggedIn = false
 }) => {
-  const { isDarkMode, toggleTheme } = useTheme();
-  const [showPopover, setShowPopover] = useState(false);
+  const history = useHistory();
 
   return (
-    <IonHeader className={`ion-no-border ${customClass}`}>
-      <IonToolbar
-        style={{
-          '--background': 'var(--ion-card-background)',
-          '--border-color': 'transparent'
-        } as any}
-      >
+    <IonHeader className={`page-header ${customClass}`}>
+      <IonToolbar className="page-header-toolbar">
         <IonButtons slot="start">
           {showBack || showBackButton ? (
             <IonBackButton 
               defaultHref={backHref} 
-              icon={arrowBack}
-              style={{ '--color': '#6366F1' }}
+              className="page-header-back-btn"
             />
           ) : (
-            <IonButton onClick={toggleTheme} style={{ '--color': '#6366F1' }}>
-              <IonIcon icon={isDarkMode ? sunny : moon} style={{ fontSize: '24px' }} />
-            </IonButton>
-          )}
-        </IonButtons>
-
-        <IonTitle
-          style={{
-            fontSize: '24px',
-            fontWeight: 700,
-            color: 'var(--ion-text-color)'
-          }}
-        >
-          {showLogo ? (
-            <>
-              <span style={{ color: '#6366F1' }}>Rider</span> App
-            </>
-          ) : (
-            title
-          )}
-        </IonTitle>
-
-        <IonButtons slot="end">
-          {onHomeClick && (
-            <IonButton onClick={onHomeClick}>
-              <IonIcon icon={home} style={{ fontSize: '24px', color: '#6366F1' }} />
-            </IonButton>
-          )}
-          {onCartClick && (
-            <IonButton onClick={onCartClick}>
-              <div style={{ position: 'relative' }}>
-                <IonIcon icon={cartOutline} style={{ fontSize: '24px', color: '#6366F1' }} />
-                {cartCount > 0 && (
-                  <IonBadge className="cart-badge">{cartCount}</IonBadge>
-                )}
-              </div>
-            </IonButton>
-          )}
-          {isLoggedIn && onProfileClick ? (
-            <>
-              <IonButton onClick={() => setShowPopover(true)}>
-                <IonIcon icon={personOutline} style={{ fontSize: '24px', color: 'var(--ion-text-color)' }} />
-              </IonButton>
-              <IonPopover
-                isOpen={showPopover}
-                onDidDismiss={() => setShowPopover(false)}
-                side="bottom"
-                alignment="end"
-                style={{ '--width': '200px' }}
-              >
-                <IonList style={{ padding: '8px 0' }}>
-                  <IonItem
-                    button
-                    onClick={() => {
-                      onProfileClick();
-                      setShowPopover(false);
-                    }}
-                    style={{ '--padding-start': '16px', '--padding-end': '16px' }}
-                  >
-                    <IonIcon icon={personOutline} slot="start" style={{ color: '#6366F1', marginRight: '12px' }} />
-                    <IonLabel>Profile</IonLabel>
-                  </IonItem>
-                  {onSettingsClick && (
-                    <IonItem
-                      button
-                      onClick={() => {
-                        onSettingsClick();
-                        setShowPopover(false);
-                      }}
-                      style={{ '--padding-start': '16px', '--padding-end': '16px' }}
-                    >
-                      <IonIcon icon={settingsOutline} slot="start" style={{ color: '#6366F1', marginRight: '12px' }} />
-                      <IonLabel>Settings</IonLabel>
-                    </IonItem>
-                  )}
-                  {onLogoutClick && (
-                    <IonItem
-                      button
-                      onClick={() => {
-                        onLogoutClick();
-                        setShowPopover(false);
-                      }}
-                      style={{ '--padding-start': '16px', '--padding-end': '16px', '--color': '#EF4444' }}
-                    >
-                      <IonIcon icon={logOutOutline} slot="start" style={{ color: '#EF4444', marginRight: '12px' }} />
-                      <IonLabel style={{ color: '#EF4444' }}>Logout</IonLabel>
-                    </IonItem>
-                  )}
-                </IonList>
-              </IonPopover>
-            </>
-          ) : isLoggedIn ? null : onLoginClick || onRegisterClick ? (
-            <>
-              {onLoginClick && (
-                <IonButton onClick={onLoginClick} style={{ '--color': '#6366F1' }}>
-                  <IonLabel>Login</IonLabel>
-                </IonButton>
+            <button 
+              className="page-header-logo-btn"
+              onClick={() => history.push('/guest/home')}
+            >
+              {showLogo ? (
+                <span className="page-header-logo">
+                  <span className="logo-primary">Rider</span>
+                  <span className="logo-secondary">App</span>
+                </span>
+              ) : (
+                <span className="page-header-title">{title}</span>
               )}
-              {onRegisterClick && (
-                <IonButton onClick={onRegisterClick} fill="solid" style={{ '--background': '#6366F1', borderRadius: '8px', marginLeft: '8px' }}>
-                  <IonLabel>Register</IonLabel>
-                </IonButton>
-              )}
-            </>
-          ) : null}
+            </button>
+          )}
         </IonButtons>
       </IonToolbar>
     </IonHeader>

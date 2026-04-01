@@ -7,9 +7,10 @@ import {
   IonIcon,
 } from '@ionic/react';
 import { personOutline, mailOutline, callOutline, logOutOutline, settingsOutline } from 'ionicons/icons';
-import { useTheme } from '../../context/ThemeContext';
 import { useHistory } from 'react-router-dom';
-import UserNavBar from '../../components/Navbar/UserNavBar';
+import { useTheme } from '../../context/ThemeContext';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/mobile-first-responsive.css';
 
@@ -35,9 +36,10 @@ const UserProfile: React.FC = () => {
 
   return (
     <IonPage>
-      <UserNavBar title="My Profile" />
+      <IonContent className="content-with-sticky-footer ion-page-with-bottom-nav" style={{ '--background': 'var(--ion-background-color)' } as any}>
+        {/* Logo Header */}
+        <LogoHeader />
 
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
         <div style={{ padding: '12px' }} className="mobile-container-lg">
           {/* Profile Avatar Section */}
           <div className="profile-section-mobile" style={{ paddingTop: '8px', marginBottom: '16px' }}>
@@ -249,6 +251,9 @@ const UserProfile: React.FC = () => {
             </IonButton>
           </div>
         </div>
+
+        {/* Bottom Navigation */}
+        <BottomNav type="user" activeTab="profile" />
       </IonContent>
     </IonPage>
   );

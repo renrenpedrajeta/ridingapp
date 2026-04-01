@@ -311,7 +311,7 @@ const ActivityLog: React.FC = () => {
             <IonTitle>Activity Details</IonTitle>
           </IonToolbar>
         </IonHeader>
-        <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
+      <IonContent className="content-with-sticky-footer" style={{ '--background': 'var(--ion-background-color)' } as any}>
           {selectedActivity && (
             <div style={{ padding: '16px' }}>
               <IonCard style={{ margin: 0, background: 'var(--ion-card-background)' }}>

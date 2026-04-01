@@ -54,15 +54,7 @@ const AdminDashboard: React.FC = () => {
 
       <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
         {/* Admin Navigation */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '8px',
-          padding: '16px',
-          overflowX: 'auto',
-          background: 'var(--ion-card-background)',
-          borderBottomLeftRadius: '12px',
-          borderBottomRightRadius: '12px'
-        }}>
+        <div className="nav-tabs">
           <IonButton
             expand="block"
             style={{
@@ -155,8 +147,8 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         {/* Quick Stats */}
-        <div style={{ padding: '0 16px 16px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div className="responsive-stats-grid" style={{ padding: '0 16px 16px' }}>
+          <div className="responsive-grid-2" style={{ gap: '12px' }}>
             {/* Total Users */}
             <IonCard 
               style={{ margin: 0, background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)' }}

@@ -84,40 +84,26 @@ const Register: React.FC = () => {
       </IonHeader>
 
       <IonContent className="ion-padding" style={{ '--background': 'var(--ion-background-color)' } as any}>
-        <div style={{ maxWidth: '400px', margin: '0 auto', paddingTop: '40px', paddingBottom: '140px' }}>
+        <div className="auth-container">
           {/* Header */}
-          <div style={{ marginBottom: '40px', textAlign: 'center' }}>
-            <h1 style={{ 
-              fontSize: '32px', 
-              fontWeight: 800, 
-              color: '#6366F1',
-              marginBottom: '8px',
-              margin: '0 0 12px 0'
-            }}>
+          <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+            <h1 className="auth-title" style={{ color: '#6366F1' }}>
               Create Account
             </h1>
-            <p style={{ color: 'var(--ion-text-color-secondary)', marginBottom: 0, fontSize: '15px' }}>
+            <p className="auth-subtitle">
               Join our community of food lovers
             </p>
           </div>
 
           {error && (
-            <div style={{ 
-              background: '#fee2e2', 
-              padding: '12px', 
-              borderRadius: '8px', 
-              marginBottom: '24px',
-              color: '#991b1b',
-              fontSize: '14px',
-              border: '1px solid #fecaca'
-            }}>
+            <div className="error-alert">
               {error}
             </div>
           )}
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>Full Name</label>
-            <IonItem className="rider-input" style={{ marginBottom: '0', '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
+          <div className="form-group-mobile">
+            <label className="form-label">Full Name</label>
+            <IonItem className="rider-input" style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
               <IonIcon icon={personOutline} slot="start" color="primary" />
               <IonInput
                 placeholder="Your full name"
@@ -128,9 +114,9 @@ const Register: React.FC = () => {
             </IonItem>
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>Email</label>
-            <IonItem className="rider-input" style={{ marginBottom: '0', '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
+          <div className="form-group-mobile">
+            <label className="form-label">Email</label>
+            <IonItem className="rider-input" style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
               <IonIcon icon={mailOutline} slot="start" color="primary" />
               <IonInput
                 type="email"
@@ -142,9 +128,9 @@ const Register: React.FC = () => {
             </IonItem>
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>Phone</label>
-            <IonItem className="rider-input" style={{ marginBottom: '0', '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
+          <div className="form-group-mobile">
+            <label className="form-label">Phone</label>
+            <IonItem className="rider-input" style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
               <IonIcon icon={callOutline} slot="start" color="primary" />
               <IonInput
                 type="tel"
@@ -156,8 +142,8 @@ const Register: React.FC = () => {
             </IonItem>
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>Password</label>
+          <div className="form-group-mobile">
+            <label className="form-label">Password</label>
             <IonItem className="rider-input" style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
               <IonIcon icon={lockClosedOutline} slot="start" color="primary" />
               <IonInput
@@ -177,9 +163,9 @@ const Register: React.FC = () => {
             </IonItem>
           </div>
 
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>Confirm Password</label>
-            <IonItem className="rider-input" style={{ marginBottom: '0', '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
+          <div className="form-group-mobile">
+            <label className="form-label">Confirm Password</label>
+            <IonItem className="rider-input" style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
               <IonIcon icon={lockClosedOutline} slot="start" color="primary" />
               <IonInput
                 type="password"
@@ -191,7 +177,7 @@ const Register: React.FC = () => {
             </IonItem>
           </div>
 
-          <IonItem lines="none" style={{ '--background': 'transparent', marginBottom: '24px' } as any}>
+          <IonItem lines="none" style={{ '--background': 'transparent', marginBottom: '20px' } as any}>
             <IonCheckbox 
               slot="start"
               checked={agreed}
@@ -206,23 +192,15 @@ const Register: React.FC = () => {
 
           <IonButton
             expand="block"
-            size="large"
-            className="rider-button"
-            style={{
-              '--background': '#6366F1',
-              '--border-radius': '8px',
-              height: '48px',
-              fontSize: '16px',
-              fontWeight: 700,
-              marginBottom: '24px'
-            }}
+            className="mobile-button"
+            style={{ '--background': '#6366F1', marginBottom: '20px' }}
             onClick={handleRegister}
           >
             Create Account
           </IonButton>
 
           <div style={{ textAlign: 'center' }}>
-            <span style={{ color: 'var(--ion-text-color-secondary)', fontSize: '14px' }}>
+            <span className="text-base" style={{ color: 'var(--ion-text-color-secondary)' }}>
               Already have an account?{' '}
               <span 
                 style={{ color: '#6366F1', fontWeight: 700, cursor: 'pointer' }}

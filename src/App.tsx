@@ -1,6 +1,6 @@
 // src/App.tsx
 import React, { Suspense, lazy } from 'react';
-import { IonApp, IonRouterOutlet, IonSpinner, setupIonicReact } from '@ionic/react';
+import { IonApp, IonRouterOutlet, IonSpinner } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
 import { Route, Redirect } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
@@ -23,6 +23,7 @@ import '@ionic/react/css/flex-utils.css';
 import '@ionic/react/css/display.css';
 import './theme/variables.css';
 import './theme/global.css';
+import './styles/mobile-first-responsive.css';
 import "leaflet/dist/leaflet.css";
 
 // Loading fallback component
@@ -76,11 +77,6 @@ const VendorEarnings = lazy(() => import('./pages/Vendor/VendorEarnings'));
 const VendorReviews = lazy(() => import('./pages/Vendor/VendorReviews'));
 const VendorSettings = lazy(() => import('./pages/Vendor/VendorSettings'));
 const VendorMessages = lazy(() => import('./pages/Vendor/VendorMessages'));
-
-setupIonicReact({
-  mode: 'ios',
-  animated: true,
-});
 
 const App: React.FC = () => (
   <IonApp>

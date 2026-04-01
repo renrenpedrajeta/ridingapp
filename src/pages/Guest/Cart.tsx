@@ -8,25 +8,26 @@ import {
   IonFooter,
   IonItem,
   IonLabel,
+  IonHeader,
+  IonToolbar,
+  IonButtons,
+  IonTitle,
 } from '@ionic/react';
-import { locationOutline, bicycleOutline, cardOutline } from 'ionicons/icons';
+import { locationOutline, bicycleOutline, cardOutline, arrowBack } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import CartItem from '../../components/Cart/CartItem';
-import PageHeader from '../../components/PageHeader';
+import LogoHeader from '../../components/LogoHeader';
 import GuestPromptModal from '../../components/Auth/GuestPromptModal';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
 
 const GuestCart: React.FC = () => {
   const history = useHistory();
-  const { items, updateQuantity, removeFromCart, total, itemCount } = useCart();
+  const { items, updateQuantity, removeFromCart, total } = useCart();
   const { isGuest, logout } = useAuth();
-  const { isDarkMode } = useTheme();
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState<string>('Current Location');
 
-  // Load selected location from sessionStorage
   useEffect(() => {
     const locationName = sessionStorage.getItem('locationName');
     if (locationName) {
@@ -34,13 +35,8 @@ const GuestCart: React.FC = () => {
     }
   }, []);
 
-  // static data for fees - in real app, these would likely come from an API or config
   const deliveryFee = 2.99;
   const serviceFee = 1.49;
-  //this is the current location
-  const staticFromLocation = "Jollibee, E. Jacinto Street, San Vicente, Gapan, Nueva Ecija, Central Luzon, 3105, Philippines"
-  //this is the location of the stalls
-  const staticToLocation = "Calaba, San Isidro, Nueva Ecija, Central Luzon, 3108, Philippines"
   
   const finalTotal = total + deliveryFee + serviceFee;
 
@@ -54,64 +50,36 @@ const GuestCart: React.FC = () => {
 
   return (
     <IonPage>
-      <PageHeader 
-        showLogo={true}
-        showBackButton={true}
-        backHref="/guest/home"
-        cartCount={itemCount}
-        onCartClick={() => history.push('/guest/cart')}
-        onProfileClick={() => {
-          if (isGuest) {
-            history.push('/login');
-          } else {
-            logout();
-            history.push('/login');
-          }
-        }}
-      />
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonButton onClick={() => history.goBack()}>
+              <IonIcon slot="icon-only" icon={arrowBack} />
+            </IonButton>
+          </IonButtons>
+          <IonTitle>Your Cart</IonTitle>
+        </IonToolbar>
+      </IonHeader>
 
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
-        {/* Page Title */}
-        <div style={{ padding: '20px 16px 16px 16px' }}>
-          <h2 style={{ 
-            margin: 0, 
-            fontSize: '28px', 
-            fontWeight: 700, 
-            color: 'var(--ion-text-color)' 
-          }}>
-            Your Cart
-          </h2>
-        </div>
+      <IonContent className="guest-cart-content">
+        {/* Logo Header */}
+        <LogoHeader />
+
+
+        
         {items.length === 0 ? (
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            height: '60vh',
-            padding: '24px',
-            textAlign: 'center'
-          }}>
-            <div style={{
-              width: '120px',
-              height: '120px',
-              background: 'var(--ion-card-background)',
-              border: '2px solid var(--ion-border-color)',
-              borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: '24px'
-            }}>
-              <IonIcon icon={bicycleOutline} style={{ fontSize: '48px', color: '#6366F1' }} />
+          <div className="empty-state-container">
+            <div className="icon-container" style={{ background: 'var(--ion-card-background)', border: '2px solid var(--ion-border-color)' }}>
+              <IonIcon icon={bicycleOutline} style={{ fontSize: '28px', color: '#6366F1' }} />
             </div>
-            <h2 style={{ margin: '0 0 8px', fontWeight: 700, color: 'var(--ion-text-color)' }}>Your cart is empty</h2>
-            <p style={{ margin: 0, color: 'var(--ion-text-color-secondary)' }}>Add some delicious food to get started!</p>
+            <h2 className="empty-state-text">Your cart is empty</h2>
+            <p className="empty-state-description">Add some delicious food to get started!</p>
             <IonButton
+              className="mobile-button"
               style={{ 
-                marginTop: '24px',
                 '--background': '#6366F1',
-                '--border-radius': '8px'
+                '--border-radius': '8px',
+                marginTop: '8px'
               }}
               onClick={() => history.push('/guest/home')}
             >
@@ -121,37 +89,19 @@ const GuestCart: React.FC = () => {
         ) : (
           <>
             {/* Delivery Address */}
-            <div style={{ 
-              background: 'var(--ion-card-background)', 
-              margin: '16px', 
-              padding: '16px', 
-              borderRadius: '12px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-              border: '1px solid var(--ion-border-color)'
-            }}>
-              <div style={{
-                width: '40px',
-                height: '40px',
-                background: 'var(--ion-background-color)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '1px solid var(--ion-border-color)'
-              }}>
-                <IonIcon icon={locationOutline} style={{ color: '#6366F1', fontSize: '20px' }} />
+            <div className="mobile-card-lg" style={{ margin: '16px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <div className="icon-container-sm" style={{ background: 'var(--ion-background-color)', border: '1px solid var(--ion-border-color)' }}>
+                <IonIcon icon={locationOutline} style={{ color: '#6366F1', fontSize: '18px' }} />
               </div>
               <div style={{ flex: 1 }}>
                 <p style={{ margin: '0 0 4px', fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>Deliver to</p>
-                <p style={{ margin: 0, fontWeight: 600, color: 'var(--ion-text-color)' }}>{selectedLocation}</p>
+                <p style={{ margin: 0, fontWeight: 600, color: 'var(--ion-text-color)', fontSize: '14px' }}>{selectedLocation}</p>
               </div>
               <IonButton fill="clear" style={{ '--color': '#6366F1' }} onClick={() => history.push('/guest/location')}>Change</IonButton>
             </div>
 
             {/* Cart Items */}
-            <div style={{ padding: '0 16px' }}>
+            <div className="cart-items-mobile" style={{ padding: '0 16px' }}>
               {items.map(item => (
                 <CartItem 
                   key={item.id} 
@@ -163,14 +113,7 @@ const GuestCart: React.FC = () => {
             </div>
 
             {/* Bill Details */}
-            <div style={{ 
-              background: 'var(--ion-card-background)', 
-              margin: '16px', 
-              padding: '16px', 
-              borderRadius: '12px',
-              border: '1px solid var(--ion-border-color)',
-              marginBottom: '100px'
-            }}>
+            <div className="mobile-card-lg" style={{ margin: '16px', marginBottom: '100px' }}>
               <h3 style={{ margin: '0 0 16px', fontWeight: 700, fontSize: '16px', color: 'var(--ion-text-color)' }}>Bill Details</h3>
               
               <IonItem lines="none" style={{ '--padding-start': 0, '--inner-padding-end': 0, '--background': 'transparent' } as any}>
@@ -193,7 +136,7 @@ const GuestCart: React.FC = () => {
                 display: 'flex',
                 justifyContent: 'space-between',
                 fontWeight: 700,
-                fontSize: '18px',
+                fontSize: '16px',
                 color: 'var(--ion-text-color)'
               }}>
                 <span>Total</span>
@@ -202,6 +145,7 @@ const GuestCart: React.FC = () => {
             </div>
           </>
         )}
+
       </IonContent>
 
       {/* Footer Checkout Button */}
@@ -209,13 +153,12 @@ const GuestCart: React.FC = () => {
         <IonFooter style={{ '--background': 'var(--ion-card-background)', padding: '16px', borderTop: '1px solid var(--ion-border-color)' } as any}>
           <IonButton
             expand="block"
-            size="large"
+            className="mobile-button"
             style={{
               '--background': '#6366F1',
               '--border-radius': '8px',
               '--box-shadow': '0 4px 20px rgba(99, 102, 241, 0.3)',
-              height: '56px',
-              fontSize: '16px',
+              fontSize: '15px',
               fontWeight: 700
             }}
             onClick={handleCheckout}

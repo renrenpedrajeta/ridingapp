@@ -212,15 +212,7 @@ const AdminReports: React.FC = () => {
 
       <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
         {/* Admin Navigation */}
-        <div style={{
-          display: 'flex',
-          gap: '8px',
-          padding: '16px',
-          overflowX: 'auto',
-          background: 'var(--ion-card-background)',
-          borderBottomLeftRadius: '12px',
-          borderBottomRightRadius: '12px'
-        }}>
+        <div className="nav-tabs">
           <IonButton
             expand="block"
             style={{

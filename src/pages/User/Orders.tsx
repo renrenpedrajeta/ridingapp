@@ -11,11 +11,11 @@ import {
   IonSegmentButton,
   IonLabel,
 } from '@ionic/react';
-import { checkmarkCircle, timeOutline, bicycleOutline, checkmarkDoneOutline, mapOutline } from 'ionicons/icons';
+import { checkmarkCircle, checkmarkDoneOutline, mapOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
-import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
-import UserNavBar from '../../components/Navbar/UserNavBar';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
 import '../../styles/mobile-first-responsive.css';
 
 interface OrderItem {
@@ -41,7 +41,6 @@ interface Order {
 
 const Orders: React.FC = () => {
   const history = useHistory();
-  const { isDarkMode } = useTheme();
   const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'active' | 'completed'>('all');
@@ -129,9 +128,10 @@ const Orders: React.FC = () => {
 
   return (
     <IonPage>
-      <UserNavBar title="My Orders" />
+      <IonContent className="ion-page-with-bottom-nav" style={{ '--background': 'var(--ion-background-color)' } as any}>
+        {/* Logo Header */}
+        <LogoHeader />
 
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
         <div style={{ padding: '12px' }}>
           {/* Filter Segment */}
           <div style={{ marginBottom: '12px' }}>
@@ -154,47 +154,47 @@ const Orders: React.FC = () => {
 
           {/* Orders List */}
           {filteredOrders.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '32px 12px' }}>
-              <IonIcon icon={mapOutline} style={{ fontSize: '40px', color: 'var(--ion-text-color-secondary)', marginBottom: '12px', display: 'block' }} />
-              <p style={{ margin: '0 0 12px', fontSize: '13px', color: 'var(--ion-text-color)' }}>No {selectedFilter === 'all' ? '' : selectedFilter} orders yet</p>
+            <div className="empty-state-container">
+              <IonIcon icon={mapOutline} style={{ fontSize: '48px', color: 'var(--ion-text-color-secondary)', marginBottom: '16px' }} />
+              <p className="empty-state-text">No {selectedFilter === 'all' ? '' : selectedFilter} orders yet</p>
               <IonButton
                 expand="block"
                 color="primary"
-                fill="solid"
-                style={{ '--background': '#6366F1', maxWidth: '180px', margin: '0 auto', fontSize: '12px', height: '36px' }}
+                className="mobile-button"
+                style={{ '--background': '#6366F1', maxWidth: '200px', marginTop: '8px' }}
                 onClick={() => history.push('/user/home')}
               >
                 Start Shopping
               </IonButton>
             </div>
           ) : (
-            <div style={{ display: 'grid', gap: '12px', marginBottom: '12px' }}>
+            <div style={{ display: 'grid', gap: '12px', padding: '0 12px 12px 12px' }}>
               {filteredOrders.map((order) => (
                 <IonCard key={order.id} style={{ marginBottom: 0 }}>
-                  <IonCardContent style={{ padding: '10px' }}>
+                  <IonCardContent style={{ padding: '12px' }}>
                     {/* Order Header */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--ion-border-color)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--ion-border-color)' }}>
                       <div>
-                        <p style={{ margin: '0 0 2px', fontSize: '10px', color: 'var(--ion-text-color-secondary)', textTransform: 'uppercase' }}>Order ID</p>
-                        <p style={{ margin: 0, fontSize: '12px', fontWeight: 700, color: 'var(--ion-text-color)' }}>{order.id}</p>
+                        <p style={{ margin: '0 0 4px', fontSize: '11px', color: 'var(--ion-text-color-secondary)', textTransform: 'uppercase' }}>Order ID</p>
+                        <p style={{ margin: 0, fontSize: '13px', fontWeight: 700, color: 'var(--ion-text-color)' }}>{order.id}</p>
                       </div>
                       <div style={{ textAlign: 'right' }}>
-                        <p style={{ margin: '0 0 2px', fontSize: '10px', color: 'var(--ion-text-color-secondary)', textTransform: 'uppercase' }}>Amount</p>
-                        <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: '#6366F1' }}>₱{order.total.toFixed(2)}</p>
+                        <p style={{ margin: '0 0 4px', fontSize: '11px', color: 'var(--ion-text-color-secondary)', textTransform: 'uppercase' }}>Amount</p>
+                        <p style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: '#6366F1' }}>₱{order.total.toFixed(2)}</p>
                       </div>
                     </div>
 
                     {/* Order Items Summary */}
-                    <div style={{ marginBottom: '10px', paddingBottom: '10px', borderBottom: '1px solid var(--ion-border-color)' }}>
-                      <p style={{ margin: '0 0 6px', fontSize: '10px', color: 'var(--ion-text-color-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>Items</p>
+                    <div style={{ marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--ion-border-color)' }}>
+                      <p style={{ margin: '0 0 8px', fontSize: '11px', color: 'var(--ion-text-color-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>Items</p>
                       <div>
                         {order.items.slice(0, 2).map((item, idx) => (
-                          <p key={idx} style={{ margin: '3px 0', fontSize: '11px', color: 'var(--ion-text-color)' }}>
+                          <p key={idx} style={{ margin: '4px 0', fontSize: '13px', color: 'var(--ion-text-color)' }}>
                             {item.name} x{item.quantity}
                           </p>
                         ))}
                         {order.items.length > 2 && (
-                          <p style={{ margin: '3px 0', fontSize: '11px', color: 'var(--ion-text-color-secondary)' }}>
+                          <p style={{ margin: '4px 0', fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>
                             +{order.items.length - 2} more item{order.items.length - 2 > 1 ? 's' : ''}
                           </p>
                         )}
@@ -203,135 +203,79 @@ const Orders: React.FC = () => {
 
                     {/* Status Progress */}
                     <div style={{ marginBottom: '12px' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', alignItems: 'center' }}>
-                        <p style={{ margin: 0, fontSize: '11px', fontWeight: 600, color: 'var(--ion-text-color)' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
+                        <p style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: 'var(--ion-text-color)' }}>
                           {getStatusLabel(order.vendorStatus, order.riderStatus)}
                         </p>
-                        <span style={{ fontSize: '10px', color: 'var(--ion-text-color-secondary)' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--ion-text-color-secondary)' }}>
                           {getProgressPercentage(order.vendorStatus, order.riderStatus)}%
                         </span>
                       </div>
-                      <div style={{ height: '4px', background: 'var(--ion-border-color)', borderRadius: '2px', overflow: 'hidden' }}>
+                      <div className="progress-bar">
                         <div
+                          className="progress-bar-fill"
                           style={{
-                            height: '100%',
                             width: `${getProgressPercentage(order.vendorStatus, order.riderStatus)}%`,
                             background: getStatusColor(order.riderStatus),
-                            transition: 'width 0.3s ease',
                           }}
                         />
                       </div>
                     </div>
 
-                    {/* Tracking Steps */}
-                    <div style={{ marginBottom: '10px' }}>
-                      <div style={{ display: 'grid', gridTemplateColumns: 'auto 1fr auto 1fr auto 1fr auto 1fr', gap: '4px', alignItems: 'center' }}>
-                        {/* Received */}
-                        <div style={{ textAlign: 'center' }}>
-                          <div style={{
-                            width: '20px',
-                            height: '20px',
-                            borderRadius: '50%',
-                            background: '#10B981',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 2px',
-                          }}>
-                            <IonIcon icon={checkmarkCircle} style={{ fontSize: '14px', color: 'white' }} />
+                    {/* Tracking Steps - Horizontal Scroll */}
+                    <div style={{ marginBottom: '12px' }}>
+                      <div className="tracking-steps-container">
+                        <div className="tracking-steps">
+                          {/* Received */}
+                          <div className="tracking-step">
+                            <div className="tracking-step-circle" style={{ background: '#10B981' }}>
+                              <IonIcon icon={checkmarkCircle} style={{ fontSize: '12px', color: 'white' }} />
+                            </div>
+                            <span className="tracking-step-label">Received</span>
                           </div>
-                          <p style={{ margin: 0, fontSize: '8px', color: 'var(--ion-text-color-secondary)' }}>Received</p>
-                        </div>
 
-                        {/* Line */}
-                        <div style={{
-                          height: '2px',
-                          background: order.vendorStatus === 'received' ? 'var(--ion-border-color)' : '#10B981',
-                          gridColumn: 'span 1',
-                        }} />
-
-                        {/* Preparing */}
-                        <div style={{ textAlign: 'center' }}>
-                          <div style={{
-                            width: '20px',
-                            height: '20px',
-                            borderRadius: '50%',
-                            background: order.vendorStatus === 'received' ? 'var(--ion-border-color)' : '#10B981',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 2px',
-                          }}>
-                            {(order.vendorStatus === 'preparing' || order.vendorStatus === 'ready') && (
-                              <IonIcon icon={checkmarkCircle} style={{ fontSize: '14px', color: 'white' }} />
-                            )}
+                          {/* Preparing */}
+                          <div className="tracking-step">
+                            <div className="tracking-step-circle" style={{ background: order.vendorStatus === 'received' ? 'var(--ion-border-color)' : '#10B981' }}>
+                              {(order.vendorStatus === 'preparing' || order.vendorStatus === 'ready') && (
+                                <IonIcon icon={checkmarkCircle} style={{ fontSize: '12px', color: 'white' }} />
+                              )}
+                            </div>
+                            <span className="tracking-step-label">Preparing</span>
                           </div>
-                          <p style={{ margin: 0, fontSize: '8px', color: 'var(--ion-text-color-secondary)' }}>Preparing</p>
-                        </div>
 
-                        {/* Line */}
-                        <div style={{
-                          height: '2px',
-                          background: (order.vendorStatus === 'ready' || order.riderStatus !== 'waiting') ? '#10B981' : 'var(--ion-border-color)',
-                          gridColumn: 'span 1',
-                        }} />
-
-                        {/* Pickup */}
-                        <div style={{ textAlign: 'center' }}>
-                          <div style={{
-                            width: '20px',
-                            height: '20px',
-                            borderRadius: '50%',
-                            background: (order.riderStatus === 'picked_up' || order.riderStatus === 'on_way' || order.riderStatus === 'delivered') ? '#10B981' : 'var(--ion-border-color)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 2px',
-                          }}>
-                            {(order.riderStatus === 'picked_up' || order.riderStatus === 'on_way' || order.riderStatus === 'delivered') && (
-                              <IonIcon icon={checkmarkCircle} style={{ fontSize: '14px', color: 'white' }} />
-                            )}
+                          {/* Pickup */}
+                          <div className="tracking-step">
+                            <div className="tracking-step-circle" style={{ background: (order.riderStatus === 'picked_up' || order.riderStatus === 'on_way' || order.riderStatus === 'delivered') ? '#10B981' : 'var(--ion-border-color)' }}>
+                              {(order.riderStatus === 'picked_up' || order.riderStatus === 'on_way' || order.riderStatus === 'delivered') && (
+                                <IonIcon icon={checkmarkCircle} style={{ fontSize: '12px', color: 'white' }} />
+                              )}
+                            </div>
+                            <span className="tracking-step-label">Pickup</span>
                           </div>
-                          <p style={{ margin: 0, fontSize: '8px', color: 'var(--ion-text-color-secondary)' }}>Pickup</p>
-                        </div>
 
-                        {/* Line */}
-                        <div style={{
-                          height: '2px',
-                          background: (order.riderStatus === 'on_way' || order.riderStatus === 'delivered') ? '#10B981' : 'var(--ion-border-color)',
-                          gridColumn: 'span 1',
-                        }} />
-
-                        {/* Delivered */}
-                        <div style={{ textAlign: 'center' }}>
-                          <div style={{
-                            width: '20px',
-                            height: '20px',
-                            borderRadius: '50%',
-                            background: order.riderStatus === 'delivered' ? '#10B981' : 'var(--ion-border-color)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 2px',
-                          }}>
-                            {order.riderStatus === 'delivered' && (
-                              <IonIcon icon={checkmarkDoneOutline} style={{ fontSize: '14px', color: 'white' }} />
-                            )}
+                          {/* Delivered */}
+                          <div className="tracking-step">
+                            <div className="tracking-step-circle" style={{ background: order.riderStatus === 'delivered' ? '#10B981' : 'var(--ion-border-color)' }}>
+                              {order.riderStatus === 'delivered' && (
+                                <IonIcon icon={checkmarkDoneOutline} style={{ fontSize: '12px', color: 'white' }} />
+                              )}
+                            </div>
+                            <span className="tracking-step-label">Delivered</span>
                           </div>
-                          <p style={{ margin: 0, fontSize: '8px', color: 'var(--ion-text-color-secondary)' }}>Delivered</p>
                         </div>
                       </div>
                     </div>
 
                     {/* Delivery Address */}
-                    <div style={{ padding: '8px', background: 'var(--ion-background-color)', borderRadius: '6px', marginBottom: '8px' }}>
-                      <p style={{ margin: '0 0 2px', fontSize: '9px', color: 'var(--ion-text-color-secondary)', textTransform: 'uppercase', fontWeight: 600 }}>Delivery Location</p>
-                      <p style={{ margin: 0, fontSize: '12px', color: 'var(--ion-text-color)' }}>{order.deliveryAddress}</p>
+                    <div style={{ padding: '10px 12px', background: 'var(--ion-background-color)', borderRadius: '6px', marginBottom: '10px' }}>
+                      <p style={{ margin: '0 0 4px', fontSize: '11px', color: 'var(--ion-text-color-secondary)', textTransform: 'uppercase', fontWeight: 600 }}>Delivery Location</p>
+                      <p style={{ margin: 0, fontSize: '13px', color: 'var(--ion-text-color)' }}>{order.deliveryAddress}</p>
                     </div>
 
                     {/* Action Button */}
                     {order.riderStatus !== 'delivered' && (
-                      <IonButton expand="block" color="primary" fill="outline" size="small" style={{ height: '32px', fontSize: '11px' }}>
+                      <IonButton expand="block" color="primary" fill="outline" className="mobile-button-small" style={{ '--background': '#6366F1', fontSize: '13px' }}>
                         Live Tracking
                       </IonButton>
                     )}
@@ -341,6 +285,9 @@ const Orders: React.FC = () => {
             </div>
           )}
         </div>
+
+        {/* Bottom Navigation */}
+        <BottomNav type="user" activeTab="home" />
       </IonContent>
     </IonPage>
   );

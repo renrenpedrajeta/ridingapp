@@ -22,6 +22,7 @@ import { useCart } from '../../context/CartContext';
 import { useTheme } from '../../context/ThemeContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
+import '../../styles/mobile-first-responsive.css';
 
 interface DeliveryLocation {
   lat: number;
@@ -39,14 +40,12 @@ const Checkout: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   
-  // Mock restaurant location
   const restaurantLocation: DeliveryLocation = {
     lat: 14.5995,
     lng: 120.9842,
     name: 'Restaurant Location'
   };
   
-  // Customer location from sessionStorage
   const [customerLocation, setCustomerLocation] = useState<DeliveryLocation | null>(null);
 
   useEffect(() => {
@@ -104,13 +103,13 @@ const Checkout: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent>
-        <div style={{ padding: '20px 16px' }}>
+      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any} className="content-with-sticky-footer">
+        <div className="mobile-container">
           {/* Order Summary */}
-          <IonCard style={{ marginBottom: '20px' }}>
+          <IonCard className="mobile-card">
             <IonCardContent>
-              <h3 style={{ margin: '0 0 16px 0', color: 'var(--ion-text-color)', fontWeight: 700 }}>Order Summary</h3>
-              <div style={{ maxHeight: '200px', overflowY: 'auto', marginBottom: '16px' }}>
+              <h3 className="section-title" style={{ margin: '0 0 16px 0' }}>Order Summary</h3>
+              <div style={{ maxHeight: '180px', overflowY: 'auto', marginBottom: '16px' }}>
                 {items.map((item) => (
                   <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between', paddingBottom: '8px', borderBottom: '1px solid var(--ion-border-color)' }}>
                     <span style={{ color: 'var(--ion-text-color)' }}>{item.name} x{item.quantity}</span>
@@ -141,10 +140,10 @@ const Checkout: React.FC = () => {
 
           {/* Delivery Map */}
           {customerLocation && (
-            <IonCard style={{ marginBottom: '20px' }}>
+            <IonCard className="mobile-card">
               <IonCardContent style={{ padding: 0 }}>
-                <h3 style={{ margin: '16px 16px 0 16px', color: 'var(--ion-text-color)', fontWeight: 700 }}>Delivery Route</h3>
-                <div style={{ height: '300px', borderRadius: '8px', overflow: 'hidden', margin: '12px' }}>
+                <h3 className="section-title" style={{ margin: '16px' }}>Delivery Route</h3>
+                <div className="map-container" style={{ margin: '0 16px 16px' }}>
                   <MapContainer 
                     center={[restaurantLocation.lat, restaurantLocation.lng]} 
                     zoom={13} 
@@ -154,7 +153,6 @@ const Checkout: React.FC = () => {
                       url={isDarkMode ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'}
                       attribution={isDarkMode ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}
                     />
-                    {/* Restaurant Marker */}
                     <Marker
                       position={[restaurantLocation.lat, restaurantLocation.lng]}
                       icon={L.icon({
@@ -168,7 +166,6 @@ const Checkout: React.FC = () => {
                     >
                       <Popup>Restaurant Location</Popup>
                     </Marker>
-                    {/* Customer Marker */}
                     <Marker
                       position={[customerLocation.lat, customerLocation.lng]}
                       icon={L.icon({
@@ -189,11 +186,11 @@ const Checkout: React.FC = () => {
           )}
 
           {/* Address Section */}
-          <IonCard style={{ marginBottom: '20px' }}>
+          <IonCard className="mobile-card">
             <IonCardContent>
-              <h3 style={{ margin: '0 0 16px 0', color: 'var(--ion-text-color)', fontWeight: 700 }}>Delivery Address</h3>
+              <h3 className="section-title" style={{ margin: '0 0 16px 0' }}>Delivery Address</h3>
               
-              <IonItem lines="none" style={{ '--background': 'var(--ion-color-background)' } as any}>
+              <IonItem lines="none" style={{ '--background': 'var(--ion-card-background)' } as any}>
                 <IonLabel position="stacked" style={{ color: 'var(--ion-text-color-secondary)' }}>Your Name *</IonLabel>
                 <IonInput
                   type="text"
@@ -204,7 +201,7 @@ const Checkout: React.FC = () => {
                 />
               </IonItem>
 
-              <IonItem lines="none" style={{ '--background': 'var(--ion-color-background)' } as any}>
+              <IonItem lines="none" style={{ '--background': 'var(--ion-card-background)' } as any}>
                 <IonLabel position="stacked" style={{ color: 'var(--ion-text-color-secondary)' }}>Phone Number *</IonLabel>
                 <IonInput
                   type="tel"
@@ -216,14 +213,15 @@ const Checkout: React.FC = () => {
               </IonItem>
 
               <div style={{ marginTop: '16px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--ion-text-color-secondary)', fontSize: '14px' }}>Delivery Address *</label>
-                <div style={{ display: 'flex', gap: '8px' }}>
+                <label className="form-label">Delivery Address *</label>
+                <div style={{ display: 'flex', gap: '12px' }}>
                   <IonInput
                     type="text"
                     placeholder="Select delivery location"
                     value={deliveryAddress}
                     readonly
-                    style={{ color: 'var(--ion-text-color)', '--background': 'var(--ion-background-color)' } as any}
+                    className="form-input"
+                    style={{ flex: 1 }}
                   />
                   <IonButton color="primary" onClick={handleLocationPicker}>
                     <IonIcon icon={locationOutline} />
@@ -239,8 +237,8 @@ const Checkout: React.FC = () => {
         <div style={{ padding: '16px', background: 'var(--ion-card-background)', borderTop: '1px solid var(--ion-border-color)' }}>
           <IonButton
             expand="block"
+            className="mobile-button"
             color="primary"
-            fill="solid"
             onClick={handlePayment}
             disabled={loading}
           >

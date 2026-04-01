@@ -2,33 +2,27 @@ import React, { useState } from 'react';
 import {
   IonHeader,
   IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
   IonIcon,
-  IonBadge,
-  IonPopover,
-  IonItem,
-  IonList,
-  IonLabel,
 } from '@ionic/react';
 import {
   home,
   cartOutline,
-  chatbubbleOutline,
-  timeOutline,
-  personCircleOutline,
+  personOutline,
   logOutOutline,
   settingsOutline,
   sunnyOutline,
   moonOutline,
   listOutline,
+  chatbubbleOutline,
+  timeOutline,
+  personCircleOutline,
 } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useNotification } from '../../context/NotificationContext';
-import '../../styles/mobile-first-responsive.css';
+import { useCart } from '../../context/CartContext';
+import '../Navbar.css';
 
 interface UserNavBarProps {
   title?: string;
@@ -36,190 +30,183 @@ interface UserNavBarProps {
   cartCount?: number;
 }
 
-/**
- * UserNavBar - Navigation bar for regular users
- * Features: Home, Cart, Messages, Activities, Profile, Settings
- */
 const UserNavBar: React.FC<UserNavBarProps> = ({
-  title = 'RiderApp',
   showCart = true,
-  cartCount = 0,
 }) => {
   const history = useHistory();
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const { unreadCount } = useNotification();
-  const [showPopover, setShowPopover] = useState(false);
+  const { itemCount } = useCart();
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = () => {
     logout();
-    setShowPopover(false);
+    setShowUserMenu(false);
     history.push('/login');
   };
 
-  return (
-    <IonHeader>
-      <IonToolbar
-        style={{
-          '--background': 'var(--ion-card-background)',
-          borderBottom: '1px solid var(--ion-border-color)',
-          padding: '8px 0',
-        } as any}
-      >
-        <IonTitle
-          style={{
-            fontSize: '18px',
-            fontWeight: '700',
-            color: 'var(--ion-text-color)',
-            paddingLeft: '12px',
-          }}
-          className="navbar-title-mobile"
-        >
-          {title}
-        </IonTitle>
+  const navigateTo = (path: string) => {
+    setShowUserMenu(false);
+    history.push(path);
+  };
 
-        <IonButtons slot="end" className="navbar-buttons-mobile">
-          {/* Profile Dropdown - Only button on navbar */}
-          <IonButton id="user-profile-button" onClick={() => setShowPopover(true)} className="navbar-icon-button">
-            <IonIcon
-              icon={personCircleOutline}
-              style={{ fontSize: '20px', color: '#6366F1' }}
-            />
-          </IonButton>
-        </IonButtons>
+  return (
+    <IonHeader className="navbar-header">
+      <IonToolbar className="navbar-toolbar">
+        {/* Left Section - Logo */}
+        <div className="navbar-left">
+          <button 
+            className="navbar-logo-btn"
+            onClick={() => history.push('/user/home')}
+          >
+            <span className="navbar-logo">
+              <span className="logo-primary">Rider</span>
+              <span className="logo-secondary">App</span>
+            </span>
+          </button>
+        </div>
+
+        {/* Right Section */}
+        <div className="navbar-right">
+          {/* Theme Toggle */}
+          <button 
+            className="navbar-icon-btn"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+          >
+            <IonIcon icon={isDarkMode ? sunnyOutline : moonOutline} />
+          </button>
+
+          {/* Messages */}
+          <button 
+            className="navbar-icon-btn"
+            onClick={() => history.push('/messages')}
+            aria-label="Messages"
+          >
+            <IonIcon icon={chatbubbleOutline} />
+            {unreadCount > 0 && (
+              <span className="navbar-cart-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+            )}
+          </button>
+
+          {/* Cart Button */}
+          {showCart && (
+            <button 
+              className="navbar-icon-btn"
+              onClick={() => history.push('/user/cart')}
+              aria-label="Shopping cart"
+            >
+              <IonIcon icon={cartOutline} />
+              {itemCount > 0 && (
+                <span className="navbar-cart-badge">{itemCount > 9 ? '9+' : itemCount}</span>
+              )}
+            </button>
+          )}
+
+          {/* User Menu Button */}
+          <button 
+            className="navbar-icon-btn"
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            aria-label="User menu"
+          >
+            <IonIcon icon={personOutline} />
+          </button>
+        </div>
       </IonToolbar>
 
-      {/* Profile Popover Menu */}
-      <IonPopover
-        trigger="user-profile-button"
-        isOpen={showPopover}
-        onDidDismiss={() => setShowPopover(false)}
-        side="bottom"
-        alignment="end"
-        className="profile-popover popover-menu-mobile"
-      >
-        <IonList style={{ minWidth: '220px', padding: 0 }}>
-          {/* User Info Header */}
-          <div style={{
-            padding: '12px',
-            borderBottom: '1px solid var(--ion-border-color)',
-            background: 'var(--ion-card-background)',
-          }}>
-            <p style={{ margin: '0 0 4px', fontSize: '11px', color: 'var(--ion-text-color-secondary)', textTransform: 'uppercase', fontWeight: 600 }}>Logged in as</p>
-            <p style={{ margin: 0, fontSize: '14px', fontWeight: 700, color: 'var(--ion-text-color)' }}>{user?.name}</p>
+      {/* User Dropdown Menu */}
+      {showUserMenu && (
+        <>
+          <div 
+            className="navbar-menu-overlay"
+            onClick={() => setShowUserMenu(false)}
+          />
+          <div className="navbar-user-menu">
+            <div className="navbar-user-header">
+              <div className="navbar-user-avatar">
+                <IonIcon icon={personCircleOutline} />
+              </div>
+              <div className="navbar-user-info">
+                <p className="navbar-user-name">{user?.name || 'User'}</p>
+                <p className="navbar-user-email">{user?.email || ''}</p>
+              </div>
+            </div>
+
+            <div className="navbar-menu-items">
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/user/home')}
+              >
+                <IonIcon icon={home} />
+                <span className="navbar-menu-item-text">Home</span>
+              </button>
+              
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/user/cart')}
+              >
+                <IonIcon icon={cartOutline} />
+                <span className="navbar-menu-item-text">Cart</span>
+                {itemCount > 0 && <span className="menu-badge">{itemCount}</span>}
+              </button>
+              
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/messages')}
+              >
+                <IonIcon icon={chatbubbleOutline} />
+                <span className="navbar-menu-item-text">Messages</span>
+                {unreadCount > 0 && <span className="menu-badge">{unreadCount}</span>}
+              </button>
+              
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/user/orders')}
+              >
+                <IonIcon icon={listOutline} />
+                <span className="navbar-menu-item-text">My Orders</span>
+              </button>
+              
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/activities')}
+              >
+                <IonIcon icon={timeOutline} />
+                <span className="navbar-menu-item-text">Activities</span>
+              </button>
+
+              <div className="navbar-menu-divider" />
+
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/user/profile')}
+              >
+                <IonIcon icon={personOutline} />
+                <span className="navbar-menu-item-text">My Profile</span>
+              </button>
+              
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/user/settings')}
+              >
+                <IonIcon icon={settingsOutline} />
+                <span className="navbar-menu-item-text">Settings</span>
+              </button>
+
+              <div className="navbar-menu-divider" />
+
+              <button 
+                className="navbar-menu-item navbar-menu-item-danger"
+                onClick={handleLogout}
+              >
+                <IonIcon icon={logOutOutline} />
+                <span className="navbar-menu-item-text">Logout</span>
+              </button>
+            </div>
           </div>
-
-          {/* Navigation Items */}
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/user/home');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '10px', '--padding-end': '10px' } as any}
-          >
-            <IonIcon icon={home} slot="start" style={{ color: '#6366F1', fontSize: '18px', marginRight: '10px' }} />
-            <IonLabel style={{ fontSize: '13px' }}>Home</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/user/cart');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '10px', '--padding-end': '10px' } as any}
-          >
-            <IonIcon icon={cartOutline} slot="start" style={{ color: '#6366F1', fontSize: '18px', marginRight: '10px' }} />
-            <IonLabel style={{ fontSize: '13px' }}>Cart {cartCount > 0 && `(${cartCount})`}</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/messages');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '10px', '--padding-end': '10px' } as any}
-          >
-            <IonIcon icon={chatbubbleOutline} slot="start" style={{ color: '#6366F1', fontSize: '18px', marginRight: '10px' }} />
-            <IonLabel style={{ fontSize: '13px' }}>Messages {unreadCount > 0 && `(${unreadCount})`}</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/activities');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '10px', '--padding-end': '10px' } as any}
-          >
-            <IonIcon icon={timeOutline} slot="start" style={{ color: '#6366F1', fontSize: '18px', marginRight: '10px' }} />
-            <IonLabel style={{ fontSize: '13px' }}>Activities</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/user/profile');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '10px', '--padding-end': '10px' } as any}
-          >
-            <IonIcon icon={personCircleOutline} slot="start" style={{ color: '#6366F1', fontSize: '18px', marginRight: '10px' }} />
-            <IonLabel style={{ fontSize: '13px' }}>My Profile</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/user/orders');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '10px', '--padding-end': '10px' } as any}
-          >
-            <IonIcon icon={listOutline} slot="start" style={{ color: '#6366F1', fontSize: '18px', marginRight: '10px' }} />
-            <IonLabel style={{ fontSize: '13px' }}>My Orders</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/user/settings');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '10px', '--padding-end': '10px' } as any}
-          >
-            <IonIcon icon={settingsOutline} slot="start" style={{ color: '#6366F1', fontSize: '18px', marginRight: '10px' }} />
-            <IonLabel style={{ fontSize: '13px' }}>Settings</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              toggleTheme();
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '10px', '--padding-end': '10px' } as any}
-          >
-            <IonIcon icon={isDarkMode ? sunnyOutline : moonOutline} slot="start" style={{ color: '#6366F1', fontSize: '18px', marginRight: '10px' }} />
-            <IonLabel style={{ fontSize: '13px' }}>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</IonLabel>
-          </IonItem>
-
-          {/* Separator */}
-          <div style={{ height: '1px', background: 'var(--ion-border-color)', margin: '8px 0' }} />
-
-          {/* Logout */}
-          <IonItem 
-            button 
-            onClick={handleLogout}
-            style={{ '--padding-start': '10px', '--padding-end': '10px' } as any}
-          >
-            <IonIcon icon={logOutOutline} slot="start" style={{ color: '#EF4444', fontSize: '18px', marginRight: '10px' }} />
-            <IonLabel style={{ color: '#EF4444', fontSize: '13px' }}>Logout</IonLabel>
-          </IonItem>
-        </IonList>
-      </IonPopover>
+        </>
+      )}
     </IonHeader>
   );
 };

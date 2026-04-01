@@ -2,23 +2,17 @@ import React, { useState } from 'react';
 import {
   IonHeader,
   IonToolbar,
-  IonTitle,
-  IonButtons,
-  IonButton,
   IonIcon,
-  IonBadge,
-  IonPopover,
-  IonItem,
-  IonList,
-  IonLabel,
 } from '@ionic/react';
 import {
   home,
   listOutline,
-  briefcaseOutline,
+  bagOutline,
   chatbubbleOutline,
   barChartOutline,
+  starOutline,
   personCircleOutline,
+  personOutline,
   logOutOutline,
   settingsOutline,
   sunnyOutline,
@@ -28,207 +22,184 @@ import { useHistory } from 'react-router-dom';
 import { useVendorAuth } from '../../context/VendorAuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useNotification } from '../../context/NotificationContext';
+import '../Navbar.css';
 
 interface VendorNavBarProps {
   title?: string;
 }
 
-/**
- * VendorNavBar - Navigation bar for vendor/restaurant owners
- * Features: Dashboard, Orders, Products, Messages, Analytics, Settings
- */
 const VendorNavBar: React.FC<VendorNavBarProps> = ({ title = 'Vendor Dashboard' }) => {
   const history = useHistory();
   const { vendor, vendorLogout } = useVendorAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const { unreadCount } = useNotification();
-  const [showPopover, setShowPopover] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   const handleLogout = () => {
     vendorLogout();
-    setShowPopover(false);
+    setShowUserMenu(false);
     history.push('/vendor/login');
   };
 
+  const navigateTo = (path: string) => {
+    setShowUserMenu(false);
+    history.push(path);
+  };
+
   return (
-    <IonHeader>
-      <IonToolbar
-        style={{
-          '--background': 'var(--ion-card-background)',
-          borderBottom: '1px solid var(--ion-border-color)',
-        } as any}
-      >
-        <IonTitle
-          style={{
-            fontSize: '20px',
-            fontWeight: '700',
-            color: 'var(--ion-text-color)',
-          }}
-        >
-          {title}
-        </IonTitle>
+    <IonHeader className="navbar-header">
+      <IonToolbar className="navbar-toolbar">
+        {/* Left Section - Logo */}
+        <div className="navbar-left">
+          <a 
+            className="navbar-logo-btn"
+            onClick={(e) => {
+              e.preventDefault();
+              history.push('/vendor/dashboard');
+            }}
+            href="/vendor/dashboard"
+          >
+            <span className="navbar-logo">
+              <span className="logo-primary">Vendor</span>
+              <span className="logo-secondary">Panel</span>
+            </span>
+          </a>
+        </div>
 
-        <IonButtons slot="end">
-          {/* Dashboard Button */}
-          <IonButton onClick={() => history.push('/vendor/dashboard')}>
-            <IonIcon
-              icon={home}
-              style={{ fontSize: '22px', color: '#10B981' }}
-            />
-          </IonButton>
-
-          {/* Orders */}
-          <IonButton onClick={() => history.push('/vendor/orders')}>
-            <IonIcon
-              icon={listOutline}
-              style={{ fontSize: '22px', color: '#10B981' }}
-            />
-          </IonButton>
-
-          {/* Products/Inventory */}
-          <IonButton onClick={() => history.push('/vendor/inventory')}>
-            <IonIcon
-              icon={briefcaseOutline}
-              style={{ fontSize: '22px', color: '#10B981' }}
-            />
-          </IonButton>
+        {/* Right Section */}
+        <div className="navbar-right">
+          {/* Theme Toggle */}
+          <button 
+            className="navbar-icon-btn"
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+          >
+            <IonIcon icon={isDarkMode ? sunnyOutline : moonOutline} />
+          </button>
 
           {/* Messages */}
-          <IonButton onClick={() => history.push('/vendor/messages')}>
-            <div style={{ position: 'relative' }}>
-              <IonIcon
-                icon={chatbubbleOutline}
-                style={{ fontSize: '22px', color: '#10B981' }}
-              />
-              {unreadCount > 0 && (
-                <IonBadge color="danger" style={{ position: 'absolute', top: '-5px', right: '-5px' }}>
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </IonBadge>
-              )}
-            </div>
-          </IonButton>
+          <button 
+            className="navbar-icon-btn"
+            onClick={() => history.push('/vendor/messages')}
+            aria-label="Messages"
+          >
+            <IonIcon icon={chatbubbleOutline} />
+            {unreadCount > 0 && (
+              <span className="navbar-cart-badge">{unreadCount > 9 ? '9+' : unreadCount}</span>
+            )}
+          </button>
 
-          {/* Earnings/Analytics */}
-          <IonButton onClick={() => history.push('/vendor/earnings')}>
-            <IonIcon
-              icon={barChartOutline}
-              style={{ fontSize: '22px', color: '#10B981' }}
-            />
-          </IonButton>
-
-          {/* Theme Toggle */}
-          <IonButton onClick={toggleTheme}>
-            <IonIcon
-              icon={isDarkMode ? sunnyOutline : moonOutline}
-              style={{ fontSize: '22px', color: '#10B981' }}
-            />
-          </IonButton>
-
-          {/* Profile Dropdown */}
-          <IonButton id="vendor-profile-button" onClick={() => setShowPopover(true)}>
-            <IonIcon
-              icon={personCircleOutline}
-              style={{ fontSize: '22px', color: '#10B981' }}
-            />
-          </IonButton>
-        </IonButtons>
+          {/* User Menu Button */}
+          <button 
+            className="navbar-icon-btn"
+            onClick={() => setShowUserMenu(!showUserMenu)}
+            aria-label="User menu"
+          >
+            <IonIcon icon={personOutline} />
+          </button>
+        </div>
       </IonToolbar>
 
-      {/* Profile Popover Menu */}
-      <IonPopover
-        trigger="vendor-profile-button"
-        isOpen={showPopover}
-        onDidDismiss={() => setShowPopover(false)}
-        side="bottom"
-        alignment="end"
-        className="profile-popover"
-      >
-        <IonList style={{ minWidth: '240px', padding: 0 }}>
-          {/* User Info Header */}
-          <div style={{
-            padding: '16px',
-            borderBottom: '1px solid var(--ion-border-color)',
-            background: 'var(--ion-card-background)',
-          }}>
-            <p style={{ margin: '0 0 4px', fontSize: '11px', color: 'var(--ion-text-color-secondary)', textTransform: 'uppercase', fontWeight: 600 }}>Logged in as</p>
-            <p style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: 'var(--ion-text-color)' }}>{vendor?.fullName}</p>
+      {/* User Dropdown Menu */}
+      {showUserMenu && (
+        <>
+          <div 
+            className="navbar-menu-overlay"
+            onClick={() => setShowUserMenu(false)}
+          />
+          <div className="navbar-user-menu">
+            {/* User Info Header */}
+            <div className="navbar-user-header" style={{ background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)' }}>
+              <div className="navbar-user-avatar">
+                <IonIcon icon={personCircleOutline} />
+              </div>
+              <div className="navbar-user-info">
+                <p className="navbar-user-name">{vendor?.fullName || 'Vendor'}</p>
+                <p className="navbar-user-email">{vendor?.businessName || ''}</p>
+              </div>
+            </div>
+
+            {/* Menu Items */}
+            <div className="navbar-menu-items">
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/vendor/dashboard')}
+              >
+                <IonIcon icon={home} />
+                <span>Dashboard</span>
+              </button>
+              
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/vendor/orders')}
+              >
+                <IonIcon icon={listOutline} />
+                <span>Orders</span>
+              </button>
+              
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/vendor/products')}
+              >
+                <IonIcon icon={bagOutline} />
+                <span>Products</span>
+              </button>
+              
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/vendor/inventory')}
+              >
+                <IonIcon icon={barChartOutline} />
+                <span>Inventory</span>
+              </button>
+              
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/vendor/earnings')}
+              >
+                <IonIcon icon={barChartOutline} />
+                <span>Earnings</span>
+              </button>
+
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/vendor/reviews')}
+              >
+                <IonIcon icon={starOutline} />
+                <span>Reviews</span>
+              </button>
+
+              <div className="navbar-menu-divider" />
+
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/vendor/profile')}
+              >
+                <IonIcon icon={personOutline} />
+                <span>My Profile</span>
+              </button>
+              
+              <button 
+                className="navbar-menu-item"
+                onClick={() => navigateTo('/vendor/settings')}
+              >
+                <IonIcon icon={settingsOutline} />
+                <span>Settings</span>
+              </button>
+
+              <div className="navbar-menu-divider" />
+
+              <button 
+                className="navbar-menu-item navbar-menu-item-danger"
+                onClick={handleLogout}
+              >
+                <IonIcon icon={logOutOutline} />
+                <span>Logout</span>
+              </button>
+            </div>
           </div>
-
-          {/* Profile Menu Items */}
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/vendor/profile');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '12px', '--padding-end': '12px' } as any}
-          >
-            <IonIcon icon={personCircleOutline} slot="start" style={{ color: '#10B981', fontSize: '20px', marginRight: '12px' }} />
-            <IonLabel>My Profile</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/vendor/orders');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '12px', '--padding-end': '12px' } as any}
-          >
-            <IonIcon icon={listOutline} slot="start" style={{ color: '#10B981', fontSize: '20px', marginRight: '12px' }} />
-            <IonLabel>My Orders</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/vendor/products');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '12px', '--padding-end': '12px' } as any}
-          >
-            <IonIcon icon={briefcaseOutline} slot="start" style={{ color: '#10B981', fontSize: '20px', marginRight: '12px' }} />
-            <IonLabel>Products</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/vendor/earnings');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '12px', '--padding-end': '12px' } as any}
-          >
-            <IonIcon icon={barChartOutline} slot="start" style={{ color: '#10B981', fontSize: '20px', marginRight: '12px' }} />
-            <IonLabel>Earnings</IonLabel>
-          </IonItem>
-
-          <IonItem 
-            button 
-            onClick={() => {
-              history.push('/vendor/settings');
-              setShowPopover(false);
-            }}
-            style={{ '--padding-start': '12px', '--padding-end': '12px' } as any}
-          >
-            <IonIcon icon={settingsOutline} slot="start" style={{ color: '#10B981', fontSize: '20px', marginRight: '12px' }} />
-            <IonLabel>Settings</IonLabel>
-          </IonItem>
-
-          {/* Separator */}
-          <div style={{ height: '1px', background: 'var(--ion-border-color)', margin: '8px 0' }} />
-
-          {/* Logout */}
-          <IonItem 
-            button 
-            onClick={handleLogout}
-            style={{ '--padding-start': '12px', '--padding-end': '12px' } as any}
-          >
-            <IonIcon icon={logOutOutline} slot="start" style={{ color: '#EF4444', fontSize: '20px', marginRight: '12px' }} />
-            <IonLabel style={{ color: '#EF4444' }}>Logout</IonLabel>
-          </IonItem>
-        </IonList>
-      </IonPopover>
+        </>
+      )}
     </IonHeader>
   );
 };

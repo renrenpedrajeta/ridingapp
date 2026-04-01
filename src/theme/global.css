@@ -92,18 +92,33 @@ a:hover {
 .stalls-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
+  gap: 12px;
+  padding: 0;
+}
+
+@media (min-width: 576px) {
+  .stalls-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
 }
 
 @media (min-width: 768px) {
   .stalls-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
   }
 }
 
 @media (min-width: 1024px) {
   .stalls-grid {
     grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .stalls-grid {
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -247,38 +262,7 @@ ion-card-subtitle {
   animation: slideUp 0.3s ease-out;
 }
 
-/* ==================== LIGHT MODE (DEFAULT) ==================== */
-:root {
-  --ion-background-color: #f8f9fa;
-  --ion-card-background: #ffffff;
-  --ion-text-color: #1a1a1a;
-  --ion-text-color-secondary: #666666;
-  --ion-border-color: #e5e5e5;
-  --ion-color-primary: #8b5cf6;
-  --ion-color-primary-rgb: 139, 92, 246;
-  --ion-color-secondary: #6366f1;
-  --ion-color-tertiary: #06b6d4;
-  --ion-color-success: #22c55e;
-  --ion-color-warning: #f97316;
-  --ion-color-danger: #ef4444;
-}
-
-/* ==================== DARK MODE ==================== */
-:root.dark-mode {
-  --ion-background-color: #1a1a1a;
-  --ion-card-background: #2d2d2d;
-  --ion-text-color: #ffffff;
-  --ion-text-color-secondary: #a0a0a0;
-  --ion-border-color: #404040;
-  --ion-color-primary: #a78bfa;
-  --ion-color-primary-rgb: 167, 139, 250;
-  --ion-color-secondary: #818cf8;
-  --ion-color-tertiary: #22d3ee;
-  --ion-color-success: #4ade80;
-  --ion-color-warning: #fb923c;
-  --ion-color-danger: #f87171;
-}
-
+/* ==================== DARK MODE ONLY OVERRIDES ==================== */
 /* Dark mode - smooth shadows */
 :root.dark-mode .stat-card,
 :root.dark-mode .chart-card,
@@ -303,7 +287,89 @@ ion-card-subtitle {
   background: var(--ion-card-background);
 }
 
+/* Dark mode - navbar styles */
+:root.dark-mode .navbar-header {
+  background: var(--ion-background-color);
+  border-bottom-color: var(--ion-border-color);
+}
+
+:root.dark-mode .navbar-toolbar {
+  --background: var(--ion-background-color);
+}
+
+:root.dark-mode .navbar-user-menu {
+  background: var(--ion-card-background);
+}
+
+:root.dark-mode .navbar-menu-item {
+  color: var(--ion-text-color);
+}
+
+:root.dark-mode .navbar-menu-item:hover {
+  background: var(--ion-background-color);
+}
+
 /* Smooth theme transitions */
 html {
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ==================== ERROR ALERT ==================== */
+.error-alert {
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  border: 1px solid;
+}
+
+.error-alert {
+  background: #fee2e2;
+  color: #991b1b;
+  border-color: #fecaca;
+}
+
+:root.dark-mode .error-alert {
+  background: #7f1d1d;
+  color: #fecaca;
+  border-color: #991b1b;
+}
+
+/* ==================== ION CONTENT PADDING FOR HEADER ==================== */
+.ion-page {
+  --header-height: 56px;
+}
+
+ion-content {
+  --padding-top: 0 !important;
+}
+
+ion-content.content-with-header {
+  --padding-top: 0 !important;
+}
+
+/* ==================== ION-FOOTER FIX ==================== */
+ion-footer {
+  box-shadow: none;
+}
+
+ion-footer ion-toolbar {
+  --background: var(--ion-card-background);
+  --border-color: var(--ion-border-color);
+  --border-width: 1px 0 0 0;
+  --border-style: solid;
+  padding: 12px 16px;
+}
+
+ion-footer ion-toolbar ion-button {
+  margin: 0;
+  width: 100%;
+}
+
+/* ==================== ION TOOLBAR INSIDE CONTENT FIX ==================== */
+ion-content ion-toolbar {
+  --background: var(--ion-background-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }

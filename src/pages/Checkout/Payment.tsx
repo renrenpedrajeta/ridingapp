@@ -15,13 +15,12 @@ import {
   IonSegment,
   IonSegmentButton,
   IonCheckbox,
-  IonRadio,
-  IonRadioGroup,
 } from '@ionic/react';
 import { arrowBack, cardOutline, phonePortraitOutline, walletOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
+import '../../styles/mobile-first-responsive.css';
 
 const Payment: React.FC = () => {
   const history = useHistory();
@@ -45,7 +44,6 @@ const Payment: React.FC = () => {
   const handlePayment = async () => {
     setLoading(true);
     
-    // Create order object
     const newOrder = {
       id: `ORD-${Date.now()}`,
       items: items,
@@ -55,30 +53,22 @@ const Payment: React.FC = () => {
       total: finalTotal,
       paymentMethod: paymentMethod,
       status: 'pending',
-      vendorStatus: 'received', // vendor is preparing
-      riderStatus: 'waiting', // rider waiting to pick up
+      vendorStatus: 'received',
+      riderStatus: 'waiting',
       timestamp: new Date().toISOString(),
       deliveryAddress: sessionStorage.getItem('locationName') || 'Delivery Location',
     };
 
-    // Save order to localStorage
     const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
     existingOrders.push(newOrder);
     localStorage.setItem('orders', JSON.stringify(existingOrders));
 
-    // Simulate payment processing
     setTimeout(() => {
       setLoading(false);
       clearCart();
       sessionStorage.removeItem('selectedLocation');
       sessionStorage.removeItem('locationName');
-      
-      // Route based on user type
-      if (isGuest) {
-        history.push('/order-success', { orderId: newOrder.id });
-      } else {
-        history.push('/order-success', { orderId: newOrder.id });
-      }
+      history.push('/order-success', { orderId: newOrder.id });
     }, 2000);
   };
 
@@ -95,21 +85,11 @@ const Payment: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
-        <div style={{ padding: '16px', paddingBottom: '200px' }}>
+      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any} className="content-with-sticky-footer">
+        <div className="mobile-container">
           {/* Order Summary */}
-          <div
-            style={{
-              background: 'var(--ion-card-background)',
-              padding: '16px',
-              borderRadius: '12px',
-              border: '1px solid var(--ion-border-color)',
-              marginBottom: '24px',
-            }}
-          >
-            <h3 style={{ margin: '0 0 16px', fontWeight: 700, fontSize: '16px', color: 'var(--ion-text-color)' }}>
-              Order Summary
-            </h3>
+          <div className="mobile-card">
+            <h3 className="section-title">Order Summary</h3>
 
             <IonItem lines="none" style={{ '--padding-start': 0, '--inner-padding-end': 0, '--background': 'transparent' } as any}>
               <IonLabel style={{ color: 'var(--ion-text-color)' }}>Subtotal</IonLabel>
@@ -124,80 +104,42 @@ const Payment: React.FC = () => {
               <span slot="end" style={{ color: 'var(--ion-text-color)' }}>₱{serviceFee.toFixed(2)}</span>
             </IonItem>
 
-            <div
-              style={{
-                borderTop: '1px solid var(--ion-border-color)',
-                marginTop: '12px',
-                paddingTop: '12px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                fontWeight: 700,
-                fontSize: '18px',
-                color: 'var(--ion-text-color)',
-              }}
-            >
+            <div style={{ borderTop: '1px solid var(--ion-border-color)', marginTop: '12px', paddingTop: '12px', display: 'flex', justifyContent: 'space-between', fontWeight: 700, fontSize: '16px', color: 'var(--ion-text-color)' }}>
               <span>Total</span>
               <span style={{ color: '#6366F1' }}>₱{finalTotal.toFixed(2)}</span>
             </div>
           </div>
 
           {/* Payment Method Selection */}
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', marginBottom: '12px', fontSize: '13px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>
-              Payment Method
-            </label>
+          <div style={{ marginBottom: '20px' }}>
+            <label className="form-label">Payment Method</label>
             <IonSegment
               value={paymentMethod}
               onIonChange={e => setPaymentMethod(e.detail.value as string)}
               style={{ '--background': 'var(--ion-card-background)' }}
             >
-              <IonSegmentButton
-                value="card"
-                style={{
-                  '--color': 'var(--ion-text-color-secondary)',
-                  '--color-checked': '#FFFFFF',
-                  '--background-checked': '#6366F1',
-                }}
-              >
+              <IonSegmentButton value="card" style={{ '--color-checked': '#FFFFFF', '--background-checked': '#6366F1' } as any}>
                 <IonIcon icon={cardOutline} />
-                <span style={{ marginLeft: '8px' }}>Card</span>
+                <span style={{ marginLeft: '6px' }}>Card</span>
               </IonSegmentButton>
-              <IonSegmentButton
-                value="gcash"
-                style={{
-                  '--color': 'var(--ion-text-color-secondary)',
-                  '--color-checked': '#FFFFFF',
-                  '--background-checked': '#6366F1',
-                }}
-              >
+              <IonSegmentButton value="gcash" style={{ '--color-checked': '#FFFFFF', '--background-checked': '#6366F1' } as any}>
                 <IonIcon icon={phonePortraitOutline} />
-                <span style={{ marginLeft: '8px' }}>GCash</span>
+                <span style={{ marginLeft: '6px' }}>GCash</span>
               </IonSegmentButton>
-              <IonSegmentButton
-                value="wallet"
-                style={{
-                  '--color': 'var(--ion-text-color-secondary)',
-                  '--color-checked': '#FFFFFF',
-                  '--background-checked': '#6366F1',
-                }}
-              >
+              <IonSegmentButton value="wallet" style={{ '--color-checked': '#FFFFFF', '--background-checked': '#6366F1' } as any}>
                 <IonIcon icon={walletOutline} />
-                <span style={{ marginLeft: '8px' }}>Wallet</span>
+                <span style={{ marginLeft: '6px' }}>Wallet</span>
               </IonSegmentButton>
             </IonSegment>
           </div>
 
           {/* Card Payment Form */}
           {paymentMethod === 'card' && (
-            <div style={{ marginBottom: '24px' }}>
-              <h4 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 600, color: 'var(--ion-text-color)' }}>
-                Card Details
-              </h4>
+            <div style={{ marginBottom: '20px' }}>
+              <h4 className="section-title" style={{ fontSize: '16px' }}>Card Details</h4>
 
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>
-                  Card Number
-                </label>
+              <div className="form-group-mobile">
+                <label className="form-label">Card Number</label>
                 <IonItem style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
                   <IonIcon icon={cardOutline} slot="start" color="primary" />
                   <IonInput
@@ -209,10 +151,8 @@ const Payment: React.FC = () => {
                 </IonItem>
               </div>
 
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>
-                  Card Holder
-                </label>
+              <div className="form-group-mobile">
+                <label className="form-label">Card Holder</label>
                 <IonItem style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
                   <IonInput
                     placeholder="John Doe"
@@ -223,11 +163,9 @@ const Payment: React.FC = () => {
                 </IonItem>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>
-                    Expiry Date
-                  </label>
+              <div className="responsive-grid-2">
+                <div className="form-group-mobile">
+                  <label className="form-label">Expiry Date</label>
                   <IonItem style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
                     <IonInput
                       placeholder="MM/YY"
@@ -237,10 +175,8 @@ const Payment: React.FC = () => {
                     />
                   </IonItem>
                 </div>
-                <div>
-                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>
-                    CVV
-                  </label>
+                <div className="form-group-mobile">
+                  <label className="form-label">CVV</label>
                   <IonItem style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
                     <IonInput
                       placeholder="123"
@@ -267,14 +203,10 @@ const Payment: React.FC = () => {
 
           {/* GCash Payment */}
           {paymentMethod === 'gcash' && (
-            <div style={{ marginBottom: '24px' }}>
-              <h4 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 600, color: 'var(--ion-text-color)' }}>
-                GCash Number
-              </h4>
-              <div style={{ marginBottom: '12px' }}>
-                <label style={{ display: 'block', marginBottom: '6px', fontSize: '12px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>
-                  Phone Number
-                </label>
+            <div style={{ marginBottom: '20px' }}>
+              <h4 className="section-title" style={{ fontSize: '16px' }}>GCash Number</h4>
+              <div className="form-group-mobile">
+                <label className="form-label">Phone Number</label>
                 <IonItem style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
                   <IonIcon icon={phonePortraitOutline} slot="start" color="primary" />
                   <IonInput
@@ -290,15 +222,7 @@ const Payment: React.FC = () => {
 
           {/* Wallet Payment */}
           {paymentMethod === 'wallet' && (
-            <div
-              style={{
-                background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)',
-                padding: '20px',
-                borderRadius: '12px',
-                marginBottom: '24px',
-                color: 'white',
-              }}
-            >
+            <div className="mobile-card" style={{ background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)', color: 'white' }}>
               <p style={{ margin: '0 0 8px', fontSize: '12px', opacity: 0.9 }}>Available Balance</p>
               <h3 style={{ margin: 0, fontSize: '28px', fontWeight: 700 }}>₱5,000.00</h3>
             </div>
@@ -306,24 +230,11 @@ const Payment: React.FC = () => {
         </div>
       </IonContent>
 
-      {/* Footer */}
-      <IonFooter
-        style={{
-          '--background': 'var(--ion-card-background)',
-          padding: '16px',
-          borderTop: '1px solid var(--ion-border-color)',
-        } as any}
-      >
+      <IonFooter style={{ '--background': 'var(--ion-card-background)', padding: '16px', borderTop: '1px solid var(--ion-border-color)' } as any}>
         <IonButton
           expand="block"
-          size="large"
-          style={{
-            '--background': '#6366F1',
-            '--border-radius': '8px',
-            height: '48px',
-            fontSize: '16px',
-            fontWeight: 700,
-          }}
+          className="mobile-button"
+          style={{ '--background': '#6366F1' }}
           onClick={handlePayment}
           disabled={loading}
         >

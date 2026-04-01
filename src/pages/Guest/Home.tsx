@@ -7,17 +7,15 @@ import {
   IonSegment,
   IonSegmentButton,
   IonLabel,
-  IonToolbar,
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import StallCard from '../../components/Stall/StallCard';
-import PageHeader from '../../components/PageHeader';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
 import { Stall } from '../../types';
-import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
+import '../../styles/mobile-first-responsive.css';
 
-// Mock data
 const MOCK_STALLS: Stall[] = [
   {
     id: '1',
@@ -59,16 +57,14 @@ const MOCK_STALLS: Stall[] = [
 
 const GuestHome: React.FC = () => {
   const history = useHistory();
-  const { itemCount } = useCart();
   const { continueAsGuest } = useAuth();
-  const { isDarkMode } = useTheme();
-  const [stalls, setStalls] = useState<Stall[]>(MOCK_STALLS);
+  const [stalls] = useState<Stall[]>(MOCK_STALLS);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     continueAsGuest();
-  }, []);
+  }, [continueAsGuest]);
 
   const categories = ['All', 'Fast Food', 'Japanese', 'Italian', 'Chinese', 'Desserts'];
 
@@ -80,93 +76,64 @@ const GuestHome: React.FC = () => {
 
   return (
     <IonPage>
-      <PageHeader 
-        showLogo={true}
-        cartCount={itemCount}
-        onCartClick={() => history.push('/guest/cart')}
-        onLoginClick={() => history.push('/login')}
-        onRegisterClick={() => history.push('/register')}
-      />
+      <IonContent className="guest-home-content ion-page-with-bottom-nav">
+        {/* Logo Header */}
+        <LogoHeader />
 
-      <IonToolbar style={{ '--background': 'var(--ion-background-color)', padding: '16px 0 0 0' } as any}>
-        <div style={{ padding: '12px 16px 16px 16px' }}>
+        {/* Search Bar */}
+        <div className="guest-search-container">
           <IonSearchbar
             value={searchQuery}
-            onIonChange={e => setSearchQuery(e.detail.value!)}
+            onIonChange={e => setSearchQuery(e.detail.value || '')}
             placeholder="Search food, stalls..."
-            style={{
-              '--background': 'var(--ion-card-background)',
-              '--border-radius': '12px',
-              '--border': '1px solid var(--ion-border-color)',
-              '--placeholder-color': 'var(--ion-text-color-secondary)',
-              '--icon-color': 'var(--ion-color-primary)',
-              '--color': 'var(--ion-text-color)',
-              padding: '0',
-              height: '48px',
-              '--box-shadow': '0 2px 12px rgba(99, 102, 241, 0.12)'
-            } as any}
+            className="guest-searchbar"
           />
         </div>
-      </IonToolbar>
 
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
         {/* Categories */}
-        <div style={{ padding: '16px 0', background: 'var(--ion-card-background)', display: 'flex', justifyContent: 'center', borderBottom: '1px solid var(--ion-border-color)' }}>
-          <div style={{ maxWidth: '100%', overflowX: 'auto', display: 'flex', justifyContent: 'center', paddingLeft: '16px', paddingRight: '16px' }}>
-            <IonSegment 
-              value={selectedCategory} 
-              onIonChange={e => setSelectedCategory(e.detail.value as string)}
-              scrollable
-              style={{ '--background': 'transparent', width: 'auto' }}
+        <div className="guest-categories">
+          <IonSegment
+            value={selectedCategory}
+            onIonChange={e => setSelectedCategory(e.detail.value as string)}
+            scrollable
+            className="guest-category-segment"
           >
             {categories.map(cat => (
               <IonSegmentButton 
                 key={cat} 
                 value={cat.toLowerCase()}
-                className="category-segment-btn"
-                style={{ 
-                  '--color': 'var(--ion-text-color-secondary)',
-                  '--color-checked': '#FFFFFF',
-                  '--border-radius': '8px',
-                  '--indicator-color': 'transparent'
-                }}
+                className="guest-category-btn"
               >
-                <IonLabel style={{ fontSize: '14px', fontWeight: 600 }}>{cat}</IonLabel>
+                <IonLabel>{cat}</IonLabel>
               </IonSegmentButton>
             ))}
-            </IonSegment>
-          </div>
+          </IonSegment>
         </div>
 
-        {/* Stalls Grid */}
-        <div style={{ padding: '16px' }}>
-          <h2 style={{ 
-            fontSize: '20px', 
-            fontWeight: 700, 
-            color: 'var(--ion-text-color)',
-            margin: '16px 0 16px 0'
-          }}>
-            Popular Near You
-          </h2>
+        {/* Content */}
+        <div className="guest-content">
+          <h2 className="guest-section-title">Popular Near You</h2>
           
-          <div className="stalls-grid">
-            {filteredStalls.map(stall => (
-              <StallCard 
-                key={stall.id} 
-                stall={stall} 
-                onClick={() => history.push(`/stall/${stall.id}`)}
-              />
-            ))}
+          <div className="guest-stalls-grid">
+            {filteredStalls.length > 0 ? (
+              filteredStalls.map(stall => (
+                <StallCard 
+                  key={stall.id} 
+                  stall={stall} 
+                  onClick={() => history.push(`/stall/${stall.id}`)}
+                />
+              ))
+            ) : (
+              <div className="guest-no-results">
+                <p>No stalls found. Try a different search or category.</p>
+              </div>
+            )}
           </div>
         </div>
-      </IonContent>
 
-      {/* Footer */}
-      <div style={{ background: 'var(--ion-card-background)', borderTop: '1px solid var(--ion-border-color)', padding: '20px 16px', textAlign: 'center' }}>
-        <p style={{ textAlign: 'center', margin: '0', fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>
-          © 2026 Rider App. All rights reserved.
-        </p>
-      </div>
+        {/* Bottom Navigation */}
+        <BottomNav type="guest" activeTab="home" />
+      </IonContent>
     </IonPage>
   );
 };

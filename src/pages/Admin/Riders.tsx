@@ -270,17 +270,7 @@ const AdminRiders: React.FC = () => {
 
       <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
         {/* Admin Navigation */}
-        <div
-          style={{
-            display: 'flex',
-            gap: '8px',
-            padding: '16px',
-            overflowX: 'auto',
-            background: 'var(--ion-card-background)',
-            borderBottomLeftRadius: '12px',
-            borderBottomRightRadius: '12px',
-          }}
-        >
+        <div className="nav-tabs">
           <IonButton
             expand="block"
             style={{
@@ -554,10 +544,8 @@ const AdminRiders: React.FC = () => {
 
         {/* Stats */}
         <div
+          className="responsive-stats-grid"
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '12px',
             padding: '0 16px 16px',
           }}
         >

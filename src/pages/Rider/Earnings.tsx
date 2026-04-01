@@ -5,19 +5,19 @@ import {
   IonContent,
   IonCard,
   IonCardContent,
-  IonBadge,
   IonIcon,
   IonSegment,
   IonSegmentButton,
   IonLabel,
   IonButton,
 } from '@ionic/react';
-import { cashOutline, trendingUpOutline, downloadOutline, calendarOutline } from 'ionicons/icons';
+import { cashOutline, trendingUpOutline, downloadOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
-import RiderNavBar from '../../components/Navbar/RiderNavBar';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
 import { useAuth } from '../../context/AuthContext';
+import '../../styles/mobile-first-responsive.css';
 
-// Move data outside component to prevent recreation
 const EARNINGS_DATA = {
   today: { total: 450.50, trips: 12, average: 37.54 },
   week: { total: 2150.75, trips: 58, average: 37.08 },
@@ -34,37 +34,11 @@ const WEEKLY_EARNINGS = [
   { day: 'Sun', amount: 450, trips: 12 },
 ];
 
-// Style constants
-const NAV_BUTTON_STYLE = {
-  expand: 'block' as const,
-  style: {
-    '--background': 'transparent',
-    '--color': 'var(--ion-text-color)',
-    height: '40px',
-    fontSize: '12px',
-    fontWeight: 600,
-    textTransform: 'none' as const,
-    flex: '1',
-    minWidth: '80px'
-  }
-};
-
-const ACTIVE_NAV_BUTTON_STYLE = {
-  ...NAV_BUTTON_STYLE,
-  style: {
-    ...NAV_BUTTON_STYLE.style,
-    '--background': '#6366F1',
-    '--color': '#FFFFFF',
-    border: 'none',
-  }
-};
-
 const RiderEarnings: React.FC = () => {
   const history = useHistory();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState('today');
 
-  // Protect this page - redirect if not a rider
   if (!user || user.role !== 'rider') {
     history.replace('/rider/login');
     return null;
@@ -75,92 +49,35 @@ const RiderEarnings: React.FC = () => {
 
   return (
     <IonPage>
-      <RiderNavBar title="Earnings" />
-
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
-        {/* Rider Navigation */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '8px',
-          padding: '16px',
-          overflowX: 'auto',
-          background: 'var(--ion-card-background)',
-          borderBottomLeftRadius: '12px',
-          borderBottomRightRadius: '12px'
-        }}>
-          <IonButton
-            {...NAV_BUTTON_STYLE}
-            style={{
-              ...NAV_BUTTON_STYLE.style,
-              border: '1px solid #6366F1',
-            } as any}
-            onClick={() => history.push('/rider/home')}
-          >
-            🏠 Home
-          </IonButton>
-          <IonButton
-            {...NAV_BUTTON_STYLE}
-            onClick={() => history.push('/rider/orders')}
-          >
-            📦 Orders
-          </IonButton>
-          <IonButton
-            {...ACTIVE_NAV_BUTTON_STYLE}
-          >
-            💰 Earnings
-          </IonButton>
-          <IonButton
-            {...NAV_BUTTON_STYLE}
-            onClick={() => history.push('/rider/profile')}
-          >
-            👤 Profile
-          </IonButton>
-        </div>
+      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any} className="content-with-sticky-footer ion-page-with-bottom-nav">
+        {/* Logo Header */}
+        <LogoHeader />
 
         {/* Quick Access Menu */}
-        <div style={{
-          padding: '16px 16px 16px',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '10px'
-        }}>
-          <div 
-            onClick={() => history.push('/activities')}
-            style={{
-              padding: '12px',
-              background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              textAlign: 'center',
-              color: 'white'
-            }}
-          >
-            <div style={{ fontSize: '20px', marginBottom: '4px' }}>📋</div>
-            <p style={{ margin: 0, fontSize: '10px', fontWeight: 600 }}>Activity</p>
-          </div>
-          <div 
-            onClick={() => history.push('/messages')}
-            style={{
-              padding: '12px',
-              background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              textAlign: 'center',
-              color: 'white'
-            }}
-          >
-            <div style={{ fontSize: '20px', marginBottom: '4px' }}>💬</div>
-            <p style={{ margin: 0, fontSize: '10px', fontWeight: 600 }}>Messages</p>
+        <div className="mobile-container">
+          <div className="quick-access-grid">
+            <div 
+              onClick={() => history.push('/activities')}
+              className="quick-access-item"
+              style={{ background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)' }}
+            >
+              <div className="quick-access-icon">📋</div>
+              <span className="quick-access-label">Activity</span>
+            </div>
+            <div 
+              onClick={() => history.push('/messages')}
+              className="quick-access-item"
+              style={{ background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)' }}
+            >
+              <div className="quick-access-icon">💬</div>
+              <span className="quick-access-label">Messages</span>
+            </div>
           </div>
         </div>
 
         {/* Period Selection */}
-        <div style={{ padding: '16px' }}>
-          <IonSegment 
-            value={selectedPeriod} 
-            onIonChange={e => setSelectedPeriod(e.detail.value as string)}
-            style={{ '--background': 'transparent' } as any}
-          >
+        <div className="mobile-container">
+          <IonSegment value={selectedPeriod} onIonChange={e => setSelectedPeriod(e.detail.value as string)} style={{ '--background': 'transparent' } as any}>
             <IonSegmentButton value="today" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px' } as any}>
               <IonLabel style={{ fontSize: '12px' }}>Today</IonLabel>
             </IonSegmentButton>
@@ -174,12 +91,12 @@ const RiderEarnings: React.FC = () => {
         </div>
 
         {/* Total Earnings Card */}
-        <div style={{ padding: '0 16px 16px' }}>
-          <IonCard style={{ margin: 0, background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)' }}>
+        <div className="mobile-container" style={{ paddingTop: '0' }}>
+          <IonCard style={{ margin: 0, background: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)' }}>
             <IonCardContent style={{ padding: '24px' }}>
               <div style={{ textAlign: 'center', color: 'white' }}>
                 <p style={{ margin: '0 0 8px', fontSize: '14px', opacity: 0.9 }}>Total Earnings</p>
-                <h2 style={{ margin: 0, fontSize: '36px', fontWeight: 700 }}>₱{earnings.total.toFixed(2)}</h2>
+                <h2 style={{ margin: 0, fontSize: '32px', fontWeight: 700 }}>₱{earnings.total.toFixed(2)}</h2>
                 <p style={{ margin: '12px 0 0', fontSize: '12px', opacity: 0.8 }}>
                   {earnings.trips} trips • Avg: ₱{earnings.average.toFixed(2)}
                 </p>
@@ -189,21 +106,13 @@ const RiderEarnings: React.FC = () => {
         </div>
 
         {/* Stats Grid */}
-        <div style={{ padding: '0 16px 16px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <div className="mobile-container" style={{ paddingTop: '0' }}>
+          <div className="responsive-grid-2">
             <IonCard style={{ margin: 0, background: 'var(--ion-card-background)' }}>
               <IonCardContent style={{ padding: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ 
-                    width: '40px', 
-                    height: '40px', 
-                    background: 'rgba(99, 102, 241, 0.1)', 
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <IonIcon icon={cashOutline} style={{ fontSize: '20px', color: '#6366F1' }} />
+                  <div className="icon-container-sm" style={{ background: 'rgba(245, 158, 11, 0.1)' }}>
+                    <IonIcon icon={cashOutline} style={{ fontSize: '18px', color: '#F59E0B' }} />
                   </div>
                   <div>
                     <p style={{ margin: 0, fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>Trips</p>
@@ -216,16 +125,8 @@ const RiderEarnings: React.FC = () => {
             <IonCard style={{ margin: 0, background: 'var(--ion-card-background)' }}>
               <IonCardContent style={{ padding: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ 
-                    width: '40px', 
-                    height: '40px', 
-                    background: 'rgba(16, 185, 129, 0.1)', 
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
-                    <IonIcon icon={trendingUpOutline} style={{ fontSize: '20px', color: '#10B981' }} />
+                  <div className="icon-container-sm" style={{ background: 'rgba(16, 185, 129, 0.1)' }}>
+                    <IonIcon icon={trendingUpOutline} style={{ fontSize: '18px', color: '#10B981' }} />
                   </div>
                   <div>
                     <p style={{ margin: 0, fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>Average</p>
@@ -239,26 +140,24 @@ const RiderEarnings: React.FC = () => {
 
         {/* Weekly Chart */}
         {selectedPeriod !== 'month' && (
-          <div style={{ padding: '0 16px 16px' }}>
-            <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 700, color: 'var(--ion-text-color)' }}>
-              Weekly Breakdown
-            </h3>
-            <IonCard style={{ margin: 0, background: 'var(--ion-card-background)' }}>
+          <div className="mobile-container" style={{ paddingTop: '0' }}>
+            <h3 className="section-title" style={{ margin: '16px 0 12px 0' }}>Weekly Breakdown</h3>
+            <IonCard className="mobile-card">
               <IonCardContent style={{ padding: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: '150px', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', height: '120px', gap: '6px' }}>
                   {WEEKLY_EARNINGS.map((day, index) => (
                     <div key={index} style={{ textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'flex-end' }}>
                       <div 
                         style={{
                           height: `${(day.amount / maxEarning) * 100}%`,
-                          background: 'linear-gradient(180deg, #6366F1 0%, #818CF8 100%)',
-                          borderRadius: '8px 8px 0 0',
-                          marginBottom: '8px',
-                          minHeight: '20px'
+                          background: 'linear-gradient(180deg, #F59E0B 0%, #FBBF24 100%)',
+                          borderRadius: '6px 6px 0 0',
+                          marginBottom: '6px',
+                          minHeight: '16px'
                         }}
                       />
-                      <p style={{ margin: 0, fontSize: '11px', color: 'var(--ion-text-color-secondary)' }}>{day.day}</p>
-                      <p style={{ margin: '2px 0 0', fontSize: '10px', color: 'var(--ion-text-color-secondary)' }}>₱{day.amount}</p>
+                      <p style={{ margin: 0, fontSize: '10px', color: 'var(--ion-text-color-secondary)' }}>{day.day}</p>
+                      <p style={{ margin: '2px 0 0', fontSize: '9px', color: 'var(--ion-text-color-secondary)' }}>₱{day.amount}</p>
                     </div>
                   ))}
                 </div>
@@ -268,16 +167,15 @@ const RiderEarnings: React.FC = () => {
         )}
 
         {/* Action Buttons */}
-        <div style={{ padding: '0 16px 16px' }}>
-          <IonButton 
-            expand="block" 
-            fill="outline"
-            style={{ '--border-color': '#6366F1', '--color': '#6366F1', margin: 0 }}
-          >
+        <div className="mobile-container" style={{ paddingTop: '0' }}>
+          <IonButton expand="block" fill="outline" className="mobile-button" style={{ '--border-color': '#F59E0B', '--color': '#F59E0B', margin: 0 }}>
             <IonIcon slot="start" icon={downloadOutline} />
             Download Statement
           </IonButton>
         </div>
+
+        {/* Bottom Navigation */}
+        <BottomNav type="rider" activeTab="earnings" />
       </IonContent>
     </IonPage>
   );

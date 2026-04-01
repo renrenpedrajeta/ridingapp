@@ -5,25 +5,22 @@ import {
   IonContent,
   IonButton,
   IonCard,
-  IonCardHeader,
-  IonCardTitle,
   IonCardContent,
   IonBadge,
   IonIcon,
   IonToggle,
-  IonItem,
-  IonLabel,
 } from '@ionic/react';
-import { mapOutline, cashOutline, checkmarkCircleOutline, timeOutline, navigateOutline } from 'ionicons/icons';
+import { mapOutline, cashOutline, checkmarkCircleOutline, navigateOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
-import RiderNavBar from '../../components/Navbar/RiderNavBar';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
 import { useAuth } from '../../context/AuthContext';
+import '../../styles/mobile-first-responsive.css';
 
 const RiderHome: React.FC = () => {
   const history = useHistory();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
-  // Protect this page - redirect if not a rider
   if (!user || user.role !== 'rider') {
     history.replace('/rider/login');
     return null;
@@ -33,7 +30,6 @@ const RiderHome: React.FC = () => {
   const [completedDeliveries, setCompletedDeliveries] = useState(12);
   const [rating, setRating] = useState(4.8);
 
-  // Mock available orders
   const availableOrders = [
     {
       id: '1',
@@ -66,123 +62,34 @@ const RiderHome: React.FC = () => {
 
   return (
     <IonPage>
-      <RiderNavBar title="Dashboard" />
-
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
-        {/* Rider Navigation */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '8px',
-          padding: '16px',
-          overflowX: 'auto',
-          background: 'var(--ion-card-background)',
-          borderBottomLeftRadius: '12px',
-          borderBottomRightRadius: '12px'
-        }}>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': '#6366F1',
-              '--color': '#FFFFFF',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-          >
-            🏠 Home
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-            onClick={() => history.push('/rider/orders')}
-          >
-            📦 Orders
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-            onClick={() => history.push('/rider/earnings')}
-          >
-            💰 Earnings
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-            onClick={() => history.push('/rider/profile')}
-          >
-            👤 Profile
-          </IonButton>
-        </div>
+      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any} className="content-with-sticky-footer ion-page-with-bottom-nav">
+        {/* Logo Header */}
+        <LogoHeader />
 
         {/* Quick Access Menu */}
-        <div style={{
-          padding: '16px 16px 16px',
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '10px'
-        }}>
-          <div 
-            onClick={() => history.push('/activities')}
-            style={{
-              padding: '12px',
-              background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              textAlign: 'center',
-              color: 'white'
-            }}
-          >
-            <div style={{ fontSize: '20px', marginBottom: '4px' }}>📋</div>
-            <p style={{ margin: 0, fontSize: '10px', fontWeight: 600 }}>Activity</p>
-          </div>
-          <div 
-            onClick={() => history.push('/messages')}
-            style={{
-              padding: '12px',
-              background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)',
-              borderRadius: '12px',
-              cursor: 'pointer',
-              textAlign: 'center',
-              color: 'white'
-            }}
-          >
-            <div style={{ fontSize: '20px', marginBottom: '4px' }}>💬</div>
-            <p style={{ margin: 0, fontSize: '10px', fontWeight: 600 }}>Messages</p>
+        <div className="mobile-container">
+          <div className="quick-access-grid">
+            <div 
+              onClick={() => history.push('/activities')}
+              className="quick-access-item"
+              style={{ background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)' }}
+            >
+              <div className="quick-access-icon">📋</div>
+              <span className="quick-access-label">Activity</span>
+            </div>
+            <div 
+              onClick={() => history.push('/messages')}
+              className="quick-access-item"
+              style={{ background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)' }}
+            >
+              <div className="quick-access-icon">💬</div>
+              <span className="quick-access-label">Messages</span>
+            </div>
           </div>
         </div>
 
         {/* Status Toggle */}
-        <div style={{ padding: '16px' }}>
+        <div className="mobile-container">
           <IonCard style={{ margin: 0, background: 'var(--ion-card-background)' }}>
             <IonCardContent>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -190,14 +97,14 @@ const RiderHome: React.FC = () => {
                   <h3 style={{ margin: 0, color: 'var(--ion-text-color)', fontWeight: 700 }}>
                     {isAvailable ? 'Online' : 'Offline'}
                   </h3>
-                  <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>
+                  <p style={{ margin: '4px 0 0', fontSize: '13px', color: 'var(--ion-text-color-secondary)' }}>
                     {isAvailable ? 'Ready to accept orders' : 'Tap to go online'}
                   </p>
                 </div>
                 <IonToggle 
                   checked={isAvailable} 
                   onIonChange={(e) => setIsAvailable(e.detail.checked)}
-                  style={{ '--background-checked': '#6366F1' }}
+                  style={{ '--background-checked': '#F59E0B' }}
                 />
               </div>
             </IonCardContent>
@@ -205,21 +112,12 @@ const RiderHome: React.FC = () => {
         </div>
 
         {/* Quick Stats */}
-        <div style={{ padding: '0 16px 16px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-            {/* Today's Earnings */}
+        <div className="mobile-container" style={{ paddingTop: '0' }}>
+          <div className="responsive-grid-2" style={{ gap: '12px' }}>
             <IonCard style={{ margin: 0, background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)' }}>
               <IonCardContent style={{ padding: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ 
-                    width: '40px', 
-                    height: '40px', 
-                    background: 'rgba(255,255,255,0.2)', 
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
+                  <div className="icon-container-sm" style={{ background: 'rgba(255,255,255,0.2)' }}>
                     <IonIcon icon={cashOutline} style={{ fontSize: '20px', color: 'white' }} />
                   </div>
                   <div>
@@ -230,19 +128,10 @@ const RiderHome: React.FC = () => {
               </IonCardContent>
             </IonCard>
 
-            {/* Completed Deliveries */}
             <IonCard style={{ margin: 0, background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)' }}>
               <IonCardContent style={{ padding: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div style={{ 
-                    width: '40px', 
-                    height: '40px', 
-                    background: 'rgba(255,255,255,0.2)', 
-                    borderRadius: '50%',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center'
-                  }}>
+                  <div className="icon-container-sm" style={{ background: 'rgba(255,255,255,0.2)' }}>
                     <IonIcon icon={checkmarkCircleOutline} style={{ fontSize: '20px', color: 'white' }} />
                   </div>
                   <div>
@@ -256,7 +145,7 @@ const RiderHome: React.FC = () => {
         </div>
 
         {/* Rating */}
-        <div style={{ padding: '0 16px 16px' }}>
+        <div className="mobile-container" style={{ paddingTop: '0' }}>
           <IonCard style={{ margin: 0, background: 'var(--ion-card-background)' }}>
             <IonCardContent>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -264,7 +153,7 @@ const RiderHome: React.FC = () => {
                   <p style={{ margin: 0, fontSize: '14px', color: 'var(--ion-text-color-secondary)' }}>Current Rating</p>
                   <h3 style={{ margin: '4px 0 0', color: 'var(--ion-text-color)', fontWeight: 700 }}>★ {rating}</h3>
                 </div>
-                <IonBadge color="light" style={{ fontSize: '14px', padding: '8px 12px' }}>Excellent</IonBadge>
+                <IonBadge color="light" style={{ fontSize: '13px', padding: '6px 12px' }}>Excellent</IonBadge>
               </div>
             </IonCardContent>
           </IonCard>
@@ -273,15 +162,15 @@ const RiderHome: React.FC = () => {
         {/* Available Orders */}
         {isAvailable && (
           <>
-            <div style={{ padding: '16px 16px 8px' }}>
-              <h2 style={{ margin: 0, fontSize: '18px', fontWeight: 700, color: 'var(--ion-text-color)' }}>
+            <div className="mobile-container" style={{ paddingTop: '0' }}>
+              <h2 className="section-title" style={{ margin: '16px 0 12px 0' }}>
                 Available Orders
               </h2>
             </div>
 
-            <div style={{ padding: '0 16px 16px' }}>
+            <div className="mobile-container" style={{ paddingTop: '0' }}>
               {availableOrders.map(order => (
-                <IonCard key={order.id} style={{ margin: '0 0 12px', background: 'var(--ion-card-background)' }}>
+                <IonCard key={order.id} className="mobile-card" style={{ margin: '0 0 12px 0' }}>
                   <IonCardContent>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
                       <div>
@@ -292,7 +181,7 @@ const RiderHome: React.FC = () => {
                           {order.customerName}
                         </p>
                       </div>
-                      <IonBadge color="light" style={{ '--background': '#6366F1', color: 'white', fontWeight: 700 }}>
+                      <IonBadge color="light" style={{ '--background': '#F59E0B', color: 'white', fontWeight: 700 }}>
                         ₱{order.fee}
                       </IonBadge>
                     </div>
@@ -304,9 +193,9 @@ const RiderHome: React.FC = () => {
                       </span>
                     </div>
 
-                    <div style={{ padding: '12px', background: 'var(--ion-background-color)', borderRadius: '8px', marginBottom: '12px', fontSize: '12px' }}>
+                    <div style={{ padding: '12px', background: 'var(--ion-background-color)', borderRadius: '8px', marginBottom: '12px', fontSize: '13px' }}>
                       <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                        <IonIcon icon={navigateOutline} style={{ fontSize: '14px', color: '#6366F1' }} />
+                        <IonIcon icon={navigateOutline} style={{ fontSize: '14px', color: '#F59E0B' }} />
                         <div>
                           <p style={{ margin: 0, color: 'var(--ion-text-color-secondary)' }}>From:</p>
                           <p style={{ margin: 0, color: 'var(--ion-text-color)', fontWeight: 600 }}>{order.pickupLocation}</p>
@@ -323,7 +212,8 @@ const RiderHome: React.FC = () => {
 
                     <IonButton 
                       expand="block"
-                      style={{ '--background': '#6366F1', margin: 0 }}
+                      className="mobile-button"
+                      style={{ '--background': '#F59E0B', margin: 0 }}
                       onClick={() => history.push(`/rider/orders/${order.id}`)}
                     >
                       Accept Order
@@ -336,21 +226,17 @@ const RiderHome: React.FC = () => {
         )}
 
         {!isAvailable && (
-          <div style={{ 
-            display: 'flex', 
-            flexDirection: 'column', 
-            alignItems: 'center', 
-            justifyContent: 'center',
-            padding: '40px 20px',
-            textAlign: 'center'
-          }}>
-            <div style={{ fontSize: '48px', marginBottom: '16px' }}>🔴</div>
-            <p style={{ color: 'var(--ion-text-color)', fontWeight: 700, fontSize: '16px' }}>You're currently offline</p>
-            <p style={{ color: 'var(--ion-text-color-secondary)', fontSize: '14px', marginBottom: '20px' }}>
+          <div className="empty-state-container">
+            <div style={{ fontSize: '64px', marginBottom: '16px' }}>🔴</div>
+            <p className="empty-state-text">You're currently offline</p>
+            <p className="empty-state-description">
               Toggle above to go online and start accepting orders
             </p>
           </div>
         )}
+
+        {/* Bottom Navigation */}
+        <BottomNav type="rider" activeTab="home" />
       </IonContent>
     </IonPage>
   );

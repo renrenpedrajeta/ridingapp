@@ -57,49 +57,35 @@ const Login: React.FC = () => {
   return (
     <IonPage>
       <IonHeader className="ion-no-border">
-        <IonToolbar style={{ '--background': 'var(--ion-card-background)' } as any}>
+        <IonToolbar style={{ '--background': 'var(--ion-background-color)', '--border-width': '0' } as any}>
           <IonButtons slot="start">
             <IonBackButton defaultHref="/guest/home" color="primary" />
           </IonButtons>
         </IonToolbar>
       </IonHeader>
 
-      <IonContent className="ion-padding" style={{ '--background': 'var(--ion-background-color)' } as any}>
-        <div style={{ maxWidth: '400px', margin: '0 auto', paddingTop: '40px', paddingBottom: '140px' }}>
+      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any} className="auth-content">
+        <div className="auth-container">
           {/* Header */}
-          <div style={{ marginBottom: '40px', textAlign: 'center' }}>
-            <h1 style={{ 
-              fontSize: '32px', 
-              fontWeight: 800, 
-              color: '#6366F1',
-              marginBottom: '8px',
-              margin: '0 0 12px 0'
-            }}>
+          <div className="auth-title-wrapper" style={{ marginBottom: '32px', textAlign: 'center' }}>
+            <h1 className="auth-title" style={{ color: '#6366F1' }}>
               Welcome Back
             </h1>
-            <p style={{ color: 'var(--ion-text-color-secondary)', marginBottom: 0, fontSize: '15px' }}>
+            <p className="auth-subtitle">
               Sign in to continue
             </p>
           </div>
 
           {error && (
-            <div style={{ 
-              background: '#fee2e2', 
-              padding: '12px', 
-              borderRadius: '8px', 
-              marginBottom: '24px',
-              color: '#991b1b',
-              fontSize: '14px',
-              border: '1px solid #fecaca'
-            }}>
+            <div className="error-alert">
               {error}
             </div>
           )}
 
           {/* Email Input */}
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>Email</label>
-            <IonItem className="rider-input" style={{ marginBottom: '0', '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
+          <div className="form-group-mobile">
+            <label className="form-label">Email</label>
+            <IonItem className="rider-input" style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
               <IonIcon icon={mailOutline} slot="start" color="primary" />
               <IonInput
                 type="email"
@@ -112,8 +98,8 @@ const Login: React.FC = () => {
           </div>
 
           {/* Password Input */}
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '13px', fontWeight: 600, color: 'var(--ion-text-color)', textTransform: 'uppercase', opacity: 0.7 }}>Password</label>
+          <div className="form-group-mobile">
+            <label className="form-label">Password</label>
             <IonItem className="rider-input" style={{ '--background': 'var(--ion-card-background)', '--border': '1px solid var(--ion-border-color)' } as any}>
               <IonIcon icon={lockClosedOutline} slot="start" color="primary" />
               <IonInput
@@ -133,44 +119,23 @@ const Login: React.FC = () => {
             </IonItem>
           </div>
 
-          <div style={{ textAlign: 'right', marginBottom: '24px' }}>
-            <IonButton fill="clear" style={{ 
-              '--color': '#6366F1', 
-              fontSize: '13px',
-              fontWeight: 600,
-              padding: '0',
-              height: 'auto'
-            }}>
+          <div style={{ textAlign: 'right', marginBottom: '20px' }}>
+            <IonButton fill="clear" style={{ '--color': '#6366F1', fontSize: '13px', fontWeight: 600, padding: '0', height: 'auto' }}>
               Forgot Password?
             </IonButton>
           </div>
 
           <IonButton
             expand="block"
-            size="large"
-            className="rider-button"
-            style={{
-              '--background': '#6366F1',
-              '--border-radius': '8px',
-              height: '48px',
-              fontSize: '16px',
-              fontWeight: 700,
-              marginBottom: '24px'
-            }}
+            className="mobile-button"
+            style={{ '--background': '#6366F1', marginBottom: '20px' }}
             onClick={handleLogin}
           >
             Sign In
           </IonButton>
 
           {/* Test Credentials */}
-          <div style={{ 
-            background: 'var(--ion-card-background)', 
-            border: '1px solid var(--ion-border-color)',
-            borderRadius: '8px', 
-            padding: '12px', 
-            marginBottom: '16px',
-            textAlign: 'center'
-          }}>
+          <div className="mobile-card" style={{ marginBottom: '16px', textAlign: 'center' }}>
             <p style={{ fontSize: '12px', color: 'var(--ion-text-color-secondary)', margin: '0 0 8px 0', fontWeight: 600 }}>Test Credentials</p>
             <p style={{ fontSize: '12px', color: 'var(--ion-text-color)', margin: '4px 0', fontFamily: 'monospace' }}>📧 user@example.com</p>
             <p style={{ fontSize: '12px', color: 'var(--ion-text-color)', margin: '4px 0', fontFamily: 'monospace' }}>🔑 User@123</p>
@@ -178,7 +143,7 @@ const Login: React.FC = () => {
 
           {/* Sign Up Link */}
           <div style={{ textAlign: 'center' }}>
-            <span style={{ color: 'var(--ion-text-color-secondary)', fontSize: '14px' }}>
+            <span className="text-base" style={{ color: 'var(--ion-text-color-secondary)' }}>
               Don't have an account?{' '}
               <span 
                 style={{ color: '#6366F1', fontWeight: 700, cursor: 'pointer' }}
@@ -194,10 +159,12 @@ const Login: React.FC = () => {
       </IonContent>
 
       {/* Footer */}
-      <IonFooter style={{ '--background': 'var(--ion-card-background)', borderTop: '1px solid var(--ion-border-color)', padding: '16px' } as any}>
-        <p style={{ textAlign: 'center', margin: '0', fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>
-          By logging in, you agree to our Terms of Service and Privacy Policy
-        </p>
+      <IonFooter style={{ '--background': 'var(--ion-background-color)', '--border-color': 'var(--ion-border-color)', '--border-width': '1px 0 0 0', '--border-style': 'solid' } as any}>
+        <div style={{ padding: '16px', textAlign: 'center' }}>
+          <p style={{ margin: '0', fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>
+            By logging in, you agree to our Terms of Service and Privacy Policy
+          </p>
+        </div>
       </IonFooter>
     </IonPage>
   );

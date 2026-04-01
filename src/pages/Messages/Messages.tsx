@@ -16,6 +16,7 @@ import {
   IonToolbar,
   IonBackButton,
   IonTitle,
+  IonButtons,
 } from '@ionic/react';
 import {
   chatbubbleOutline,
@@ -26,7 +27,8 @@ import {
   close,
 } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
-import UserNavBar from '../../components/Navbar/UserNavBar';
+import LogoHeader from '../../components/LogoHeader';
+import BottomNav from '../../components/BottomNav';
 import { useAuth } from '../../context/AuthContext';
 import './Messages.css';
 
@@ -224,16 +226,19 @@ const Messages: React.FC = () => {
 
   return (
     <IonPage>
-      <UserNavBar title="Messages" />
+      <IonHeader>
+        <IonToolbar>
+          <IonButtons slot="start">
+            <IonButton onClick={() => history.goBack()}>
+              <IonIcon slot="icon-only" icon={arrowBack} />
+            </IonButton>
+          </IonButtons>
+          <IonTitle>Messages</IonTitle>
+        </IonToolbar>
+      </IonHeader>
 
-      <IonContent>
-        <div className="messages-header">
-          <IonButton fill="clear" onClick={() => history.goBack()}>
-            <IonIcon icon={arrowBack} />
-          </IonButton>
-          <h2>Messages</h2>
-          <div style={{ width: 44 }} />
-        </div>
+      <IonContent className="content-with-sticky-footer ion-page-with-bottom-nav">
+        <LogoHeader />
 
         <div className="search-container">
           <IonSearchbar
@@ -288,15 +293,19 @@ const Messages: React.FC = () => {
             ))
           )}
         </div>
+
+        <BottomNav type="user" activeTab="messages" />
       </IonContent>
 
       {/* Chat Modal */}
       <IonModal isOpen={showChat} onDidDismiss={() => setShowChat(false)}>
         <IonHeader translucent>
           <IonToolbar>
-            <IonButton slot="start" fill="clear" onClick={() => setShowChat(false)}>
-              <IonIcon icon={close} slot="icon-only" />
-            </IonButton>
+            <IonButtons slot="start">
+              <IonButton fill="clear" onClick={() => setShowChat(false)}>
+                <IonIcon icon={close} slot="icon-only" />
+              </IonButton>
+            </IonButtons>
             <IonTitle>
               <div className="chat-header-title">
                 <div>{selectedConversation?.otherPerson.name}</div>

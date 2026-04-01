@@ -14,9 +14,10 @@ import {
   IonCardContent,
   IonAlert,
 } from '@ionic/react';
-import { settingsOutline, notificationsOutline, moonOutline, globeOutline, lockClosedOutline, informationCircleOutline, arrowBack } from 'ionicons/icons';
+import { notificationsOutline, moonOutline, globeOutline, lockClosedOutline, informationCircleOutline } from 'ionicons/icons';
 import { useHistory } from 'react-router-dom';
-import UserNavBar from '../../components/Navbar/UserNavBar';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/mobile-first-responsive.css';
@@ -60,9 +61,10 @@ const UserSettings: React.FC = () => {
 
   return (
     <IonPage>
-      <UserNavBar title="Settings" />
+      <IonContent className="content-with-sticky-footer ion-page-with-bottom-nav" style={{ '--background': 'var(--ion-background-color)' } as any}>
+        {/* Logo Header */}
+        <LogoHeader />
 
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
         <div style={{ padding: '12px' }}>
           {/* Notifications Section */}
           <div style={{ marginBottom: '16px' }}>
@@ -358,6 +360,9 @@ const UserSettings: React.FC = () => {
             },
           ]}
         />
+
+        {/* Bottom Navigation */}
+        <BottomNav type="user" activeTab="profile" />
       </IonContent>
     </IonPage>
   );

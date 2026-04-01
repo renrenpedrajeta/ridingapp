@@ -92,8 +92,8 @@ const OrderSuccess: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
-        <div style={{ padding: '20px' }}>
+      <IonContent className="content-with-sticky-footer" style={{ '--background': 'var(--ion-background-color)' } as any}>
+        <div className="mobile-container">
           {/* Success Icon */}
           <div style={{ textAlign: 'center', marginBottom: '24px' }}>
             <div style={{
@@ -113,7 +113,7 @@ const OrderSuccess: React.FC = () => {
           </div>
 
           {/* Order ID Card */}
-          <IonCard style={{ marginBottom: '20px' }}>
+          <IonCard style={{ marginBottom: '16px' }}>
             <IonCardContent>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 <div>
@@ -133,7 +133,7 @@ const OrderSuccess: React.FC = () => {
           </IonCard>
 
           {/* Ordered Items */}
-          <IonCard style={{ marginBottom: '20px' }}>
+          <IonCard style={{ marginBottom: '16px' }}>
             <IonCardContent>
               <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 700, color: 'var(--ion-text-color)' }}>Ordered Items</h3>
               <div>
@@ -163,7 +163,7 @@ const OrderSuccess: React.FC = () => {
           </IonCard>
 
           {/* Order Summary */}
-          <IonCard style={{ marginBottom: '20px' }}>
+          <IonCard style={{ marginBottom: '16px' }}>
             <IonCardContent>
               <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 700, color: 'var(--ion-text-color)' }}>Order Summary</h3>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '8px', borderBottom: '1px solid var(--ion-border-color)' }}>
@@ -186,7 +186,7 @@ const OrderSuccess: React.FC = () => {
           </IonCard>
 
           {/* Delivery Details */}
-          <IonCard style={{ marginBottom: '20px' }}>
+          <IonCard style={{ marginBottom: '16px' }}>
             <IonCardContent>
               <h3 style={{ margin: '0 0 16px', fontSize: '16px', fontWeight: 700, color: 'var(--ion-text-color)' }}>Delivery Details</h3>
               <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
