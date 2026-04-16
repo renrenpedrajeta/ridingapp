@@ -1,5 +1,5 @@
 // src/pages/Checkout/Payment.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   IonPage,
   IonContent,
@@ -17,15 +17,22 @@ import {
   IonCheckbox,
 } from '@ionic/react';
 import { arrowBack, cardOutline, phonePortraitOutline, walletOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/mobile-first-responsive.css';
 
 const Payment: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { total, items, clearCart } = useCart();
-  const { isGuest } = useAuth();
+  const { user } = useAuth();
+  
+  // Redirect to login if guest user tries to access payment
+  useEffect(() => {
+    if (!user) {
+      ionRouter.push('/login');
+    }
+  }, [user, ionRouter]);
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [cardDetails, setCardDetails] = useState({
     cardNumber: '',
@@ -68,7 +75,7 @@ const Payment: React.FC = () => {
       clearCart();
       sessionStorage.removeItem('selectedLocation');
       sessionStorage.removeItem('locationName');
-      history.push('/order-success', { orderId: newOrder.id });
+      ionRouter.push('/order-success');
     }, 2000);
   };
 
@@ -77,7 +84,7 @@ const Payment: React.FC = () => {
       <IonHeader className="ion-no-border">
         <IonToolbar style={{ '--background': 'var(--ion-card-background)' } as any}>
           <IonButtons slot="start">
-            <IonButton onClick={() => history.goBack()}>
+            <IonButton onClick={() => ionRouter.goBack()}>
               <IonIcon slot="icon-only" icon={arrowBack} />
             </IonButton>
           </IonButtons>

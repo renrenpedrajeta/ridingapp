@@ -17,7 +17,7 @@ import {
   moonOutline,
   listOutline,
 } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useNotification } from '../../context/NotificationContext';
@@ -28,7 +28,7 @@ interface RiderNavBarProps {
 }
 
 const RiderNavBar: React.FC<RiderNavBarProps> = ({ title }) => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const { unreadCount } = useNotification();
@@ -37,12 +37,12 @@ const RiderNavBar: React.FC<RiderNavBarProps> = ({ title }) => {
   const handleLogout = () => {
     logout();
     setShowUserMenu(false);
-    history.push('/rider/login');
+    ionRouter.push('/rider/login');
   };
 
   const navigateTo = (path: string) => {
     setShowUserMenu(false);
-    history.push(path);
+    ionRouter.push(path);
   };
 
   return (
@@ -52,7 +52,7 @@ const RiderNavBar: React.FC<RiderNavBarProps> = ({ title }) => {
         <div className="navbar-left">
           <button 
             className="navbar-logo-btn"
-            onClick={() => history.push('/rider/home')}
+            onClick={() => ionRouter.push('/rider/home')}
           >
             <span className="navbar-logo">
               <span className="logo-primary">Rider</span>
@@ -75,7 +75,7 @@ const RiderNavBar: React.FC<RiderNavBarProps> = ({ title }) => {
           {/* Messages */}
           <button 
             className="navbar-icon-btn"
-            onClick={() => history.push('/rider/messages')}
+            onClick={() => ionRouter.push('/rider/messages')}
             aria-label="Messages"
           >
             <IonIcon icon={chatbubbleOutline} />

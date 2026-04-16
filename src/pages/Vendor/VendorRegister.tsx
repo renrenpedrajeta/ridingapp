@@ -18,19 +18,20 @@ import {
   IonSelectOption,
 } from '@ionic/react';
 import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline, personOutline, storefront, locationOutline, callOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
-import { useVendorAuth } from '../../context/VendorAuthContext';
+import { useIonRouter } from '@ionic/react';
+import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import PasswordStrengthIndicator from '../../components/PasswordStrengthIndicator';
 
 const VendorRegister: React.FC = () => {
-  const history = useHistory();
-  const { vendorRegister, isVendorLoggedIn } = useVendorAuth();
+  const ionRouter = useIonRouter();
+  const { register, isAuthenticated, role } = useAuth();
   const { isDarkMode } = useTheme();
 
-  // Redirect if already logged in
+  const isVendorLoggedIn = isAuthenticated && role === 'vendor';
+
   if (isVendorLoggedIn) {
-    history.replace('/vendor/dashboard');
+    ionRouter.push('/vendor/dashboard');
     return null;
   }
 
@@ -104,21 +105,17 @@ const VendorRegister: React.FC = () => {
 
     setLoading(true);
     try {
-      await vendorRegister({
-        id: '',
-        fullName: formData.fullName,
-        businessName: formData.businessName,
+      await register({
+        name: formData.fullName,
         email: formData.email,
         phone: formData.phone,
-        password: formData.password,
-        storeAddress: formData.storeAddress,
-        storeCategory: formData.storeCategory,
+        role: 'vendor',
       });
 
-      // Auto-login after successful registration
-      history.push('/vendor/dashboard');
-    } catch (err: any) {
-      setErrors({ submit: err.message || 'Registration failed' });
+      ionRouter.push('/vendor/dashboard');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Registration failed';
+      setErrors({ submit: message });
     } finally {
       setLoading(false);
     }
@@ -326,7 +323,7 @@ const VendorRegister: React.FC = () => {
             <IonButton
               expand="block"
               fill="clear"
-              onClick={() => history.push('/vendor/login')}
+              onClick={() => ionRouter.push('/vendor/login')}
               style={{ '--color': '#8b5cf6', fontWeight: 600 }}
             >
               Login Here

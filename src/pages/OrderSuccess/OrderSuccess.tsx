@@ -12,7 +12,8 @@ import {
   IonTitle,
 } from '@ionic/react';
 import { checkmarkCircleOutline, locationOutline, time, bicycle } from 'ionicons/icons';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -39,7 +40,7 @@ interface Order {
 }
 
 const OrderSuccess: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const location = useLocation();
   const { isGuest } = useAuth();
   const { isDarkMode } = useTheme();
@@ -78,9 +79,9 @@ const OrderSuccess: React.FC = () => {
 
   const handleContinue = () => {
     if (isGuest) {
-      history.push('/guest/home');
+      ionRouter.push('/guest/home');
     } else {
-      history.push('/user/orders');
+      ionRouter.push('/user/orders');
     }
   };
 
@@ -231,9 +232,9 @@ const OrderSuccess: React.FC = () => {
               style={{ height: '48px', fontSize: '16px', fontWeight: 700 }}
               onClick={() => {
                 if (isGuest) {
-                  history.push('/guest/home');
+                  ionRouter.push('/guest/home');
                 } else {
-                  history.push('/user/home');
+                  ionRouter.push('/user/home');
                 }
               }}
             >

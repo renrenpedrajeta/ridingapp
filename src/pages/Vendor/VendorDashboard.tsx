@@ -1,27 +1,19 @@
 // src/pages/Vendor/VendorDashboard.tsx
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import {
+  IonPage,
   IonContent,
   IonCard,
   IonCardContent,
-  IonGrid,
-  IonRow,
-  IonCol,
-  IonIcon,
   IonButton,
 } from '@ionic/react';
-import {
-  cartOutline,
-  cashOutline,
-  hourglassOutline,
-  checkmarkCircleOutline,
-  timeOutline,
-  starOutline,
-} from 'ionicons/icons';
 import { useTheme } from '../../context/ThemeContext';
-import { useVendorAuth } from '../../context/VendorAuthContext';
-import VendorLayout from '../../layouts/VendorLayout';
+import { useAuth } from '../../context/AuthContext';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
+import StatCard from '../../components/StatCard';
+import StatusBadge from '../../components/StatusBadge';
 import './VendorDashboard.css';
 
 interface Order {
@@ -30,7 +22,7 @@ interface Order {
   customer: string;
   items: number;
   total: number;
-  status: 'pending' | 'preparing' | 'ready' | 'delivered';
+  status: 'pending' | 'preparing' | 'ready_for_pickup' | 'completed';
   time: string;
 }
 
@@ -39,53 +31,12 @@ interface SalesData {
   sales: number;
 }
 
-// Mock data - all hardcoded and static
 const MOCK_ORDERS: Order[] = [
-  {
-    id: '1',
-    orderNumber: '#ORD-2026-001',
-    customer: 'Sarah Chen',
-    items: 3,
-    total: 45.50,
-    status: 'pending',
-    time: '2 min ago',
-  },
-  {
-    id: '2',
-    orderNumber: '#ORD-2026-002',
-    customer: 'Mike Johnson',
-    items: 2,
-    total: 32.00,
-    status: 'preparing',
-    time: '5 min ago',
-  },
-  {
-    id: '3',
-    orderNumber: '#ORD-2026-003',
-    customer: 'Emma Wilson',
-    items: 1,
-    total: 18.75,
-    status: 'ready',
-    time: '8 min ago',
-  },
-  {
-    id: '4',
-    orderNumber: '#ORD-2026-004',
-    customer: 'John Smith',
-    items: 4,
-    total: 62.00,
-    status: 'delivered',
-    time: '15 min ago',
-  },
-  {
-    id: '5',
-    orderNumber: '#ORD-2026-005',
-    customer: 'Lisa Anderson',
-    items: 2,
-    total: 28.50,
-    status: 'delivered',
-    time: '22 min ago',
-  },
+  { id: '1', orderNumber: '#ORD-001', customer: 'Sarah Chen', items: 3, total: 45.50, status: 'pending', time: '2 min ago' },
+  { id: '2', orderNumber: '#ORD-002', customer: 'Mike Johnson', items: 2, total: 32.00, status: 'preparing', time: '5 min ago' },
+  { id: '3', orderNumber: '#ORD-003', customer: 'Emma Wilson', items: 1, total: 18.75, status: 'ready_for_pickup', time: '8 min ago' },
+  { id: '4', orderNumber: '#ORD-004', customer: 'John Smith', items: 4, total: 62.00, status: 'completed', time: '15 min ago' },
+  { id: '5', orderNumber: '#ORD-005', customer: 'Lisa Anderson', items: 2, total: 28.50, status: 'completed', time: '22 min ago' },
 ];
 
 const MOCK_SALES_DATA: SalesData[] = [
@@ -100,259 +51,129 @@ const MOCK_SALES_DATA: SalesData[] = [
 
 const VendorDashboard: React.FC = () => {
   const { isDarkMode } = useTheme();
-  const { isVendorLoggedIn } = useVendorAuth();
-  const history = useHistory();
+  const { isRoleAuthenticated } = useAuth();
+  const ionRouter = useIonRouter();
 
-  // Redirect if not logged in - using useEffect to avoid render issues
+  const isVendorAuthenticated = isRoleAuthenticated('vendor');
+
   useEffect(() => {
-    if (!isVendorLoggedIn) {
-      history.replace('/vendor/login');
+    if (!isVendorAuthenticated) {
+      ionRouter.push('/vendor/login');
     }
-  }, [isVendorLoggedIn, history]);
+  }, [isVendorAuthenticated, ionRouter]);
 
-  // If not logged in, show nothing while redirect happens
-  if (!isVendorLoggedIn) {
+  if (!isVendorAuthenticated) {
     return null;
   }
 
-  // Calculate stats from hardcoded data
   const totalOrders = MOCK_ORDERS.length;
   const pendingOrders = MOCK_ORDERS.filter(o => o.status === 'pending' || o.status === 'preparing').length;
   const totalEarnings = MOCK_ORDERS.reduce((sum, o) => sum + o.total, 0);
-  const todaySales = totalEarnings; // Same as total for demo
+  const todaySales = totalEarnings;
   const maxSales = Math.max(...MOCK_SALES_DATA.map(d => d.sales));
   const rating = 4.8;
 
-  const getStatusColor = (status: string): string => {
-    switch (status) {
-      case 'pending':
-        return '#f97316';
-      case 'preparing':
-        return '#eab308';
-      case 'ready':
-        return '#06b6d4';
-      case 'delivered':
-        return '#22c55e';
-      default:
-        return '#6b7280';
-    }
-  };
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return hourglassOutline;
-      case 'preparing':
-        return timeOutline;
-      case 'ready':
-        return checkmarkCircleOutline;
-      case 'delivered':
-        return checkmarkCircleOutline;
-      default:
-        return timeOutline;
-    }
-  };
-
   return (
-    <VendorLayout pageTitle="Dashboard">
-      <IonContent className="vendor-dashboard">
+    <IonPage>
+      <IonContent className="vendor-dashboard ion-page-with-bottom-nav">
+        <LogoHeader />
+        
         {/* Overview Cards */}
-        <div className="dashboard-section">
-          <h2 className="section-title">Overview</h2>
-          <IonGrid>
-            <IonRow>
-              <IonCol size="12" sizeMd="6" sizeLg="3" className="stat-card-col">
-                <IonCard className="stat-card">
-                  <IonCardContent>
-                    <div className="stat-header">
-                      <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #f97316 0%, #fb923c 100%)' }}>
-                        <IonIcon icon={cartOutline} />
-                      </div>
-                      <span className="stat-label">Total Orders</span>
-                    </div>
-                    <div className="stat-value">{totalOrders}</div>
-                    <div className="stat-meta">📈 +5 this week</div>
-                  </IonCardContent>
-                </IonCard>
-              </IonCol>
-
-              <IonCol size="12" sizeMd="6" sizeLg="3" className="stat-card-col">
-                <IonCard className="stat-card">
-                  <IonCardContent>
-                    <div className="stat-header">
-                      <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #eab308 0%, #facc15 100%)' }}>
-                        <IonIcon icon={hourglassOutline} />
-                      </div>
-                      <span className="stat-label">Pending Orders</span>
-                    </div>
-                    <div className="stat-value">{pendingOrders}</div>
-                    <div className="stat-meta">⏱️ Needs attention</div>
-                  </IonCardContent>
-                </IonCard>
-              </IonCol>
-
-              <IonCol size="12" sizeMd="6" sizeLg="3" className="stat-card-col">
-                <IonCard className="stat-card">
-                  <IonCardContent>
-                    <div className="stat-header">
-                      <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #22c55e 0%, #4ade80 100%)' }}>
-                        <IonIcon icon={cashOutline} />
-                      </div>
-                      <span className="stat-label">Today's Sales</span>
-                    </div>
-                    <div className="stat-value">${todaySales.toFixed(2)}</div>
-                    <div className="stat-meta">💰 +12.5% increase</div>
-                  </IonCardContent>
-                </IonCard>
-              </IonCol>
-
-              <IonCol size="12" sizeMd="6" sizeLg="3" className="stat-card-col">
-                <IonCard className="stat-card">
-                  <IonCardContent>
-                    <div className="stat-header">
-                      <div className="stat-icon" style={{ background: 'linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%)' }}>
-                        <IonIcon icon={starOutline} />
-                      </div>
-                      <span className="stat-label">Rating</span>
-                    </div>
-                    <div className="stat-value">⭐ {rating}</div>
-                    <div className="stat-meta">Based on {MOCK_ORDERS.length} reviews</div>
-                  </IonCardContent>
-                </IonCard>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+        <div style={{ padding: '16px 0' }}>
+          <div className="mobile-container">
+            <h2 className="section-title">Overview</h2>
+          </div>
+          <div className="mobile-container">
+            <div className="responsive-grid-2" style={{ gap: '12px' }}>
+              <StatCard icon="📦" label="Total Orders" value={totalOrders} color="#f97316" trend="+5 this week" />
+              <StatCard icon="⏳" label="Pending" value={pendingOrders} color="#eab308" trend="Needs attention" />
+              <StatCard icon="💰" label="Today's Sales" value={`$${todaySales.toFixed(2)}`} color="#22c55e" trend="+12.5% increase" />
+              <StatCard icon="⭐" label="Rating" value={rating} color="#06b6d4" />
+            </div>
+          </div>
         </div>
 
         {/* Sales Chart */}
-        <div className="dashboard-section">
-          <h2 className="section-title">Sales Overview (This Week)</h2>
-          <IonCard className="chart-card">
-            <IonCardContent>
-              <div className="sales-chart">
-                <div className="chart-legend">
-                  <span>Sales: ${MOCK_SALES_DATA.reduce((sum, d) => sum + d.sales, 0).toFixed(2)}</span>
-                </div>
-                <div className="chart-bars">
-                  {MOCK_SALES_DATA.map((data, index) => (
-                    <div key={index} className="chart-bar-wrapper">
-                      <div
-                        className="chart-bar"
-                        style={{
-                          height: `${(data.sales / maxSales) * 200}px`,
-                          background: 'linear-gradient(180deg, #8b5cf6 0%, #6366f1 100%)',
-                        }}
-                        title={`${data.date}: $${data.sales}`}
-                      />
-                      <span className="chart-label">{data.date}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="chart-tooltip">Hover over bars to see details</div>
+        <div style={{ padding: '16px 0' }}>
+          <div className="mobile-container">
+            <h2 className="section-title">Sales This Week</h2>
+          </div>
+          <div className="mobile-container">
+            <IonCard style={{ margin: 0, padding: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <span style={{ fontWeight: 600 }}>Total: ${MOCK_SALES_DATA.reduce((sum, d) => sum + d.sales, 0).toFixed(2)}</span>
               </div>
-            </IonCardContent>
-          </IonCard>
+              <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', height: '120px', gap: '8px' }}>
+                {MOCK_SALES_DATA.map((data, index) => (
+                  <div key={index} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                    <div style={{ 
+                      width: '100%', 
+                      height: `${(data.sales / maxSales) * 80}px`, 
+                      background: 'linear-gradient(180deg, #8b5cf6 0%, #6366f1 100%)',
+                      borderRadius: '4px'
+                    }} />
+                    <span style={{ fontSize: '10px', color: 'var(--ion-text-color-secondary)' }}>{data.date}</span>
+                  </div>
+                ))}
+              </div>
+            </IonCard>
+          </div>
         </div>
 
         {/* Recent Orders */}
-        <div className="dashboard-section">
-          <div className="section-header">
+        <div style={{ padding: '16px 0' }}>
+          <div className="mobile-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <h2 className="section-title">Recent Orders</h2>
-            <IonButton
-              fill="outline"
-              size="small"
-              onClick={() => window.location.href = '/vendor/orders'}
-              style={{ '--color': '#8b5cf6', '--border-color': '#8b5cf6' } as any}
-            >
+            <IonButton fill="clear" size="small" onClick={() => ionRouter.push('/vendor/orders')} style={{ color: '#6366F1' } as any}>
               View All
             </IonButton>
           </div>
-
-          <IonCard className="orders-card">
-            <IonCardContent className="orders-table">
-              <div className="table-header">
-                <div className="col-order">Order</div>
-                <div className="col-customer">Customer</div>
-                <div className="col-amount">Amount</div>
-                <div className="col-status">Status</div>
-                <div className="col-time">Time</div>
-              </div>
-
-              {MOCK_ORDERS.slice(0, 5).map((order) => (
-                <div key={order.id} className="table-row">
-                  <div className="col-order">
-                    <span className="order-id">{order.orderNumber}</span>
+          <div className="mobile-container">
+            {MOCK_ORDERS.slice(0, 3).map((order) => (
+              <IonCard key={order.id} style={{ margin: '0 0 12px 0', padding: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div>
+                    <span style={{ fontWeight: 600, fontSize: '14px' }}>{order.orderNumber}</span>
+                    <p style={{ margin: '4px 0 0', fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>
+                      {order.customer} • {order.items} items
+                    </p>
                   </div>
-                  <div className="col-customer">
-                    <span className="customer-name">{order.customer}</span>
-                    <span className="item-count">{order.items} items</span>
-                  </div>
-                  <div className="col-amount">
-                    <span className="amount">${order.total.toFixed(2)}</span>
-                  </div>
-                  <div className="col-status">
-                    <div className="status-badge" style={{ borderLeft: `4px solid ${getStatusColor(order.status)}` }}>
-                      <IonIcon icon={getStatusIcon(order.status)} />
-                      <span style={{ textTransform: 'capitalize' }}>{order.status}</span>
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontWeight: 700, color: '#6366F1' }}>${order.total.toFixed(2)}</span>
+                    <div style={{ marginTop: '4px' }}>
+                      <StatusBadge status={order.status} size="small" />
                     </div>
                   </div>
-                  <div className="col-time">
-                    <span className="time">{order.time}</span>
-                  </div>
                 </div>
-              ))}
-            </IonCardContent>
-          </IonCard>
+              </IonCard>
+            ))}
+          </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="dashboard-section">
-          <h2 className="section-title">Quick Actions</h2>
-          <IonGrid>
-            <IonRow>
-              <IonCol size="12" sizeMd="4">
-                <IonButton
-                  expand="block"
-                  onClick={() => window.location.href = '/vendor/products'}
-                  style={{
-                    '--background': 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)',
-                    '--color': '#fff',
-                  } as any}
-                >
-                  Add New Product
-                </IonButton>
-              </IonCol>
-              <IonCol size="12" sizeMd="4">
-                <IonButton
-                  expand="block"
-                  onClick={() => window.location.href = '/vendor/orders'}
-                  style={{
-                    '--background': 'linear-gradient(135deg, #06b6d4 0%, #0ea5e9 100%)',
-                    '--color': '#fff',
-                  } as any}
-                >
-                  Manage Orders
-                </IonButton>
-              </IonCol>
-              <IonCol size="12" sizeMd="4">
-                <IonButton
-                  expand="block"
-                  onClick={() => window.location.href = '/vendor/earnings'}
-                  style={{
-                    '--background': 'linear-gradient(135deg, #22c55e 0%, #4ade80 100%)',
-                    '--color': '#fff',
-                  } as any}
-                >
-                  View Earnings
-                </IonButton>
-              </IonCol>
-            </IonRow>
-          </IonGrid>
+        <div style={{ padding: '16px 0' }}>
+          <div className="mobile-container">
+            <h2 className="section-title">Quick Actions</h2>
+          </div>
+          <div className="mobile-container">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              <IonButton expand="block" onClick={() => ionRouter.push('/vendor/products')} style={{ '--background': '#8b5cf6', '--color': '#fff', '--border-radius': '12px' } as any}>
+                Add Product
+              </IonButton>
+              <IonButton expand="block" onClick={() => ionRouter.push('/vendor/orders')} style={{ '--background': '#06b6d4', '--color': '#fff', '--border-radius': '12px' } as any}>
+                Manage Orders
+              </IonButton>
+              <IonButton expand="block" onClick={() => ionRouter.push('/vendor/settings')} style={{ '--background': '#22c55e', '--color': '#fff', '--border-radius': '12px' } as any}>
+                Settings
+              </IonButton>
+            </div>
+          </div>
         </div>
 
         <div style={{ height: '40px' }} />
       </IonContent>
-    </VendorLayout>
+      <BottomNav type="vendor" activeTab="home" />
+    </IonPage>
   );
 };
 

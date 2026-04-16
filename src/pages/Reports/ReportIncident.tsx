@@ -25,12 +25,12 @@ import {
   closeOutline,
   arrowBack,
 } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import UserNavBar from '../../components/Navbar/UserNavBar';
 import { useAuth } from '../../context/AuthContext';
 
 const ReportIncident: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { user, logout } = useAuth();
   const [reportType, setReportType] = useState('');
   const [priority, setPriority] = useState('medium');
@@ -97,7 +97,7 @@ const ReportIncident: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', borderBottom: '1px solid var(--ion-border-color)' }}>
           <IonButton 
             fill="clear" 
-            onClick={() => history.goBack()}
+            onClick={() => ionRouter.goBack()}
             style={{ '--color': '#6366F1', margin: '0 0 0 -8px' } as any}
           >
             <IonIcon icon={arrowBack} />

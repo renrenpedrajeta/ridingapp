@@ -17,7 +17,7 @@ import {
   IonCardContent,
 } from '@ionic/react';
 import { arrowBack, locationOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useCart } from '../../context/CartContext';
 import { useTheme } from '../../context/ThemeContext';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
@@ -31,7 +31,7 @@ interface DeliveryLocation {
 }
 
 const Checkout: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { items, total, clearCart } = useCart();
   const { isDarkMode } = useTheme();
   
@@ -82,12 +82,12 @@ const Checkout: React.FC = () => {
       setLoading(false);
       clearCart();
       alert('Order placed successfully! Your food will be delivered soon.');
-      history.push('/user/home');
+      ionRouter.push('/user/home');
     }, 2000);
   };
 
   const handleLocationPicker = () => {
-    history.push('/guest/location');
+    ionRouter.push('/guest/location');
   };
 
   return (
@@ -95,7 +95,7 @@ const Checkout: React.FC = () => {
       <IonHeader>
         <IonToolbar style={{ '--background': 'var(--ion-card-background)' } as any}>
           <IonButtons slot="start">
-            <IonButton onClick={() => history.goBack()}>
+            <IonButton onClick={() => ionRouter.goBack()}>
               <IonIcon icon={arrowBack} />
             </IonButton>
           </IonButtons>

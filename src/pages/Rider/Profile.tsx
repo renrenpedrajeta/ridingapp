@@ -13,18 +13,20 @@ import {
   IonToggle,
 } from '@ionic/react';
 import { personOutline, callOutline, mailOutline, saveOutline, logOutOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import BottomNav from '../../components/BottomNav';
 import LogoHeader from '../../components/LogoHeader';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/mobile-first-responsive.css';
 
 const RiderProfile: React.FC = () => {
-  const history = useHistory();
-  const { user, logout } = useAuth();
+  const ionRouter = useIonRouter();
+  const { getAuthUser, logout } = useAuth();
 
-  if (!user || user.role !== 'rider') {
-    history.replace('/rider/login');
+  const currentRider = getAuthUser('rider');
+
+  if (!currentRider) {
+    ionRouter.push('/rider/login');
     return null;
   }
 
@@ -49,8 +51,8 @@ const RiderProfile: React.FC = () => {
   };
 
   const handleLogout = () => {
-    logout();
-    history.push('/login');
+    logout('rider');
+    ionRouter.push('/rider/login');
   };
 
   return (
@@ -63,7 +65,7 @@ const RiderProfile: React.FC = () => {
         <div className="mobile-container">
           <div className="quick-access-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
             <div 
-              onClick={() => history.push('/activities')}
+              onClick={() => ionRouter.push('/activities')}
               className="quick-access-item"
               style={{ background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)' }}
             >
@@ -71,7 +73,7 @@ const RiderProfile: React.FC = () => {
               <span className="quick-access-label">Activity</span>
             </div>
             <div 
-              onClick={() => history.push('/messages')}
+              onClick={() => ionRouter.push('/messages')}
               className="quick-access-item"
               style={{ background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)' }}
             >
@@ -79,7 +81,7 @@ const RiderProfile: React.FC = () => {
               <span className="quick-access-label">Messages</span>
             </div>
             <div 
-              onClick={() => history.push('/report')}
+              onClick={() => ionRouter.push('/report')}
               className="quick-access-item"
               style={{ background: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)', color: '#1F2937' }}
             >

@@ -15,7 +15,7 @@ import {
   IonAlert,
 } from '@ionic/react';
 import { notificationsOutline, moonOutline, globeOutline, lockClosedOutline, informationCircleOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import BottomNav from '../../components/BottomNav';
 import LogoHeader from '../../components/LogoHeader';
 import { useTheme } from '../../context/ThemeContext';
@@ -23,13 +23,15 @@ import { useAuth } from '../../context/AuthContext';
 import '../../styles/mobile-first-responsive.css';
 
 const UserSettings: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { isDarkMode, toggleTheme } = useTheme();
-  const { user, logout } = useAuth();
+  const { getAuthUser, logout } = useAuth();
+
+  const currentUser = getAuthUser('user');
 
   // Protect this page - redirect if not logged in
-  if (!user || (user.role !== 'user' && user.role !== 'rider')) {
-    history.replace('/login');
+  if (!currentUser) {
+    ionRouter.push('/login');
     return null;
   }
   const [settings, setSettings] = useState({
@@ -55,8 +57,8 @@ const UserSettings: React.FC = () => {
   };
 
   const handleLogout = () => {
-    logout();
-    history.push('/guest/home');
+    logout('user');
+    ionRouter.push('/guest/home');
   };
 
   return (
@@ -217,7 +219,7 @@ const UserSettings: React.FC = () => {
                     size="small"
                     slot="end"
                     style={{ '--color': 'var(--ion-color-primary)', marginRight: '0', fontSize: '11px', height: '30px' }}
-                    onClick={() => history.push('/user/change-password')}
+                    onClick={() => ionRouter.push('/user/change-password')}
                   >
                     Change
                   </IonButton>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import {
   IonPage,
   IonHeader,
@@ -26,16 +27,19 @@ import {
   logOutOutline, 
   menuOutline 
 } from 'ionicons/icons';
-import { useVendorAuth } from '../../context/VendorAuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface VendorLayoutProps {
   children: React.ReactNode;
 }
 
 const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const location = useLocation();
-  const { vendor, vendorLogout } = useVendorAuth();
+  const { user, role, logout } = useAuth();
+
+  const isVendor = role === 'vendor';
+  const displayName = user?.name || 'Vendor';
 
   const navItems = [
     { path: '/vendor/dashboard', label: 'Dashboard', icon: gridOutline },
@@ -49,8 +53,8 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
   ];
 
   const handleLogout = () => {
-    vendorLogout();
-    history.push('/vendor/login');
+    logout();
+    ionRouter.push('/vendor/login');
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -68,7 +72,7 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
             {navItems.map((item) => (
               <IonItem 
                 key={item.path}
-                onClick={() => history.push(item.path)}
+                onClick={() => ionRouter.push(item.path)}
                 style={{
                   '--background': isActive(item.path) ? 'var(--ion-color-primary)' : 'transparent',
                   '--color': isActive(item.path) ? '#ffffff' : 'var(--ion-text-color)',
@@ -98,7 +102,7 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children }) => {
             <IonMenuButton color="primary" />
           </IonButtons>
           <IonTitle style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ion-text-color)' }}>
-            {vendor?.businessName || 'Vendor Panel'}
+            {displayName || 'Vendor Panel'}
           </IonTitle>
           <IonButtons slot="end">
             <IonButton onClick={handleLogout} fill="clear" color="primary">

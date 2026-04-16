@@ -5,7 +5,7 @@ import {
   IonBackButton,
   IonButtons,
 } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import './Navbar.css';
 
 interface PageHeaderProps {
@@ -25,7 +25,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
   backHref = '/guest/home',
   customClass = '',
 }) => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
 
   return (
     <IonHeader className={`page-header ${customClass}`}>
@@ -39,7 +39,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
           ) : (
             <button 
               className="page-header-logo-btn"
-              onClick={() => history.push('/guest/home')}
+              onClick={() => ionRouter.push('/guest/home')}
             >
               {showLogo ? (
                 <span className="page-header-logo">

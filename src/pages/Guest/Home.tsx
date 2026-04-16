@@ -8,12 +8,12 @@ import {
   IonSegmentButton,
   IonLabel,
 } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
 import StallCard from '../../components/Stall/StallCard';
 import BottomNav from '../../components/BottomNav';
 import LogoHeader from '../../components/LogoHeader';
 import { Stall } from '../../types';
 import { useAuth } from '../../context/AuthContext';
+import { useAppNavigate } from '../../context/useAppNavigate';
 import '../../styles/mobile-first-responsive.css';
 
 const MOCK_STALLS: Stall[] = [
@@ -56,7 +56,7 @@ const MOCK_STALLS: Stall[] = [
 ];
 
 const GuestHome: React.FC = () => {
-  const history = useHistory();
+  const { navigate } = useAppNavigate();
   const { continueAsGuest } = useAuth();
   const [stalls] = useState<Stall[]>(MOCK_STALLS);
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -73,6 +73,10 @@ const GuestHome: React.FC = () => {
     const matchesSearch = stall.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  const handleStallClick = (stallId: string) => {
+    navigate(`/stall/${stallId}`);
+  };
 
   return (
     <IonPage>
@@ -120,7 +124,7 @@ const GuestHome: React.FC = () => {
                 <StallCard 
                   key={stall.id} 
                   stall={stall} 
-                  onClick={() => history.push(`/stall/${stall.id}`)}
+                  onClick={() => handleStallClick(stall.id)}
                 />
               ))
             ) : (

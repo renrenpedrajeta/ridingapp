@@ -14,7 +14,7 @@ import {
   IonTitle,
 } from '@ionic/react';
 import { locationOutline, bicycleOutline, cardOutline, arrowBack } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useAppNavigate } from '../../context/useAppNavigate';
 import CartItem from '../../components/Cart/CartItem';
 import LogoHeader from '../../components/LogoHeader';
 import GuestPromptModal from '../../components/Auth/GuestPromptModal';
@@ -22,7 +22,7 @@ import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 
 const GuestCart: React.FC = () => {
-  const history = useHistory();
+  const { navigate, goBack } = useAppNavigate();
   const { items, updateQuantity, removeFromCart, total } = useCart();
   const { isGuest, logout } = useAuth();
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
@@ -44,7 +44,7 @@ const GuestCart: React.FC = () => {
     if (isGuest) {
       setShowGuestPrompt(true);
     } else {
-      history.push('/checkout');
+      navigate('/checkout');
     }
   };
 
@@ -53,7 +53,7 @@ const GuestCart: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={() => history.goBack()}>
+            <IonButton onClick={() => goBack()}>
               <IonIcon slot="icon-only" icon={arrowBack} />
             </IonButton>
           </IonButtons>
@@ -81,7 +81,7 @@ const GuestCart: React.FC = () => {
                 '--border-radius': '8px',
                 marginTop: '8px'
               }}
-              onClick={() => history.push('/guest/home')}
+              onClick={() => navigate('/guest/home')}
             >
               Browse Stalls
             </IonButton>
@@ -97,7 +97,7 @@ const GuestCart: React.FC = () => {
                 <p style={{ margin: '0 0 4px', fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>Deliver to</p>
                 <p style={{ margin: 0, fontWeight: 600, color: 'var(--ion-text-color)', fontSize: '14px' }}>{selectedLocation}</p>
               </div>
-              <IonButton fill="clear" style={{ '--color': '#6366F1' }} onClick={() => history.push('/guest/location')}>Change</IonButton>
+              <IonButton fill="clear" style={{ '--color': '#6366F1' }}               onClick={() => navigate('/guest/location')}>Change</IonButton>
             </div>
 
             {/* Cart Items */}

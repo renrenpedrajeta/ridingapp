@@ -17,7 +17,7 @@ import {
   sunnyOutline,
   moonOutline,
 } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import '../Navbar.css';
@@ -27,7 +27,7 @@ interface AdminNavBarProps {
 }
 
 const AdminNavBar: React.FC<AdminNavBarProps> = ({ title }) => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -35,12 +35,12 @@ const AdminNavBar: React.FC<AdminNavBarProps> = ({ title }) => {
   const handleLogout = () => {
     logout();
     setShowUserMenu(false);
-    history.push('/admin/login');
+    ionRouter.push('/admin/login');
   };
 
   const navigateTo = (path: string) => {
     setShowUserMenu(false);
-    history.push(path);
+    ionRouter.push(path);
   };
 
   return (
@@ -50,7 +50,7 @@ const AdminNavBar: React.FC<AdminNavBarProps> = ({ title }) => {
         <div className="navbar-left">
           <button 
             className="navbar-logo-btn"
-            onClick={() => history.push('/admin/dashboard')}
+            onClick={() => ionRouter.push('/admin/dashboard')}
           >
             <span className="navbar-logo">
               <span className="logo-primary">Admin</span>

@@ -1,6 +1,7 @@
 // src/layouts/VendorLayout.tsx
 import React, { useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import {
   IonHeader,
   IonToolbar,
@@ -29,7 +30,7 @@ import {
   menuOutline,
   closeOutline,
 } from 'ionicons/icons';
-import { useVendorAuth } from '../context/VendorAuthContext';
+import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
 import './VendorLayout.css';
 
@@ -39,10 +40,13 @@ interface VendorLayoutProps {
 }
 
 const VendorLayout: React.FC<VendorLayoutProps> = ({ children, pageTitle = 'Dashboard' }) => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const location = useLocation();
-  const { vendor, vendorLogout } = useVendorAuth();
+  const { user, role, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
+
+  const isVendor = role === 'vendor';
+  const displayName = user?.name || 'Vendor';
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -59,8 +63,8 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children, pageTitle = 'Dash
   ];
 
   const handleLogout = () => {
-    vendorLogout();
-    history.push('/vendor/login');
+    logout('vendor');
+    ionRouter.push('/vendor/login');
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -119,15 +123,15 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children, pageTitle = 'Dash
       {profileMenuOpen && (
         <div className="profile-menu-container">
           <div className="profile-menu-content">
-            <div className="profile-header" onClick={() => history.push('/user/home')} style={{ cursor: 'pointer' }}>
+            <div className="profile-header" onClick={() => ionRouter.push('/user/home')} style={{ cursor: 'pointer' }}>
               <div className="profile-avatar">👤</div>
               <div>
-                <p className="profile-name">{vendor?.fullName}</p>
-                <p className="profile-email">{vendor?.email}</p>
+                <p className="profile-name">{displayName}</p>
+                <p className="profile-email">{user?.email}</p>
               </div>
             </div>
             <div className="profile-divider" />
-            <button className="profile-menu-item" onClick={() => history.push('/vendor/settings')}>
+            <button className="profile-menu-item" onClick={() => ionRouter.push('/vendor/settings')}>
               <IonIcon icon={settingsOutline} />
               <span>Settings</span>
             </button>
@@ -145,8 +149,8 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children, pageTitle = 'Dash
           <div className="sidebar-header">
             <div className="store-logo">🏪</div>
             <div className="store-info">
-              <p className="store-name">{vendor?.businessName}</p>
-              <p className="store-category">{vendor?.storeCategory || 'Restaurant'}</p>
+              <p className="store-name">{displayName}'s Store</p>
+              <p className="store-category">Restaurant</p>
             </div>
           </div>
 
@@ -155,7 +159,7 @@ const VendorLayout: React.FC<VendorLayoutProps> = ({ children, pageTitle = 'Dash
               <button
                 key={item.path}
                 className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
-                onClick={() => history.push(item.path)}
+                onClick={() => ionRouter.push(item.path)}
               >
                 <IonIcon icon={item.icon} />
                 <span>{item.label}</span>

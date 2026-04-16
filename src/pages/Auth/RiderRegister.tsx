@@ -18,18 +18,18 @@ import {
   IonFooter,
 } from '@ionic/react';
 import { personOutline, mailOutline, lockClosedOutline, callOutline, eyeOutline, eyeOffOutline, carOutline, documentOutline, businessOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
 const RiderRegister: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { register, user } = useAuth();
   const { isDarkMode } = useTheme();
 
   // Redirect if already logged in
   if (user) {
-    history.replace(user.role === 'rider' ? '/rider/home' : '/user/home');
+    ionRouter.push(user.role === 'rider' ? '/rider/home' : '/user/home');
     return null;
   }
   const [formData, setFormData] = useState({
@@ -85,7 +85,7 @@ const RiderRegister: React.FC = () => {
         role: 'rider'
       });
       // Show pending verification message
-      history.push('/rider/pending-approval');
+      ionRouter.push('/rider/pending-approval');
     } catch (err) {
       setError('Registration failed');
     } finally {
@@ -312,7 +312,7 @@ const RiderRegister: React.FC = () => {
               Already have an account?{' '}
               <span 
                 style={{ color: '#6366F1', fontWeight: 700, cursor: 'pointer' }}
-                onClick={() => history.push('/rider/login')}
+                onClick={() => ionRouter.push('/rider/login')}
               >
                 Sign In
               </span>

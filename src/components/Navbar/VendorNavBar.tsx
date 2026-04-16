@@ -18,8 +18,8 @@ import {
   sunnyOutline,
   moonOutline,
 } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
-import { useVendorAuth } from '../../context/VendorAuthContext';
+import { useIonRouter } from '@ionic/react';
+import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useNotification } from '../../context/NotificationContext';
 import '../Navbar.css';
@@ -29,21 +29,24 @@ interface VendorNavBarProps {
 }
 
 const VendorNavBar: React.FC<VendorNavBarProps> = ({ title = 'Vendor Dashboard' }) => {
-  const history = useHistory();
-  const { vendor, vendorLogout } = useVendorAuth();
+  const ionRouter = useIonRouter();
+  const { user, role, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const { unreadCount } = useNotification();
   const [showUserMenu, setShowUserMenu] = useState(false);
 
+  const isVendor = role === 'vendor';
+  const displayName = user?.name || 'Vendor';
+
   const handleLogout = () => {
-    vendorLogout();
+    logout();
     setShowUserMenu(false);
-    history.push('/vendor/login');
+    ionRouter.push('/vendor/login');
   };
 
   const navigateTo = (path: string) => {
     setShowUserMenu(false);
-    history.push(path);
+    ionRouter.push(path);
   };
 
   return (
@@ -55,7 +58,7 @@ const VendorNavBar: React.FC<VendorNavBarProps> = ({ title = 'Vendor Dashboard' 
             className="navbar-logo-btn"
             onClick={(e) => {
               e.preventDefault();
-              history.push('/vendor/dashboard');
+              ionRouter.push('/vendor/dashboard');
             }}
             href="/vendor/dashboard"
           >
@@ -80,7 +83,7 @@ const VendorNavBar: React.FC<VendorNavBarProps> = ({ title = 'Vendor Dashboard' 
           {/* Messages */}
           <button 
             className="navbar-icon-btn"
-            onClick={() => history.push('/vendor/messages')}
+            onClick={() => ionRouter.push('/vendor/messages')}
             aria-label="Messages"
           >
             <IonIcon icon={chatbubbleOutline} />
@@ -114,8 +117,8 @@ const VendorNavBar: React.FC<VendorNavBarProps> = ({ title = 'Vendor Dashboard' 
                 <IonIcon icon={personCircleOutline} />
               </div>
               <div className="navbar-user-info">
-                <p className="navbar-user-name">{vendor?.fullName || 'Vendor'}</p>
-                <p className="navbar-user-email">{vendor?.businessName || ''}</p>
+                <p className="navbar-user-name">{displayName}</p>
+                <p className="navbar-user-email">{user?.email || ''}</p>
               </div>
             </div>
 

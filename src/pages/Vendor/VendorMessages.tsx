@@ -30,10 +30,11 @@ import {
   arrowBack,
   timeOutline,
 } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
-import VendorLayout from '../../layouts/VendorLayout';
-import { useVendorAuth } from '../../context/VendorAuthContext';
+import { useIonRouter } from '@ionic/react';
+import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
 
 interface ChatMessage {
   id: string;
@@ -58,13 +59,21 @@ interface VendorConversation {
   lastMessage: string;
   unreadCount: number;
   timestamp: Date;
-  status: 'pending' | 'accepted' | 'preparing' | 'ready' | 'picked_up' | 'delivered' | 'cancelled';
+  status: 'pending' | 'preparing' | 'ready_for_pickup' | 'completed' | 'cancelled' | 'rejected';
 }
 
 const VendorMessages: React.FC = () => {
-  const history = useHistory();
-  const { vendor } = useVendorAuth();
+  const ionRouter = useIonRouter();
+  const { getAuthUser, isRoleAuthenticated } = useAuth();
   const { sendMessage } = useNotification();
+
+  const isVendorAuthenticated = isRoleAuthenticated('vendor');
+  const currentVendor = getAuthUser('vendor');
+
+  if (!isVendorAuthenticated) {
+    ionRouter.push('/vendor/login');
+    return null;
+  }
 
   const [filterTab, setFilterTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -106,7 +115,7 @@ const VendorMessages: React.FC = () => {
       lastMessage: 'On my way to pick up the order',
       unreadCount: 0,
       timestamp: new Date(Date.now() - 5 * 60 * 1000),
-      status: 'ready',
+      status: 'ready_for_pickup',
     },
     {
       id: 'conv3',
@@ -121,7 +130,7 @@ const VendorMessages: React.FC = () => {
       lastMessage: 'Thank you for the order!',
       unreadCount: 0,
       timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      status: 'delivered',
+      status: 'completed',
     },
   ];
 
@@ -148,8 +157,8 @@ const VendorMessages: React.FC = () => {
           id: 'm1',
           content: 'Your order has been received!',
           senderRole: 'vendor',
-          senderId: vendor?.id || '',
-          senderName: vendor?.businessName || '',
+          senderId: currentVendor?.id || '',
+          senderName: currentVendor?.name || '',
           timestamp: new Date(Date.now() - 30 * 60 * 1000),
           status: 'seen',
         },
@@ -166,8 +175,8 @@ const VendorMessages: React.FC = () => {
           id: 'm3',
           content: 'About 20 minutes. We are preparing your burger right now.',
           senderRole: 'vendor',
-          senderId: vendor?.id || '',
-          senderName: vendor?.businessName || '',
+          senderId: currentVendor?.id || '',
+          senderName: currentVendor?.name || '',
           timestamp: new Date(Date.now() - 10 * 60 * 1000),
           status: 'sent',
         },
@@ -177,8 +186,8 @@ const VendorMessages: React.FC = () => {
           id: 'm1',
           content: 'Order is ready for pickup!',
           senderRole: 'vendor',
-          senderId: vendor?.id || '',
-          senderName: vendor?.businessName || '',
+          senderId: currentVendor?.id || '',
+          senderName: currentVendor?.name || '',
           timestamp: new Date(Date.now() - 8 * 60 * 1000),
           status: 'seen',
         },
@@ -197,8 +206,8 @@ const VendorMessages: React.FC = () => {
           id: 'm1',
           content: 'Your order has been delivered!',
           senderRole: 'vendor',
-          senderId: vendor?.id || '',
-          senderName: vendor?.businessName || '',
+          senderId: currentVendor?.id || '',
+          senderName: currentVendor?.name || '',
           timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
           status: 'seen',
         },
@@ -213,7 +222,7 @@ const VendorMessages: React.FC = () => {
         },
       ],
     });
-  }, [vendor]);
+  }, [currentVendor]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -251,15 +260,15 @@ const VendorMessages: React.FC = () => {
     switch (status) {
       case 'pending':
         return '#F59E0B';
-      case 'accepted':
       case 'preparing':
         return '#3B82F6';
-      case 'ready':
-      case 'picked_up':
+      case 'ready_for_pickup':
         return '#10B981';
-      case 'delivered':
+      case 'completed':
         return '#10B981';
       case 'cancelled':
+        return '#EF4444';
+      case 'rejected':
         return '#EF4444';
       default:
         return '#6366F1';
@@ -274,8 +283,8 @@ const VendorMessages: React.FC = () => {
       id: messageId,
       content: newMessage,
       senderRole: 'vendor',
-      senderId: vendor?.id || '',
-      senderName: vendor?.businessName || '',
+      senderId: currentVendor?.id || '',
+      senderName: currentVendor?.name || '',
       timestamp: new Date(),
       status: 'sending',
     };
@@ -286,7 +295,7 @@ const VendorMessages: React.FC = () => {
     }));
 
     sendMessage({
-      senderId: vendor?.id || '',
+      senderId: currentVendor?.id || '',
       senderRole: 'vendor',
       receiverId: selectedConversation.otherPerson.id,
       orderId: selectedConversation.orderId,
@@ -314,16 +323,15 @@ const VendorMessages: React.FC = () => {
           m.id === messageId ? { ...m, status: 'seen' } : m
         ),
       }));
-    }, 1800);
+}, 1800);
   };
 
   return (
-    <VendorLayout pageTitle="Messages">
-      <IonPage>
-        <IonContent>
-          {/* Header */}
-          <div style={{ padding: '16px', borderBottom: '1px solid var(--ion-border-color)' }}>
-            <h2 style={{ margin: '0 0 16px', fontSize: '24px', fontWeight: 700 }}>Messages</h2>
+    <IonPage>
+      <IonContent className="ion-page-with-bottom-nav">
+        <LogoHeader />
+        <div className="mobile-container">
+          <h1 className="section-title">Messages</h1>
             <IonSearchbar
               value={searchQuery}
               onIonInput={(e) => setSearchQuery(e.detail.value ?? '')}
@@ -456,9 +464,8 @@ const VendorMessages: React.FC = () => {
               ))
             )}
           </div>
-        </IonContent>
 
-        {/* Chat Modal */}
+          {/* Chat Modal */}
         <IonModal isOpen={showChat} onDidDismiss={() => setShowChat(false)}>
           <IonHeader translucent>
             <IonToolbar>
@@ -574,8 +581,9 @@ const VendorMessages: React.FC = () => {
             </div>
           </div>
         </IonModal>
-      </IonPage>
-    </VendorLayout>
+      </IonContent>
+      <BottomNav type="vendor" activeTab="settings" />
+    </IonPage>
   );
 };
 

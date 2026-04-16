@@ -81,7 +81,7 @@ export interface Order {
   total: number;
   deliveryFee: number;
   stallName: string;
-  status: 'pending' | 'accepted' | 'rejected' | 'preparing' | 'ready_for_pickup' | 'rider_accepted' | 'delivering' | 'delivered' | 'cancelled';
+  status: 'pending' | 'preparing' | 'ready_for_pickup' | 'completed' | 'rejected' | 'cancelled';
   customerName: string;
   customerPhone: string;
   deliveryAddress: string;
@@ -89,7 +89,7 @@ export interface Order {
   acceptedAt?: Date;
   readyAt?: Date;
   pickedUpAt?: Date;
-  deliveredAt?: Date;
+  completedAt?: Date;
   estimatedDeliveryTime?: string;
   notes?: string;
 }

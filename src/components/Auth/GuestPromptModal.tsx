@@ -10,7 +10,7 @@ import {
   IonToolbar,
 } from '@ionic/react';
 import { personAddOutline, logInOutline, closeOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useTheme } from '../../context/ThemeContext';
 
 interface GuestPromptModalProps {
@@ -20,17 +20,17 @@ interface GuestPromptModalProps {
 }
 
 const GuestPromptModal: React.FC<GuestPromptModalProps> = ({ isOpen, onClose, onContinue }) => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { isDarkMode } = useTheme();
 
   const handleRegister = () => {
     onClose();
-    history.push('/register');
+    ionRouter.push('/register');
   };
 
   const handleLogin = () => {
     onClose();
-    history.push('/login');
+    ionRouter.push('/login');
   };
 
   return (

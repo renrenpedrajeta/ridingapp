@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import {
   IonHeader,
   IonToolbar,
@@ -35,7 +36,7 @@ interface UserLayoutProps {
 }
 
 const UserLayout: React.FC<UserLayoutProps> = ({ children, pageTitle = 'Home' }) => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const location = useLocation();
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
@@ -54,8 +55,8 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children, pageTitle = 'Home' })
   ];
 
   const handleLogout = () => {
-    logout();
-    history.push('/login');
+    logout('user');
+    ionRouter.push('/login');
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -148,11 +149,11 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children, pageTitle = 'Home' })
               </div>
             </div>
             <div className="profile-divider" />
-            <button className="profile-menu-item" onClick={() => history.push('/user/profile')}>
+            <button className="profile-menu-item" onClick={() => ionRouter.push('/user/profile')}>
               <IonIcon icon={personCircleOutline} />
               <span>Profile</span>
             </button>
-            <button className="profile-menu-item" onClick={() => history.push('/user/settings')}>
+            <button className="profile-menu-item" onClick={() => ionRouter.push('/user/settings')}>
               <IonIcon icon={settingsOutline} />
               <span>Settings</span>
             </button>
@@ -180,7 +181,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children, pageTitle = 'Home' })
               <button
                 key={item.path}
                 className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
-                onClick={() => history.push(item.path)}
+                onClick={() => ionRouter.push(item.path)}
               >
                 <IonIcon icon={item.icon} />
                 <span>{item.label}</span>

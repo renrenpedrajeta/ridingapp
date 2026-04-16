@@ -26,7 +26,7 @@ import {
   arrowBack,
   close,
 } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import LogoHeader from '../../components/LogoHeader';
 import BottomNav from '../../components/BottomNav';
 import { useAuth } from '../../context/AuthContext';
@@ -59,7 +59,7 @@ interface Conversation {
 }
 
 const Messages: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { user, logout } = useAuth();
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -229,7 +229,7 @@ const Messages: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={() => history.goBack()}>
+            <IonButton onClick={() => ionRouter.goBack()}>
               <IonIcon slot="icon-only" icon={arrowBack} />
             </IonButton>
           </IonButtons>

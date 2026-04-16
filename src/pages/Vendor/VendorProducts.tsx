@@ -17,6 +17,7 @@ import {
   IonToolbar,
   IonTitle,
   IonButtons,
+  IonPage,
 } from '@ionic/react';
 import {
   addOutline,
@@ -25,10 +26,14 @@ import {
   closeOutline,
   checkmarkOutline,
   imageOutline,
+  addCircleOutline,
+  removeCircleOutline,
+  checkmarkCircleOutline,
+  closeCircleOutline,
 } from 'ionicons/icons';
 import { useTheme } from '../../context/ThemeContext';
 import { useVendorAuth } from '../../context/VendorAuthContext';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import VendorLayout from '../../layouts/VendorLayout';
 import './VendorProducts.css';
 
@@ -52,7 +57,7 @@ const MOCK_PRODUCTS: Product[] = [
     price: 12.99,
     description: 'Classic pizza with cheese and tomato',
     stock: 25,
-    image: '🍕',
+    image: '',
     available: true,
   },
   {
@@ -62,7 +67,7 @@ const MOCK_PRODUCTS: Product[] = [
     price: 14.99,
     description: 'Pizza with pepperoni and mozzarella',
     stock: 18,
-    image: '🍕',
+    image: '',
     available: true,
   },
   {
@@ -72,7 +77,7 @@ const MOCK_PRODUCTS: Product[] = [
     price: 8.99,
     description: 'Fresh lettuce with parmesan and croutons',
     stock: 15,
-    image: '🥗',
+    image: '',
     available: true,
   },
   {
@@ -82,7 +87,7 @@ const MOCK_PRODUCTS: Product[] = [
     price: 2.99,
     description: 'Cold refreshing soda',
     stock: 50,
-    image: '🥤',
+    image: '',
     available: true,
   },
   {
@@ -92,7 +97,7 @@ const MOCK_PRODUCTS: Product[] = [
     price: 10.99,
     description: 'Juicy grilled chicken burger with sauce',
     stock: 0,
-    image: '🍔',
+    image: '',
     available: false,
   },
   {
@@ -102,7 +107,7 @@ const MOCK_PRODUCTS: Product[] = [
     price: 4.99,
     description: 'Golden crispy french fries',
     stock: 30,
-    image: '🍟',
+    image: '',
     available: true,
   },
 ];
@@ -120,12 +125,12 @@ interface FormData {
 }
 
 const VendorProducts: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { isDarkMode } = useTheme();
   const { isVendorLoggedIn } = useVendorAuth();
 
   if (!isVendorLoggedIn) {
-    history.replace('/vendor/login');
+    ionRouter.push('/vendor/login');
     return null;
   }
 
@@ -133,13 +138,21 @@ const VendorProducts: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [bulkEditId, setBulkEditId] = useState<string | null>(null);
+  const [pendingStockChange, setPendingStockChange] = useState<{
+    productId: string;
+    currentStock: number;
+    newStock: number;
+    operation: 'add' | 'reduce';
+  } | null>(null);
+  const [showStockConfirmModal, setShowStockConfirmModal] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     name: '',
     category: 'Pizza',
     price: '',
     description: '',
     stock: '',
-    image: '🍕',
+    image: '',
     available: true,
   });
 
@@ -150,7 +163,7 @@ const VendorProducts: React.FC = () => {
       price: '',
       description: '',
       stock: '',
-      image: '🍕',
+      image: '',
       available: true,
     });
     setEditingId(null);
@@ -224,10 +237,49 @@ const VendorProducts: React.FC = () => {
     }
   };
 
+  const handleStockChange = (productId: string, operation: 'add' | 'reduce') => {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const newStock = operation === 'add' ? product.stock + 1 : product.stock - 1;
+    
+    if (newStock < 0) {
+      alert('Stock cannot be negative');
+      return;
+    }
+
+    setPendingStockChange({
+      productId,
+      currentStock: product.stock,
+      newStock,
+      operation
+    });
+    setShowStockConfirmModal(true);
+  };
+
+  const confirmStockUpdate = () => {
+    if (!pendingStockChange) return;
+
+    setProducts(products.map(p => 
+      p.id === pendingStockChange.productId
+        ? { ...p, stock: pendingStockChange.newStock }
+        : p
+    ));
+
+    setShowStockConfirmModal(false);
+    setPendingStockChange(null);
+  };
+
+  const cancelStockUpdate = () => {
+    setShowStockConfirmModal(false);
+    setPendingStockChange(null);
+  };
+
   return (
-    <VendorLayout pageTitle="Products Management">
-      <IonContent>
-        <div className="products-page">
+    <IonPage>
+      <VendorLayout pageTitle="Products Management">
+        <IonContent>
+          <div className="products-page">
           <div className="page-header">
             <h1>Products Management</h1>
             <IonText className="page-subtitle">Manage your menu items and inventory</IonText>
@@ -268,9 +320,24 @@ const VendorProducts: React.FC = () => {
                         <span className="detail-label">Price</span>
                         <span className="detail-value">${product.price.toFixed(2)}</span>
                       </div>
-                      <div className="detail">
+                      <div className="detail stock-detail">
                         <span className="detail-label">Stock</span>
-                        <span className="detail-value">{product.stock}</span>
+                        <div className="stock-controls">
+                          <button 
+                            className="stock-btn stock-reduce"
+                            onClick={() => handleStockChange(product.id, 'reduce')}
+                            disabled={product.stock <= 0}
+                          >
+                            <IonIcon icon={removeCircleOutline} />
+                          </button>
+                          <span className="stock-value">{product.stock}</span>
+                          <button 
+                            className="stock-btn stock-add"
+                            onClick={() => handleStockChange(product.id, 'add')}
+                          >
+                            <IonIcon icon={addCircleOutline} />
+                          </button>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -415,7 +482,7 @@ const VendorProducts: React.FC = () => {
                       <img src={formData.image} alt="Product preview" style={{ width: '100%', maxHeight: '200px', borderRadius: '8px', marginBottom: '12px', objectFit: 'cover' }} />
                     </div>
                   )}
-                  {formData.image && !formData.image.startsWith('http') && formData.image !== '🍕' && (
+                  {formData.image && !formData.image.startsWith('http') && formData.image.startsWith('data:') && (
                     <div className="image-preview">
                       <img src={formData.image} alt="Product preview" style={{ width: '100%', maxHeight: '200px', borderRadius: '8px', marginBottom: '12px', objectFit: 'cover' }} />
                     </div>
@@ -483,8 +550,68 @@ const VendorProducts: React.FC = () => {
             </div>
           </IonContent>
         </IonModal>
-      </IonContent>
-    </VendorLayout>
+
+        {/* Stock Change Confirmation Modal */}
+        <IonModal
+          isOpen={showStockConfirmModal}
+          onDidDismiss={cancelStockUpdate}
+          className="stock-confirm-modal"
+        >
+          <IonHeader>
+            <IonToolbar>
+              <IonTitle>Confirm Stock Change</IonTitle>
+            </IonToolbar>
+          </IonHeader>
+          <IonContent>
+            <div className="stock-confirm-content">
+              <div className="stock-change-icon">
+                <IonIcon 
+                  icon={pendingStockChange?.operation === 'add' ? addCircleOutline : removeCircleOutline} 
+                  className={pendingStockChange?.operation === 'add' ? 'icon-add' : 'icon-reduce'}
+                />
+              </div>
+              <h2>Stock Update</h2>
+              <div className="stock-change-details">
+                <p className="current-stock">
+                  Current Stock: <strong>{pendingStockChange?.currentStock}</strong>
+                </p>
+                <p className="arrow">→</p>
+                <p className="new-stock">
+                  New Stock: <strong>{pendingStockChange?.newStock}</strong>
+                </p>
+              </div>
+              <p className="stock-change-message">
+                {pendingStockChange?.operation === 'add' 
+                  ? `Add 1 unit to ${products.find(p => p.id === pendingStockChange?.productId)?.name}?`
+                  : `Reduce 1 unit from ${products.find(p => p.id === pendingStockChange?.productId)?.name}?`
+                }
+              </p>
+              <div className="stock-confirm-actions">
+                <IonButton 
+                  expand="block" 
+                  color="success" 
+                  fill="solid"
+                  onClick={confirmStockUpdate}
+                >
+                  <IonIcon icon={checkmarkCircleOutline} slot="start" />
+                  Confirm
+                </IonButton>
+                <IonButton 
+                  expand="block" 
+                  color="medium" 
+                  fill="solid"
+                  onClick={cancelStockUpdate}
+                >
+                  <IonIcon icon={closeCircleOutline} slot="start" />
+                  Cancel
+                </IonButton>
+              </div>
+            </div>
+          </IonContent>
+        </IonModal>
+        </IonContent>
+      </VendorLayout>
+    </IonPage>
   );
 };
 

@@ -1,6 +1,7 @@
 // src/pages/Vendor/VendorEarnings.tsx
 import React, { useState } from 'react';
 import {
+  IonPage,
   IonContent,
   IonCard,
   IonCardContent,
@@ -26,9 +27,10 @@ import {
   closeOutline,
 } from 'ionicons/icons';
 import { useTheme } from '../../context/ThemeContext';
-import { useVendorAuth } from '../../context/VendorAuthContext';
-import { useHistory } from 'react-router-dom';
-import VendorLayout from '../../layouts/VendorLayout';
+import { useAuth } from '../../context/AuthContext';
+import { useIonRouter } from '@ionic/react';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
 import './VendorEarnings.css';
 
 interface Transaction {
@@ -115,12 +117,14 @@ interface WithdrawalForm {
 }
 
 const VendorEarnings: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { isDarkMode } = useTheme();
-  const { isVendorLoggedIn } = useVendorAuth();
+  const { isRoleAuthenticated } = useAuth();
 
-  if (!isVendorLoggedIn) {
-    history.replace('/vendor/login');
+  const isVendorAuthenticated = isRoleAuthenticated('vendor');
+
+  if (!isVendorAuthenticated) {
+    ionRouter.push('/vendor/login');
     return null;
   }
 
@@ -219,13 +223,12 @@ const VendorEarnings: React.FC = () => {
   };
 
   return (
-    <VendorLayout pageTitle="Earnings & Payments">
-      <IonContent>
-        <div className="earnings-page">
-          <div className="page-header">
-            <h1>Earnings & Payments</h1>
-            <IonText className="page-subtitle">Manage your finances and withdrawal requests</IonText>
-          </div>
+    <IonPage>
+      <IonContent className="ion-page-with-bottom-nav">
+        <LogoHeader />
+        <div className="mobile-container">
+          <h1 className="section-title">Earnings</h1>
+          <p style={{ color: 'var(--ion-text-color-secondary)', marginBottom: '16px' }}>Manage your finances and withdrawal requests</p>
 
           {/* Finance Cards */}
           <div className="finance-cards-grid">
@@ -492,7 +495,8 @@ const VendorEarnings: React.FC = () => {
           position="top"
         />
       </IonContent>
-    </VendorLayout>
+      <BottomNav type="vendor" activeTab="settings" />
+    </IonPage>
   );
 };
 

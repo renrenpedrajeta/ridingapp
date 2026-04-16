@@ -29,7 +29,7 @@ import {
   arrowBack,
   close,
 } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import UserNavBar from '../../components/Navbar/UserNavBar';
 import { useAuth } from '../../context/AuthContext';
 import { useNotification } from '../../context/NotificationContext';
@@ -65,7 +65,7 @@ interface Conversation {
 }
 
 const EnhancedMessages: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { user, logout } = useAuth();
   const { sendMessage, getMessages } = useNotification();
 
@@ -378,7 +378,7 @@ const EnhancedMessages: React.FC = () => {
 
       <IonContent>
         <div className="messages-header">
-          <IonButton fill="clear" onClick={() => history.goBack()}>
+          <IonButton fill="clear" onClick={() => ionRouter.goBack()}>
             <IonIcon icon={arrowBack} />
           </IonButton>
           <h2>Messages</h2>

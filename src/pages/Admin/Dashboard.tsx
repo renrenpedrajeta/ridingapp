@@ -18,17 +18,21 @@ import {
   IonBadge,
 } from '@ionic/react';
 import { peopleOutline, bicycleOutline, cartOutline, trendingUpOutline, warningOutline, settingsOutline, logOutOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
-import AdminNavBar from '../../components/Navbar/AdminNavBar';
+import { useIonRouter } from '@ionic/react';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
+import StatCard from '../../components/StatCard';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminDashboard: React.FC = () => {
-  const history = useHistory();
-  const { user, logout } = useAuth();
+  const ionRouter = useIonRouter();
+  const { getAuthUser, logout } = useAuth();
+
+  const currentAdmin = getAuthUser('admin');
 
   // Protect this page - redirect if not admin
-  if (!user || user.role !== 'admin') {
-    history.replace('/login');
+  if (!currentAdmin) {
+    ionRouter.push('/admin/login');
     return null;
   }
   const [showActivityDetails, setShowActivityDetails] = useState(false);
@@ -50,104 +54,53 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <IonPage>
-      <AdminNavBar title="Dashboard" />
-
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
-        {/* Admin Navigation */}
-        <div className="nav-tabs">
-          <IonButton
-            expand="block"
-            style={{
-              '--background': '#6366F1',
-              '--color': '#FFFFFF',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '90px'
-            }}
-          >
-            📊 Dashboard
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-            onClick={() => history.push('/admin/users')}
-          >
-            👥 Users
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '90px'
-            }}
-            onClick={() => history.push('/admin/riders')}
-          >
-            🚴 Riders
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-            onClick={() => history.push('/admin/orders')}
-          >
-            📦 Orders
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-            onClick={() => history.push('/admin/reports')}
-          >
-            ⚠️ Reports
-          </IonButton>
-        </div>
-
+      <IonContent className="ion-page-with-bottom-nav">
+        <LogoHeader />
+        
         {/* Welcome Section */}
-        <div style={{ padding: '24px 16px' }}>
-          <h1 style={{ margin: 0, fontSize: '28px', fontWeight: 700, color: 'var(--ion-text-color)' }}>
+        <div className="mobile-container">
+          <h1 className="section-title" style={{ fontSize: '24px', margin: 0 }}>
             Admin Dashboard
           </h1>
-          <p style={{ margin: '4px 0 0', color: 'var(--ion-text-color-secondary)' }}>
+          <p style={{ color: 'var(--ion-text-color-secondary)', marginTop: '4px' }}>
             Welcome back, Administrator
           </p>
         </div>
 
-        {/* Quick Stats */}
-        <div className="responsive-stats-grid" style={{ padding: '0 16px 16px' }}>
+{/* Quick Stats */}
+        <div className="mobile-container">
+          <div className="responsive-grid-2" style={{ gap: '12px' }}>
+            <StatCard 
+              icon="👥" 
+              label="Total Users" 
+              value={stats.totalUsers.toLocaleString()} 
+              color="#6366F1"
+              trend="+12 this month"
+            />
+            <StatCard 
+              icon="🚴" 
+              label="Total Riders" 
+              value={stats.totalRiders} 
+              color="#F59E0B"
+            />
+            <StatCard 
+              icon="📦" 
+              label="Total Orders" 
+              value={stats.totalOrders.toLocaleString()} 
+              color="#10B981"
+            />
+            <StatCard 
+              icon="💰" 
+              label="Revenue" 
+              value={`₱${stats.totalRevenue.toLocaleString()}`} 
+              color="#EC4899"
+            />
+          </div>
+        </div>
+
+        {/* Quick Access */}
+        <div className="mobile-container" style={{ marginTop: '16px' }}>
+          <h2 className="section-title">Quick Actions</h2>
           <div className="responsive-grid-2" style={{ gap: '12px' }}>
             {/* Total Users */}
             <IonCard 
@@ -258,7 +211,7 @@ const AdminDashboard: React.FC = () => {
             {/* Pending Reports */}
             <IonCard 
               style={{ margin: 0, background: 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)', cursor: 'pointer' }}
-              onClick={() => history.push('/admin/reports')}
+              onClick={() => ionRouter.push('/admin/reports')}
             >
               <IonCardContent style={{ padding: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
@@ -295,7 +248,7 @@ const AdminDashboard: React.FC = () => {
               fill="clear" 
               size="small"
               style={{ '--color': '#6366F1', margin: 0, height: '24px' } as any}
-              onClick={() => history.push('/activities')}
+              onClick={() => ionRouter.push('/activities')}
             >
               See All
             </IonButton>
@@ -351,7 +304,7 @@ const AdminDashboard: React.FC = () => {
             <IonButton 
               expand="block"
               style={{ '--background': '#6366F1', margin: 0 }}
-              onClick={() => history.push('/admin/users')}
+              onClick={() => ionRouter.push('/admin/users')}
             >
               <IonIcon slot="start" icon={peopleOutline} />
               Manage Users
@@ -359,7 +312,7 @@ const AdminDashboard: React.FC = () => {
             <IonButton 
               expand="block"
               style={{ '--background': '#F59E0B', margin: 0 }}
-              onClick={() => history.push('/admin/riders')}
+              onClick={() => ionRouter.push('/admin/riders')}
             >
               <IonIcon slot="start" icon={bicycleOutline} />
               Manage Riders
@@ -414,6 +367,7 @@ const AdminDashboard: React.FC = () => {
           )}
         </IonContent>
       </IonModal>
+      <BottomNav type="admin" activeTab="home" />
     </IonPage>
   );
 };

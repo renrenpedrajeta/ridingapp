@@ -64,3 +64,86 @@ http://ionicframework.com/docs/theming/ */
   --ion-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
+/* ==================== SELECT DROPDOWN FIX ==================== */
+/* Fix for IonSelect options visibility in modal/popover */
+ion-select-option {
+  color: var(--ion-text-color) !important;
+  --ion-item-color: var(--ion-text-color);
+  --color: var(--ion-text-color) !important;
+  --ion-text-color: var(--ion-text-color) !important;
+}
+
+ion-select-option.md {
+  color: var(--ion-text-color) !important;
+  --color: var(--ion-text-color) !important;
+}
+
+/* Fix for select popover/modal text color */
+.select-popover,
+.select-bottom {
+  --ion-text-color: var(--ion-text-color) !important;
+  --ion-background-color: var(--ion-item-background) !important;
+}
+
+.select-popover .alert-radio-label,
+.select-bottom .alert-radio-label {
+  color: var(--ion-text-color) !important;
+}
+
+.select-popover ion-label,
+.select-bottom ion-label {
+  color: var(--ion-text-color) !important;
+}
+
+/* Fix for alert items in select modal */
+.alert.select-alert {
+  --ion-background-color: var(--ion-item-background) !important;
+  --ion-text-color: var(--ion-text-color) !important;
+}
+
+.alert.select-alert .alert-radio,
+.alert.select-alert .alert-checkbox {
+  --ion-background-color: var(--ion-item-background) !important;
+}
+
+.alert.select-alert .alert-radio-label,
+.alert.select-alert .alert-checkbox-label {
+  color: var(--ion-text-color) !important;
+}
+
+.alert.select-alert .alert-title,
+.alert.select-alert .alert-sub-title {
+  color: var(--ion-text-color) !important;
+}
+
+/* Fix for all ion-label in alerts */
+.alert ion-label {
+  color: var(--ion-text-color) !important;
+}
+
+/* iOS alert specific fixes */
+.alert {
+  --ion-background-color: var(--ion-item-background) !important;
+  --ion-text-color: var(--ion-text-color) !important;
+  --background: var(--ion-item-background) !important;
+  --color: var(--ion-text-color) !important;
+}
+
+.alert .alert-wrapper {
+  background-color: var(--ion-item-background) !important;
+}
+
+.alert .alert-radio-group .alert-radio-label,
+.alert .alert-checkbox-group .alert-checkbox-label {
+  color: var(--ion-text-color) !important;
+}
+
+.alert .alert-head .alert-title,
+.alert .alert-head .alert-sub-title {
+  color: var(--ion-text-color) !important;
+}
+
+.alert .alert-button {
+  color: var(--ion-color-primary);
+}
+

@@ -17,18 +17,19 @@ import {
   IonFooter,
 } from '@ionic/react';
 import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useAppNavigate } from '../../context/useAppNavigate';
 
 const Login: React.FC = () => {
-  const history = useHistory();
-  const { login, user } = useAuth();
+  const { navigate } = useAppNavigate();
+  const { login, isRoleAuthenticated } = useAuth();
   const { isDarkMode } = useTheme();
 
-  // Redirect if already logged in
-  if (user) {
-    history.replace('/user/home');
+  const isUserAuthenticated = isRoleAuthenticated('user');
+
+  if (isUserAuthenticated) {
+    navigate('/user/home');
     return null;
   }
   const [email, setEmail] = useState('');
@@ -46,7 +47,7 @@ const Login: React.FC = () => {
     setLoading(true);
     try {
       await login(email, password);
-      history.replace('/user/home');
+      navigate('/user/home');
     } catch (err) {
       setError('Invalid credentials');
     } finally {
@@ -147,7 +148,7 @@ const Login: React.FC = () => {
               Don't have an account?{' '}
               <span 
                 style={{ color: '#6366F1', fontWeight: 700, cursor: 'pointer' }}
-                onClick={() => history.push('/register')}
+                onClick={() => navigate('/register')}
               >
                 Sign Up
               </span>

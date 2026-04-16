@@ -7,7 +7,7 @@ import {
   IonIcon,
 } from '@ionic/react';
 import { personOutline, mailOutline, callOutline, logOutOutline, settingsOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useTheme } from '../../context/ThemeContext';
 import BottomNav from '../../components/BottomNav';
 import LogoHeader from '../../components/LogoHeader';
@@ -16,22 +16,24 @@ import '../../styles/mobile-first-responsive.css';
 
 const UserProfile: React.FC = () => {
   const { isDarkMode } = useTheme();
-  const { user, logout } = useAuth();
-  const history = useHistory();
+  const { getAuthUser, logout } = useAuth();
+  const ionRouter = useIonRouter();
+
+  const currentUser = getAuthUser('user');
 
   // Protect this page - redirect if not logged in
-  if (!user || (user.role !== 'user' && user.role !== 'rider')) {
-    history.replace('/login');
+  if (!currentUser) {
+    ionRouter.push('/login');
     return null;
   }
   const [profile, setProfile] = useState({
-    name: 'John Doe',
-    email: 'john@example.com',
-    phone: '+63 912 123 4567'
+    name: currentUser.name || 'User',
+    email: currentUser.email || 'user@example.com',
+    phone: currentUser.phone || '+63 912 123 4567'
   });
 
   const handleLogout = () => {
-    logout();
+    logout('user');
   };
 
   return (
@@ -160,7 +162,7 @@ const UserProfile: React.FC = () => {
           {/* Quick Access Menu */}
           <div className="quick-access-mobile" style={{marginBottom: '12px'}}>
             <div 
-              onClick={() => history.push('/activities')}
+              onClick={() => ionRouter.push('/activities')}
               style={{
                 padding: '8px 6px',
                 background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)',
@@ -179,7 +181,7 @@ const UserProfile: React.FC = () => {
               <p style={{ margin: 0, fontSize: '9px', fontWeight: 600 }}>Activity</p>
             </div>
             <div 
-              onClick={() => history.push('/messages')}
+              onClick={() => ionRouter.push('/messages')}
               style={{
                 padding: '8px 6px',
                 background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)',
@@ -198,7 +200,7 @@ const UserProfile: React.FC = () => {
               <p style={{ margin: 0, fontSize: '9px', fontWeight: 600 }}>Messages</p>
             </div>
             <div 
-              onClick={() => history.push('/report')}
+              onClick={() => ionRouter.push('/report')}
               style={{
                 padding: '8px 6px',
                 background: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
@@ -229,7 +231,7 @@ const UserProfile: React.FC = () => {
                 fontSize: '13px',
                 fontWeight: 600
               }}
-              onClick={() => history.push('/user/settings')}
+              onClick={() => ionRouter.push('/user/settings')}
             >
               <IonIcon icon={settingsOutline} slot="start" />
               Settings
@@ -244,7 +246,7 @@ const UserProfile: React.FC = () => {
                 fontSize: '13px',
                 fontWeight: 600
               }}
-              onClick={() => {logout(); history.push('/login');}}
+              onClick={() => {logout('user'); ionRouter.push('/login');}}
             >
               <IonIcon icon={logOutOutline} slot="start" />
               Sign Out

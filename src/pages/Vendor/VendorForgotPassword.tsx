@@ -14,15 +14,15 @@ import {
   IonLoading,
 } from '@ionic/react';
 import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
-import { useVendorAuth } from '../../context/VendorAuthContext';
+import { useIonRouter } from '@ionic/react';
+import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
 type ForgotPasswordStep = 'email' | 'verify' | 'reset' | 'success';
 
 const VendorForgotPassword: React.FC = () => {
-  const history = useHistory();
-  const { resetPassword } = useVendorAuth();
+  const ionRouter = useIonRouter();
+  const { resetPassword } = useAuth();
   const { isDarkMode } = useTheme();
 
   const [step, setStep] = useState<ForgotPasswordStep>('email');
@@ -49,8 +49,9 @@ const VendorForgotPassword: React.FC = () => {
       setStep('verify');
       setSuccessMessage('If this email exists, you will receive a verification code');
       setTimeout(() => setSuccessMessage(''), 3000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'An error occurred';
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -93,15 +94,16 @@ const VendorForgotPassword: React.FC = () => {
       // Simulate password reset
       await new Promise(resolve => setTimeout(resolve, 1000));
       setStep('success');
-    } catch (err: any) {
-      setError(err.message || 'Failed to reset password');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to reset password';
+      setError(message);
     } finally {
       setLoading(false);
     }
   };
 
   const handleBackToLogin = () => {
-    history.push('/vendor/login');
+    ionRouter.push('/vendor/login');
   };
 
   return (

@@ -11,7 +11,7 @@ import {
   IonTitle,
 } from '@ionic/react';
 import { locationOutline, bicycleOutline, cardOutline, arrowBack } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import CartItem from '../../components/Cart/CartItem';
 import LogoHeader from '../../components/LogoHeader';
 import { useCart } from '../../context/CartContext';
@@ -19,13 +19,15 @@ import { useAuth } from '../../context/AuthContext';
 import '../../styles/mobile-first-responsive.css';
 
 const UserCart: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { items, updateQuantity, removeFromCart, total } = useCart();
-  const { user } = useAuth();
+  const { getAuthUser } = useAuth();
+
+  const currentUser = getAuthUser('user');
 
   // Protect this page - redirect if not logged in
-  if (!user || (user.role !== 'user' && user.role !== 'rider')) {
-    history.replace('/login');
+  if (!currentUser) {
+    ionRouter.push('/login');
     return null;
   }
 
@@ -34,7 +36,7 @@ const UserCart: React.FC = () => {
   const finalTotal = total + deliveryFee + serviceFee;
 
   const handleCheckout = () => {
-    history.push('/checkout/payment');
+    ionRouter.push('/checkout/payment');
   };
 
   return (
@@ -42,7 +44,7 @@ const UserCart: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={() => history.goBack()}>
+            <IonButton onClick={() => ionRouter.goBack()}>
               <IonIcon slot="icon-only" icon={arrowBack} />
             </IonButton>
           </IonButtons>
@@ -68,7 +70,7 @@ const UserCart: React.FC = () => {
                 '--border-radius': '6px',
                 marginTop: '8px'
               }}
-              onClick={() => history.push('/user/home')}
+              onClick={() => ionRouter.push('/user/home')}
             >
               Browse Stalls
             </IonButton>
@@ -90,7 +92,7 @@ const UserCart: React.FC = () => {
                 <p style={{ margin: '0 0 4px', fontSize: '12px', color: 'var(--ion-text-color-secondary)' }}>Deliver to</p>
                 <p style={{ margin: 0, fontWeight: 600, color: 'var(--ion-text-color)', fontSize: '14px' }}>Current Location</p>
               </div>
-              <IonButton fill="clear" size="small" style={{ '--color': '#6366F1', fontSize: '12px' }} onClick={() => history.push('/user/location')}>
+              <IonButton fill="clear" size="small" style={{ '--color': '#6366F1', fontSize: '12px' }} onClick={() => ionRouter.push('/user/location')}>
                 Change
               </IonButton>
             </div>

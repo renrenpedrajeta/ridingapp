@@ -11,18 +11,20 @@ import {
   IonToggle,
 } from '@ionic/react';
 import { mapOutline, cashOutline, checkmarkCircleOutline, navigateOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import BottomNav from '../../components/BottomNav';
 import LogoHeader from '../../components/LogoHeader';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/mobile-first-responsive.css';
 
 const RiderHome: React.FC = () => {
-  const history = useHistory();
-  const { user } = useAuth();
+  const ionRouter = useIonRouter();
+  const { getAuthUser } = useAuth();
 
-  if (!user || user.role !== 'rider') {
-    history.replace('/rider/login');
+  const currentRider = getAuthUser('rider');
+
+  if (!currentRider) {
+    ionRouter.push('/rider/login');
     return null;
   }
   const [isAvailable, setIsAvailable] = useState(false);
@@ -70,7 +72,7 @@ const RiderHome: React.FC = () => {
         <div className="mobile-container">
           <div className="quick-access-grid">
             <div 
-              onClick={() => history.push('/activities')}
+              onClick={() => ionRouter.push('/activities')}
               className="quick-access-item"
               style={{ background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)' }}
             >
@@ -78,7 +80,7 @@ const RiderHome: React.FC = () => {
               <span className="quick-access-label">Activity</span>
             </div>
             <div 
-              onClick={() => history.push('/messages')}
+              onClick={() => ionRouter.push('/messages')}
               className="quick-access-item"
               style={{ background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)' }}
             >
@@ -214,7 +216,7 @@ const RiderHome: React.FC = () => {
                       expand="block"
                       className="mobile-button"
                       style={{ '--background': '#F59E0B', margin: 0 }}
-                      onClick={() => history.push(`/rider/orders/${order.id}`)}
+                      onClick={() => ionRouter.push(`/rider/orders/${order.id}`)}
                     >
                       Accept Order
                     </IonButton>

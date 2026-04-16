@@ -17,18 +17,20 @@ import {
   IonFooter,
 } from '@ionic/react';
 import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
 const AdminLogin: React.FC = () => {
-  const history = useHistory();
-  const { login, user } = useAuth();
+  const ionRouter = useIonRouter();
+  const { login, isRoleAuthenticated } = useAuth();
   const { isDarkMode } = useTheme();
 
-  // Redirect if already logged in
-  if (user) {
-    history.replace(user.role === 'admin' ? '/admin/dashboard' : '/user/home');
+  const isAdminAuthenticated = isRoleAuthenticated('admin');
+
+  // Redirect if already logged in as admin
+  if (isAdminAuthenticated) {
+    ionRouter.push('/admin/dashboard');
     return null;
   }
   const [email, setEmail] = useState('');
@@ -46,7 +48,7 @@ const AdminLogin: React.FC = () => {
     setLoading(true);
     try {
       await login(email, password);
-      history.push('/admin/dashboard');
+      ionRouter.push('/admin/dashboard');
     } catch (err) {
       setError('Invalid credentials');
     } finally {

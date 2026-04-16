@@ -17,18 +17,20 @@ import {
   IonFooter,
 } from '@ionic/react';
 import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
 const RiderLogin: React.FC = () => {
-  const history = useHistory();
-  const { login, user } = useAuth();
+  const ionRouter = useIonRouter();
+  const { login, isRoleAuthenticated } = useAuth();
   const { isDarkMode } = useTheme();
 
-  // Redirect if already logged in
-  if (user) {
-    history.replace(user.role === 'rider' ? '/rider/home' : '/user/home');
+  const isRiderAuthenticated = isRoleAuthenticated('rider');
+
+  // Redirect if already logged in as rider
+  if (isRiderAuthenticated) {
+    ionRouter.push('/rider/home');
     return null;
   }
   const [email, setEmail] = useState('');
@@ -47,18 +49,18 @@ const RiderLogin: React.FC = () => {
     try {
       await login(email, password);
       // Check verification status
-      const savedUser = localStorage.getItem('user');
-      if (savedUser) {
-        const userData = JSON.parse(savedUser);
-        if (userData.verificationStatus === 'pending') {
+      const savedAuth = localStorage.getItem('auth_user');
+      if (savedAuth) {
+        const authData = JSON.parse(savedAuth);
+        if (authData.user?.verificationStatus === 'pending') {
           setError('{pending}');
           setTimeout(() => {
-            history.replace('/rider/pending-approval');
+            ionRouter.push('/rider/pending-approval');
           }, 1000);
           return;
         }
       }
-      history.replace('/rider/home');
+      ionRouter.push('/rider/home');
     } catch (err) {
       setError('Invalid credentials');
     } finally {
@@ -195,7 +197,7 @@ const RiderLogin: React.FC = () => {
               Don't have an account?{' '}
               <span 
                 style={{ color: '#6366F1', fontWeight: 700, cursor: 'pointer' }}
-                onClick={() => history.push('/rider/register')}
+                onClick={() => ionRouter.push('/rider/register')}
               >
                 Sign Up
               </span>

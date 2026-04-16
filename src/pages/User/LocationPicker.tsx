@@ -14,7 +14,7 @@ import {
 
 import { locationOutline, closeOutline } from "ionicons/icons";
 import { useState, useRef } from "react";
-import { useHistory } from "react-router-dom";
+import { useIonRouter } from "@ionic/react";
 import { useTheme } from "../../context/ThemeContext";
 
 import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
@@ -40,7 +40,7 @@ function ChangeMapView({ center }: any) {
 
 const UserLocationPicker: React.FC = () => {
 
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { isDarkMode } = useTheme();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<LocationResult[]>([]);
@@ -60,7 +60,7 @@ const UserLocationPicker: React.FC = () => {
     }));
     sessionStorage.setItem('locationName', query);
 
-    history.goBack();
+    ionRouter.goBack();
   };
 
   const debounceRef = useRef<any>(null);
@@ -111,7 +111,7 @@ const UserLocationPicker: React.FC = () => {
       <IonHeader>
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={() => history.goBack()}>
+            <IonButton onClick={() => ionRouter.goBack()}>
               <IonIcon slot="icon-only" icon={closeOutline} />
             </IonButton>
           </IonButtons>

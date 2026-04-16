@@ -1,7 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<resources>
-    <string name="app_name">RiderApp</string>
-    <string name="title_activity_main">RiderApp</string>
-    <string name="package_name">com.riderapp.app</string>
-    <string name="custom_url_scheme">com.riderapp.app</string>
-</resources>

@@ -12,10 +12,11 @@ import {
   IonLabel,
 } from '@ionic/react';
 import { checkmarkCircle, checkmarkDoneOutline, mapOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import { useAuth } from '../../context/AuthContext';
 import BottomNav from '../../components/BottomNav';
 import LogoHeader from '../../components/LogoHeader';
+import StatusBadge from '../../components/StatusBadge';
 import '../../styles/mobile-first-responsive.css';
 
 interface OrderItem {
@@ -40,14 +41,14 @@ interface Order {
 }
 
 const Orders: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'active' | 'completed'>('all');
 
   useEffect(() => {
     if (!user) {
-      history.replace('/user/home');
+      ionRouter.push('/user/home');
       return;
     }
 
@@ -162,7 +163,7 @@ const Orders: React.FC = () => {
                 color="primary"
                 className="mobile-button"
                 style={{ '--background': '#6366F1', maxWidth: '200px', marginTop: '8px' }}
-                onClick={() => history.push('/user/home')}
+                onClick={() => ionRouter.push('/user/home')}
               >
                 Start Shopping
               </IonButton>
@@ -204,9 +205,7 @@ const Orders: React.FC = () => {
                     {/* Status Progress */}
                     <div style={{ marginBottom: '12px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', alignItems: 'center' }}>
-                        <p style={{ margin: 0, fontSize: '12px', fontWeight: 600, color: 'var(--ion-text-color)' }}>
-                          {getStatusLabel(order.vendorStatus, order.riderStatus)}
-                        </p>
+                        <StatusBadge status={order.riderStatus} size="medium" />
                         <span style={{ fontSize: '11px', color: 'var(--ion-text-color-secondary)' }}>
                           {getProgressPercentage(order.vendorStatus, order.riderStatus)}%
                         </span>

@@ -41,7 +41,8 @@ class OrderTrackingService {
 
   /**
    * VENDOR ACCEPTS ORDER
-   * Status: accepted → preparing
+   * Status: pending → preparing
+   * Flow: Customer → Rider → Vendor (starts preparing)
    */
   vendorAcceptOrder(orderId: string, vendorId: string): Order | null {
     const order = this.orders.get(orderId);
@@ -50,7 +51,7 @@ class OrderTrackingService {
       return null;
     }
 
-    order.status = 'accepted';
+    order.status = 'preparing';
     order.acceptedAt = new Date();
 
     // Send message from vendor to user (auto-generated)
@@ -104,9 +105,9 @@ class OrderTrackingService {
   }
 
   /**
-   * VENDOR UPDATES - ORDER IS READY FOR PICKUP
-   * Status: ready_for_pickup
-   * Vendor notifies rider that food is ready
+   * VENDOR MARKS ORDER READY FOR PICKUP
+   * Status: preparing → ready_for_pickup
+   * Vendor notifies rider that food is ready, rider can now pick up
    */
   vendorMarkReady(orderId: string, vendorId: string): Order | null {
     const order = this.orders.get(orderId);
@@ -143,43 +144,9 @@ class OrderTrackingService {
   }
 
   /**
-   * RIDER ACCEPTS ORDER FROM USER
-   * Status: rider_accepted
-   * Connects User → Rider → Vendor
-   */
-  riderAcceptOrder(orderId: string, riderId: string): Order | null {
-    const order = this.orders.get(orderId);
-    if (!order) {
-      console.error('Order not found');
-      return null;
-    }
-
-    order.riderId = riderId;
-    order.status = 'rider_accepted';
-
-    // Send message from rider to user
-    notificationService.sendMessage({
-      senderId: riderId,
-      senderRole: 'rider',
-      receiverId: order.userId,
-      orderId: orderId,
-      content: `I've accepted your order! I'm heading to ${order.stallName} now.`,
-      isRead: false,
-      messageType: 'notification',
-    });
-
-    // Notify user and vendor
-    const mockRiderName = `Rider ${riderId.slice(-3)}`;
-    notificationService.notifyRiderAccepted(order, order.userId, mockRiderName);
-
-    this.emit(orderId, order);
-    return order;
-  }
-
-  /**
    * RIDER PICKS UP ORDER FROM VENDOR
-   * Status: delivering
-   * Rider has collected order from vendor
+   * Status: ready_for_pickup → ready_for_pickup (still waiting for delivery)
+   * Rider has collected order from vendor, now heading to customer
    */
   riderPickedUpOrder(orderId: string, riderId: string): Order | null {
     const order = this.orders.get(orderId);
@@ -188,7 +155,7 @@ class OrderTrackingService {
       return null;
     }
 
-    order.status = 'delivering';
+    // Status remains 'ready_for_pickup' until delivered, but track pickup time
     order.pickedUpAt = new Date();
 
     // Send message from rider to user
@@ -210,8 +177,9 @@ class OrderTrackingService {
   }
 
   /**
-   * ORDER DELIVERED
-   * Status: delivered
+   * ORDER COMPLETED
+   * Status: ready_for_pickup → completed
+   * Rider has delivered order to customer
    */
   completeDelivery(orderId: string, riderId: string): Order | null {
     const order = this.orders.get(orderId);
@@ -220,8 +188,8 @@ class OrderTrackingService {
       return null;
     }
 
-    order.status = 'delivered';
-    order.deliveredAt = new Date();
+    order.status = 'completed';
+    order.completedAt = new Date();
 
     // Send message from rider to user
     notificationService.sendMessage({
@@ -293,11 +261,11 @@ class OrderTrackingService {
   }
 
   /**
-   * GET ACTIVE ORDERS FOR RIDER (not yet delivered)
+   * GET ACTIVE ORDERS FOR RIDER (not yet completed)
    */
   getRiderActiveOrders(riderId: string): Order[] {
     return this.getRiderOrders(riderId).filter(
-      order => !['delivered', 'cancelled'].includes(order.status)
+      order => !['completed', 'cancelled'].includes(order.status)
     );
   }
 

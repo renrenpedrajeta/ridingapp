@@ -29,13 +29,13 @@ import {
   bicycleOutline,
   arrowBack,
 } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import UserNavBar from '../../components/Navbar/UserNavBar';
 import { useAuth } from '../../context/AuthContext';
 import { Activity } from '../../types';
 
 const ActivityLog: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { user, logout } = useAuth();
   const [filterType, setFilterType] = useState('all');
   const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null);
@@ -197,7 +197,7 @@ const ActivityLog: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px', borderBottom: '1px solid var(--ion-border-color)' }}>
           <IonButton 
             fill="clear" 
-            onClick={() => history.goBack()}
+            onClick={() => ionRouter.goBack()}
             style={{ '--color': '#6366F1', margin: '0 0 0 -8px' } as any}
           >
             <IonIcon icon={arrowBack} />

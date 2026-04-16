@@ -23,14 +23,15 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
   // Initialize with current user
   useEffect(() => {
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      const user = JSON.parse(savedUser);
-      setCurrentUserId(user.id);
-      
-      // Load existing notifications and messages
-      const existingNotifications = notificationService.getNotifications(user.id);
-      setNotifications(existingNotifications);
+    const savedAuth = localStorage.getItem('auth_user');
+    if (savedAuth) {
+      const authData = JSON.parse(savedAuth);
+      if (authData.user) {
+        setCurrentUserId(authData.user.id);
+        
+        const existingNotifications = notificationService.getNotifications(authData.user.id);
+        setNotifications(existingNotifications);
+      }
     }
   }, []);
 

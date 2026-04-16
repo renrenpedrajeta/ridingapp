@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import {
   IonHeader,
   IonToolbar,
@@ -36,7 +37,7 @@ interface RiderLayoutProps {
 }
 
 const RiderLayout: React.FC<RiderLayoutProps> = ({ children, pageTitle = 'Dashboard' }) => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const location = useLocation();
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
@@ -56,8 +57,8 @@ const RiderLayout: React.FC<RiderLayoutProps> = ({ children, pageTitle = 'Dashbo
   ];
 
   const handleLogout = () => {
-    logout();
-    history.push('/rider/login');
+    logout('rider');
+    ionRouter.push('/rider/login');
   };
 
   const isActive = (path: string) => location.pathname === path;
@@ -150,11 +151,11 @@ const RiderLayout: React.FC<RiderLayoutProps> = ({ children, pageTitle = 'Dashbo
               </div>
             </div>
             <div className="profile-divider" />
-            <button className="profile-menu-item" onClick={() => history.push('/rider/profile')}>
+            <button className="profile-menu-item" onClick={() => ionRouter.push('/rider/profile')}>
               <IonIcon icon={personCircleOutline} />
               <span>Profile</span>
             </button>
-            <button className="profile-menu-item" onClick={() => history.push('/rider/settings')}>
+            <button className="profile-menu-item" onClick={() => ionRouter.push('/rider/settings')}>
               <IonIcon icon={settingsOutline} />
               <span>Settings</span>
             </button>
@@ -182,7 +183,7 @@ const RiderLayout: React.FC<RiderLayoutProps> = ({ children, pageTitle = 'Dashbo
               <button
                 key={item.path}
                 className={`nav-item ${isActive(item.path) ? 'active' : ''}`}
-                onClick={() => history.push(item.path)}
+                onClick={() => ionRouter.push(item.path)}
               >
                 <IonIcon icon={item.icon} />
                 <span>{item.label}</span>

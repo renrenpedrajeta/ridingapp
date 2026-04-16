@@ -373,3 +373,126 @@ ion-content ion-toolbar {
   top: 0;
   z-index: 10;
 }
+
+/* ==================== STALL CARD STYLES ==================== */
+.stall-card {
+  margin: 0 0 16px 0;
+  cursor: pointer;
+}
+
+.stall-card-image-wrapper {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 16px 16px 0 0;
+}
+
+.stall-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stall-card-rating {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.stall-card-star-icon {
+  font-size: 14px;
+}
+
+.stall-card-header {
+  padding: 16px;
+}
+
+.stall-card-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.stall-card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ion-text-color);
+  margin: 0;
+}
+
+.stall-card-cuisine {
+  color: #6366F1;
+  font-weight: 600;
+}
+
+.stall-card-info-row {
+  display: flex;
+  gap: 16px;
+  color: #6B7280;
+  font-size: 14px;
+}
+
+.stall-card-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stall-card-location {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #6B7280;
+  font-size: 13px;
+  margin-top: 8px;
+}
+
+.stall-card-location-icon {
+  font-size: 14px;
+}
+
+/* ==================== ALERT & SELECT MODAL FIXES ==================== */
+/* Ensure all text in alerts is visible */
+ion-alert,
+.alert {
+  --background: var(--ion-item-background) !important;
+  --text-color: var(--ion-text-color) !important;
+  --ion-background-color: var(--ion-item-background) !important;
+  --ion-text-color: var(--ion-text-color) !important;
+}
+
+ion-alert .alert-wrapper {
+  background-color: var(--ion-item-background) !important;
+}
+
+ion-alert .alert-head .alert-title,
+ion-alert .alert-head .alert-sub-title,
+.alert .alert-head .alert-title,
+.alert .alert-head .alert-sub-title {
+  color: var(--ion-text-color) !important;
+}
+
+ion-alert .alert-radio-group .alert-radio-label,
+ion-alert .alert-checkbox-group .alert-checkbox-label,
+.alert .alert-radio-group .alert-radio-label,
+.alert .alert-checkbox-group .alert-checkbox-label {
+  color: var(--ion-text-color) !important;
+}
+
+ion-alert .alert-button,
+.alert .alert-button {
+  color: var(--ion-color-primary);
+}
+
+/* Ensure select option items are visible */
+.select-popover .alert-radio-label,
+.select-popover .alert-checkbox-label {
+  color: var(--ion-text-color) !important;
+}

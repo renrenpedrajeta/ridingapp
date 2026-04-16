@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import './LogoHeader.css';
 
 interface LogoHeaderProps {
@@ -7,10 +7,10 @@ interface LogoHeaderProps {
 }
 
 const LogoHeader: React.FC<LogoHeaderProps> = ({ className = '' }) => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
 
   return (
-    <div className={`logo-header ${className}`} onClick={() => history.push('/guest/home')}>
+    <div className={`logo-header ${className}`} onClick={() => ionRouter.push('/guest/home')}>
       <span className="logo-header-primary">Rider</span>
       <span className="logo-header-secondary">App</span>
     </div>

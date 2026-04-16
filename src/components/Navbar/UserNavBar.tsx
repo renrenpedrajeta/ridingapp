@@ -17,11 +17,11 @@ import {
   timeOutline,
   personCircleOutline,
 } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useNotification } from '../../context/NotificationContext';
 import { useCart } from '../../context/CartContext';
+import { useAppNavigate } from '../../context/useAppNavigate';
 import '../Navbar.css';
 
 interface UserNavBarProps {
@@ -33,7 +33,7 @@ interface UserNavBarProps {
 const UserNavBar: React.FC<UserNavBarProps> = ({
   showCart = true,
 }) => {
-  const history = useHistory();
+  const { navigate } = useAppNavigate();
   const { user, logout } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
   const { unreadCount } = useNotification();
@@ -43,12 +43,12 @@ const UserNavBar: React.FC<UserNavBarProps> = ({
   const handleLogout = () => {
     logout();
     setShowUserMenu(false);
-    history.push('/login');
+    navigate('/login');
   };
 
   const navigateTo = (path: string) => {
     setShowUserMenu(false);
-    history.push(path);
+    navigate(path);
   };
 
   return (
@@ -58,7 +58,7 @@ const UserNavBar: React.FC<UserNavBarProps> = ({
         <div className="navbar-left">
           <button 
             className="navbar-logo-btn"
-            onClick={() => history.push('/user/home')}
+            onClick={() => navigate('/user/home')}
           >
             <span className="navbar-logo">
               <span className="logo-primary">Rider</span>
@@ -81,7 +81,7 @@ const UserNavBar: React.FC<UserNavBarProps> = ({
           {/* Messages */}
           <button 
             className="navbar-icon-btn"
-            onClick={() => history.push('/messages')}
+            onClick={() => navigate('/messages')}
             aria-label="Messages"
           >
             <IonIcon icon={chatbubbleOutline} />
@@ -94,7 +94,7 @@ const UserNavBar: React.FC<UserNavBarProps> = ({
           {showCart && (
             <button 
               className="navbar-icon-btn"
-              onClick={() => history.push('/user/cart')}
+              onClick={() => navigate('/user/cart')}
               aria-label="Shopping cart"
             >
               <IonIcon icon={cartOutline} />

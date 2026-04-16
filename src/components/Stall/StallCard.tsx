@@ -1,6 +1,5 @@
-// src/components/Stall/StallCard.tsx
-import React from 'react';
-import { IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonBadge, IonIcon } from '@ionic/react';
+import React, { memo } from 'react';
+import { IonCard, IonCardHeader, IonCardTitle, IonBadge, IonIcon } from '@ionic/react';
 import { star, timeOutline, bicycleOutline, locationOutline } from 'ionicons/icons';
 import { Stall } from '../../types';
 
@@ -9,66 +8,58 @@ interface StallCardProps {
   onClick?: () => void;
 }
 
-const StallCard: React.FC<StallCardProps> = ({ stall, onClick }) => {
+const StallCard: React.FC<StallCardProps> = memo(({ stall, onClick }) => {
   return (
     <IonCard 
       className="rider-card stall-card" 
       onClick={onClick}
-      style={{ margin: '0 0 16px 0', cursor: onClick ? 'pointer' : 'default' }}
     >
-      <div style={{ position: 'relative', height: '180px', overflow: 'hidden', borderRadius: '16px 16px 0 0' }}>
+      <div className="stall-card-image-wrapper">
         <img 
           src={stall.image} 
           alt={stall.name}
-          style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          crossOrigin="anonymous"
+          className="stall-card-image"
         />
         <IonBadge 
           color="light" 
-          style={{ 
-            position: 'absolute', 
-            top: '12px', 
-            right: '12px',
-            padding: '8px 12px',
-            borderRadius: '20px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            fontWeight: 600
-          }}
+          className="stall-card-rating"
         >
-          <IonIcon icon={star} color="warning" style={{ fontSize: '14px' }} />
+          <IonIcon icon={star} color="warning" className="stall-card-star-icon" />
           {stall.rating}
         </IonBadge>
       </div>
       
-      <IonCardHeader style={{ padding: '16px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-          <IonCardTitle style={{ fontSize: '18px', fontWeight: 700, color: 'var(--ion-text-color)', margin: 0 }}>
+      <IonCardHeader className="stall-card-header">
+        <div className="stall-card-title-row">
+          <IonCardTitle className="stall-card-title">
             {stall.name}
           </IonCardTitle>
-          <IonBadge color="light" style={{ color: '#6366F1', fontWeight: 600 }}>
+          <IonBadge color="light" className="stall-card-cuisine">
             {stall.cuisine}
           </IonBadge>
         </div>
         
-        <div style={{ display: 'flex', gap: '16px', color: '#6B7280', fontSize: '14px' }}>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+        <div className="stall-card-info-row">
+          <span className="stall-card-info">
             <IonIcon icon={timeOutline} />
             {stall.deliveryTime}
           </span>
-          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <span className="stall-card-info">
             <IonIcon icon={bicycleOutline} />
             ₱{stall.deliveryFee.toFixed(2)}
           </span>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#6B7280', fontSize: '13px', marginTop: '8px' }}>
-          <IonIcon icon={locationOutline} style={{ fontSize: '14px' }} />
+        <div className="stall-card-location">
+          <IonIcon icon={locationOutline} className="stall-card-location-icon" />
           {stall.location}
         </div>
       </IonCardHeader>
     </IonCard>
   );
-};
+});
+
+StallCard.displayName = 'StallCard';
 
 export default StallCard;

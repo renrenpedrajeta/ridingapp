@@ -172,6 +172,69 @@
   color: var(--ion-text-color);
 }
 
+.stock-detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.stock-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stock-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.stock-btn ion-icon {
+  font-size: 24px;
+}
+
+.stock-btn.stock-add {
+  color: var(--ion-color-success);
+}
+
+.stock-btn.stock-add:hover {
+  background: rgba(16, 185, 129, 0.1);
+  transform: scale(1.1);
+}
+
+.stock-btn.stock-reduce {
+  color: var(--ion-color-danger);
+}
+
+.stock-btn.stock-reduce:hover {
+  background: rgba(239, 68, 68, 0.1);
+  transform: scale(1.1);
+}
+
+.stock-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.stock-btn:disabled:hover {
+  transform: none;
+  background: none;
+}
+
+.stock-value {
+  font-size: 16px;
+  font-weight: 700;
+  min-width: 30px;
+  text-align: center;
+  color: var(--ion-text-color);
+}
+
 .product-actions {
   display: flex;
   gap: 8px;
@@ -294,6 +357,18 @@
   margin-top: 24px;
 }
 
+/* Select form styling */
+.form-select {
+  --highlight-background: transparent;
+  --padding-start: 16px;
+  --padding-end: 16px;
+}
+
+.form-select ion-select-option {
+  color: var(--ion-text-color) !important;
+  --color: var(--ion-text-color) !important;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 480px) {
   .products-page {
@@ -311,4 +386,90 @@
   .emoji-selector {
     grid-template-columns: repeat(3, 1fr);
   }
+}
+
+/* Stock Confirmation Modal */
+.stock-confirm-modal ion-toolbar {
+  background-color: var(--ion-toolbar-background);
+  border-bottom: 1px solid var(--ion-border-color);
+}
+
+.stock-confirm-content {
+  padding: 32px 24px;
+  text-align: center;
+  background-color: var(--ion-background-color);
+}
+
+.stock-change-icon {
+  margin-bottom: 16px;
+}
+
+.stock-change-icon ion-icon {
+  font-size: 64px;
+}
+
+.stock-change-icon .icon-add {
+  color: var(--ion-color-success);
+}
+
+.stock-change-icon .icon-reduce {
+  color: var(--ion-color-danger);
+}
+
+.stock-confirm-content h2 {
+  margin: 0 0 24px 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ion-text-color);
+}
+
+.stock-change-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background-color: var(--ion-item-background);
+  border-radius: 12px;
+}
+
+.stock-change-details p {
+  margin: 0;
+  font-size: 16px;
+  color: var(--ion-text-color);
+}
+
+.stock-change-details .current-stock,
+.stock-change-details .new-stock {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stock-change-details strong {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.stock-change-details .arrow {
+  font-size: 24px;
+  color: var(--ion-color-primary);
+}
+
+.stock-change-message {
+  font-size: 14px;
+  color: var(--ion-text-color-secondary);
+  margin-bottom: 24px;
+}
+
+.stock-confirm-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.stock-confirm-actions ion-button {
+  --padding-top: 12px;
+  --padding-bottom: 12px;
 }

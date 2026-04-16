@@ -1,7 +1,8 @@
 // src/pages/Vendor/VendorReviews.tsx
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import {
+  IonPage,
   IonContent,
   IonCard,
   IonCardContent,
@@ -26,8 +27,9 @@ import {
   closeOutline,
 } from 'ionicons/icons';
 import { useTheme } from '../../context/ThemeContext';
-import { useVendorAuth } from '../../context/VendorAuthContext';
-import VendorLayout from '../../layouts/VendorLayout';
+import { useAuth } from '../../context/AuthContext';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
 import './VendorReviews.css';
 
 interface Review {
@@ -99,12 +101,14 @@ interface ReplyForm {
 }
 
 const VendorReviews: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { isDarkMode } = useTheme();
-  const { isVendorLoggedIn } = useVendorAuth();
+  const { isRoleAuthenticated } = useAuth();
 
-  if (!isVendorLoggedIn) {
-    history.replace('/vendor/login');
+  const isVendorAuthenticated = isRoleAuthenticated('vendor');
+
+  if (!isVendorAuthenticated) {
+    ionRouter.push('/vendor/login');
     return null;
   }
 
@@ -200,13 +204,12 @@ const VendorReviews: React.FC = () => {
   };
 
   return (
-    <VendorLayout pageTitle="Reviews">
-      <IonContent>
-        <div className="reviews-page">
-          <div className="page-header">
-            <h1>Customer Reviews</h1>
-            <IonText className="page-subtitle">Manage customer feedback and ratings</IonText>
-          </div>
+    <IonPage>
+      <IonContent className="ion-page-with-bottom-nav">
+        <LogoHeader />
+        <div className="mobile-container">
+          <h1 className="section-title">Reviews</h1>
+          <p style={{ color: 'var(--ion-text-color-secondary)', marginBottom: '16px' }}>Manage customer feedback and ratings</p>
 
           {/* Rating Summary Card */}
           <IonCard className="rating-summary-card">
@@ -413,7 +416,8 @@ const VendorReviews: React.FC = () => {
           position="top"
         />
       </IonContent>
-    </VendorLayout>
+      <BottomNav type="vendor" activeTab="settings" />
+    </IonPage>
   );
 };
 

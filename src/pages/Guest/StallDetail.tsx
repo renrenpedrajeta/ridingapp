@@ -11,7 +11,8 @@ import {
   IonBadge,
 } from '@ionic/react';
 import { add, remove, star, timeOutline, locationOutline, checkmarkCircle } from 'ionicons/icons';
-import { useParams, useHistory } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import { useAppNavigate } from '../../context/useAppNavigate';
 import BottomNav from '../../components/BottomNav';
 import LogoHeader from '../../components/LogoHeader';
 import GuestPromptModal from '../../components/Auth/GuestPromptModal';
@@ -60,10 +61,10 @@ const MOCK_MENU: MenuItemType[] = [
   { id: 'm4', stallId: '1', name: 'Chicken Sandwich', description: 'Tender grilled chicken with avocado', price: 9.99, image: 'https://images.unsplash.com/photo-1562547256-c5e2b3e3e5c0?w=400', category: 'Burgers' },
   { id: 'm5', stallId: '1', name: 'Sweet Potato Fries', description: 'Golden sweet potato fries', price: 5.99, image: 'https://images.unsplash.com/photo-1585238341710-4912f4e1c992?w=400', category: 'Sides', popular: true },
   { id: 's1', stallId: '2', name: 'California Roll', description: 'Fresh crab, avocado, and cucumber', price: 9.99, image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400', category: 'Rolls', popular: true },
-  { id: 's2', stallId: '2', name: 'Spicy Tuna Roll', description: 'Spicy tuna with jalapeño', price: 11.99, image: 'https://images.unsplash.com/photo-1553621042-f6e147245ba1?w=400', category: 'Rolls', popular: true },
+  { id: 's2', stallId: '2', name: 'Spicy Tuna Roll', description: 'Spicy tuna with jalapeño', price: 11.99, image: 'https://images.unsplash.com/photo-1579584425555-c3a5142c3055?w=400', category: 'Rolls', popular: true },
   { id: 's3', stallId: '2', name: 'Salmon Nigiri', description: '6 pieces of fresh salmon sushi', price: 12.99, image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400', category: 'Nigiri' },
-  { id: 's4', stallId: '2', name: 'Veggie Roll', description: 'Crispy tempura vegetables', price: 8.99, image: 'https://images.unsplash.com/photo-1564489551917-e89b3b3d5c2f?w=400', category: 'Rolls' },
-  { id: 's5', stallId: '2', name: 'Miso Soup', description: 'Traditional miso with tofu', price: 3.99, image: 'https://images.unsplash.com/photo-1546069901-ba9599a7a7c2?w=400', category: 'Sides' },
+  { id: 's4', stallId: '2', name: 'Veggie Roll', description: 'Crispy tempura vegetables', price: 8.99, image: 'https://images.unsplash.com/photo-1520072959219-c595dc870360?w=400', category: 'Rolls' },
+  { id: 's5', stallId: '2', name: 'Miso Soup', description: 'Traditional miso with tofu', price: 3.99, image: 'https://images.unsplash.com/photo-1612757869908-a4a5cb1146a0?w=400', category: 'Sides' },
   { id: 'p1', stallId: '3', name: 'Margherita Pizza', description: 'Fresh mozzarella and basil', price: 12.99, image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=400', category: 'Pizza', popular: true },
   { id: 'p2', stallId: '3', name: 'Pepperoni Pizza', description: 'Classic pepperoni with mozzarella', price: 13.99, image: 'https://images.unsplash.com/photo-1628840042765-356cda07f4ee?w=400', category: 'Pizza', popular: true },
   { id: 'p3', stallId: '3', name: 'Veggie Pizza', description: 'Bell peppers, mushrooms, olives', price: 12.99, image: 'https://images.unsplash.com/photo-1571407974678-8f7f68163b92?w=400', category: 'Pizza' },
@@ -73,7 +74,7 @@ const MOCK_MENU: MenuItemType[] = [
 
 const StallDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const history = useHistory();
+  const { navigate } = useAppNavigate();
   const { addToCart, removeFromCart, items } = useCart();
   const { isGuest } = useAuth();
   const [showGuestPrompt, setShowGuestPrompt] = useState(false);
@@ -100,7 +101,7 @@ const StallDetail: React.FC = () => {
     if (isGuest) {
       setShowGuestPrompt(true);
     } else {
-      history.push('/user/cart');
+      navigate('/user/cart');
     }
   };
 
@@ -119,7 +120,7 @@ const StallDetail: React.FC = () => {
 
         {/* Hero Image */}
         <div className="stall-hero">
-          <img src={stallInfo.image} alt={stallInfo.name} className="stall-hero-img" />
+          <img src={stallInfo.image} alt={stallInfo.name} className="stall-hero-img" crossOrigin="anonymous" />
           <div className="stall-hero-overlay">
             <IonBadge className="open-badge">
               <IonIcon icon={checkmarkCircle} />
@@ -180,7 +181,7 @@ const StallDetail: React.FC = () => {
               return (
                 <div key={item.id} className={`menu-card ${item.popular ? 'popular' : ''}`}>
                   <div className="menu-card-image">
-                    <img src={item.image} alt={item.name} />
+                    <img src={item.image} alt={item.name} crossOrigin="anonymous" />
                     {item.popular && <span className="popular-tag">🔥 Popular</span>}
                   </div>
                   <div className="menu-card-body">

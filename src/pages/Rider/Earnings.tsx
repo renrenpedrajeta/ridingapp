@@ -12,7 +12,7 @@ import {
   IonButton,
 } from '@ionic/react';
 import { cashOutline, trendingUpOutline, downloadOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import BottomNav from '../../components/BottomNav';
 import LogoHeader from '../../components/LogoHeader';
 import { useAuth } from '../../context/AuthContext';
@@ -35,12 +35,14 @@ const WEEKLY_EARNINGS = [
 ];
 
 const RiderEarnings: React.FC = () => {
-  const history = useHistory();
-  const { user } = useAuth();
+  const ionRouter = useIonRouter();
+  const { getAuthUser } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState('today');
 
-  if (!user || user.role !== 'rider') {
-    history.replace('/rider/login');
+  const currentRider = getAuthUser('rider');
+
+  if (!currentRider) {
+    ionRouter.push('/rider/login');
     return null;
   }
 
@@ -57,7 +59,7 @@ const RiderEarnings: React.FC = () => {
         <div className="mobile-container">
           <div className="quick-access-grid">
             <div 
-              onClick={() => history.push('/activities')}
+              onClick={() => ionRouter.push('/activities')}
               className="quick-access-item"
               style={{ background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)' }}
             >
@@ -65,7 +67,7 @@ const RiderEarnings: React.FC = () => {
               <span className="quick-access-label">Activity</span>
             </div>
             <div 
-              onClick={() => history.push('/messages')}
+              onClick={() => ionRouter.push('/messages')}
               className="quick-access-item"
               style={{ background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)' }}
             >

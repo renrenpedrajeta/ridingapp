@@ -8,8 +8,8 @@ import {
   IonSegmentButton,
   IonLabel,
 } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useAppNavigate } from '../../context/useAppNavigate';
 import StallCard from '../../components/Stall/StallCard';
 import BottomNav from '../../components/BottomNav';
 import LogoHeader from '../../components/LogoHeader';
@@ -56,14 +56,16 @@ const MOCK_STALLS: Stall[] = [
 ];
 
 const UserHome: React.FC = () => {
-  const history = useHistory();
-  const { user } = useAuth();
+  const { navigate } = useAppNavigate();
+  const { getAuthUser } = useAuth();
   const [stalls] = useState<Stall[]>(MOCK_STALLS);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  if (!user || (user.role !== 'user' && user.role !== 'rider')) {
-    history.replace('/login');
+  const currentUser = getAuthUser('user');
+
+  if (!currentUser) {
+    navigate('/login');
     return null;
   }
 
@@ -121,7 +123,7 @@ const UserHome: React.FC = () => {
                 <StallCard 
                   key={stall.id} 
                   stall={stall}
-                  onClick={() => history.push(`/stall/${stall.id}`)}
+                  onClick={() => navigate(`/user/stall/${stall.id}`)}
                 />
               ))
             ) : (

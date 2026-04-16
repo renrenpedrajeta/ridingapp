@@ -1,7 +1,8 @@
 // src/pages/Vendor/VendorSettings.tsx
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import {
+  IonPage,
   IonContent,
   IonCard,
   IonCardContent,
@@ -21,10 +22,12 @@ import {
   locationOutline,
   timeOutline,
   mailOutline,
+  logOutOutline,
 } from 'ionicons/icons';
 import { useTheme } from '../../context/ThemeContext';
-import { useVendorAuth } from '../../context/VendorAuthContext';
-import VendorLayout from '../../layouts/VendorLayout';
+import { useAuth } from '../../context/AuthContext';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
 import './VendorSettings.css';
 
 interface StoreSettings {
@@ -94,14 +97,21 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
 const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
 const VendorSettings: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { isDarkMode } = useTheme();
-  const { isVendorLoggedIn } = useVendorAuth();
+  const { isRoleAuthenticated, logout } = useAuth();
 
-  if (!isVendorLoggedIn) {
-    history.replace('/vendor/login');
+  const isVendorAuthenticated = isRoleAuthenticated('vendor');
+
+  if (!isVendorAuthenticated) {
+    ionRouter.push('/vendor/login');
     return null;
   }
+
+  const handleLogout = () => {
+    logout('vendor');
+    ionRouter.push('/vendor/login');
+  };
 
   const [settings, setSettings] = useState<StoreSettings>(MOCK_STORE_SETTINGS);
   const [hasChanges, setHasChanges] = useState(false);
@@ -152,15 +162,14 @@ const VendorSettings: React.FC = () => {
   };
 
   return (
-    <VendorLayout pageTitle="Store Settings">
-      <IonContent>
-        <div className="settings-page">
-          <div className="page-header">
-            <h1>Store Settings</h1>
-            <p className="page-subtitle">Manage your store information and opening hours</p>
-          </div>
+    <IonPage>
+      <IonContent className="ion-page-with-bottom-nav">
+        <LogoHeader />
+        
+        <div className="mobile-container">
+          <h1 className="section-title">Settings</h1>
+          <p style={{ color: 'var(--ion-text-color-secondary)', marginBottom: '16px' }}>Manage your store</p>
 
-          {/* Store Information Section */}
           <IonCard className="settings-card">
             <IonCardContent>
               <h2 className="section-title">
@@ -188,18 +197,9 @@ const VendorSettings: React.FC = () => {
                   className="form-textarea"
                 />
               </div>
-
-              <div className="logo-upload-section">
-                <div className="logo-placeholder">🏪</div>
-                <IonButton fill="outline" color="primary" className="upload-btn">
-                  <IonIcon icon={imageOutline} slot="start" />
-                  Upload Store Logo
-                </IonButton>
-              </div>
             </IonCardContent>
           </IonCard>
 
-          {/* Contact Information Section */}
           <IonCard className="settings-card">
             <IonCardContent>
               <h2 className="section-title">
@@ -230,7 +230,6 @@ const VendorSettings: React.FC = () => {
             </IonCardContent>
           </IonCard>
 
-          {/* Location Section */}
           <IonCard className="settings-card">
             <IonCardContent>
               <h2 className="section-title">
@@ -272,7 +271,6 @@ const VendorSettings: React.FC = () => {
             </IonCardContent>
           </IonCard>
 
-          {/* Opening Hours Section */}
           <IonCard className="settings-card">
             <IonCardContent>
               <h2 className="section-title">
@@ -341,7 +339,6 @@ const VendorSettings: React.FC = () => {
             </IonCardContent>
           </IonCard>
 
-          {/* Action Buttons */}
           <div className="settings-actions">
             <IonButton
               expand="block"
@@ -366,9 +363,20 @@ const VendorSettings: React.FC = () => {
               </IonButton>
             )}
           </div>
+
+          <IonButton 
+            expand="block" 
+            color="danger"
+            onClick={handleLogout}
+            style={{ '--border-radius': '12px', marginTop: '16px' } as any}
+          >
+            <IonIcon icon={logOutOutline} slot="start" />
+            Logout
+          </IonButton>
+
+          <div style={{ height: '40px' }} />
         </div>
 
-        {/* Toast Notification */}
         <IonToast
           isOpen={toast.show}
           message={toast.message}
@@ -377,7 +385,8 @@ const VendorSettings: React.FC = () => {
           position="top"
         />
       </IonContent>
-    </VendorLayout>
+      <BottomNav type="vendor" activeTab="settings" />
+    </IonPage>
   );
 };
 

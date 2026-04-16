@@ -7,19 +7,21 @@ import {
   IonIcon,
 } from '@ionic/react';
 import { arrowBack, checkmarkCircleOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import RiderNavBar from '../../components/Navbar/RiderNavBar';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
 const PendingApproval: React.FC = () => {
-  const history = useHistory();
+  const ionRouter = useIonRouter();
   const { isDarkMode } = useTheme();
-  const { user } = useAuth();
+  const { getAuthUser } = useAuth();
+
+  const currentRider = getAuthUser('rider');
 
   // Protect this page - redirect if not a pending rider
-  if (!user || user.role !== 'rider') {
-    history.replace('/rider/login');
+  if (!currentRider) {
+    ionRouter.push('/rider/login');
     return null;
   }
 
@@ -132,7 +134,7 @@ const PendingApproval: React.FC = () => {
               fontWeight: 600,
               marginBottom: '12px'
             }}
-            onClick={() => history.push('/login')}
+            onClick={() => ionRouter.push('/login')}
           >
             Back to Login
           </IonButton>
@@ -147,7 +149,7 @@ const PendingApproval: React.FC = () => {
               fontWeight: 600
             }}
             color="primary"
-            onClick={() => history.push('/guest/home')}
+            onClick={() => ionRouter.push('/guest/home')}
           >
             Return Home
           </IonButton>

@@ -14,17 +14,21 @@ import {
   IonLabel,
 } from '@ionic/react';
 import { personOutline, trashOutline, lockOpenOutline, lockClosedOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
-import AdminNavBar from '../../components/Navbar/AdminNavBar';
+import { useIonRouter } from '@ionic/react';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
+import StatusBadge from '../../components/StatusBadge';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminUsers: React.FC = () => {
-  const history = useHistory();
-  const { user, logout } = useAuth();
+  const ionRouter = useIonRouter();
+  const { getAuthUser } = useAuth();
+
+  const currentAdmin = getAuthUser('admin');
 
   // Protect this page - redirect if not admin
-  if (!user || user.role !== 'admin') {
-    history.replace('/login');
+  if (!currentAdmin) {
+    ionRouter.push('/admin/login');
     return null;
   }
   const [searchQuery, setSearchQuery] = useState('');
@@ -92,95 +96,12 @@ const AdminUsers: React.FC = () => {
 
   return (
     <IonPage>
-      <AdminNavBar title="Users" />
-
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
-        {/* Admin Navigation */}
-        <div className="nav-tabs">
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '90px'
-            }}
-            onClick={() => history.push('/admin/dashboard')}
-          >
-            📊 Dashboard
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': '#6366F1',
-              '--color': '#FFFFFF',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-          >
-            👥 Users
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '90px'
-            }}
-            onClick={() => history.push('/admin/riders')}
-          >
-            🚴 Riders
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-            onClick={() => history.push('/admin/orders')}
-          >
-            📦 Orders
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '90px'
-            }}
-            onClick={() => history.push('/admin/reports')}
-          >
-            ⚠️ Reports
-          </IonButton>
-        </div>
-
+      <IonContent className="ion-page-with-bottom-nav">
+        <LogoHeader />
+        
         {/* Header */}
-        <div style={{ padding: '16px' }}>
-          <h2 style={{ margin: '0 0 16px', fontSize: '24px', fontWeight: 700, color: 'var(--ion-text-color)' }}>
+        <div className="mobile-container">
+          <h2 className="section-title" style={{ margin: '0 0 16px' }}>
             Manage Users
           </h2>
           <IonSearchbar
@@ -241,15 +162,9 @@ const AdminUsers: React.FC = () => {
                         {user.email}
                       </p>
                     </div>
-                    <IonBadge 
-                      style={{
-                        '--background': user.isActive ? '#10B981' : '#EF4444',
-                        color: 'white',
-                        marginLeft: 'auto'
-                      }}
-                    >
-                      {user.status}
-                    </IonBadge>
+                    <div style={{ marginLeft: 'auto' }}>
+                      <StatusBadge status={user.isActive ? 'active' : 'inactive'} size="small" />
+                    </div>
                   </div>
 
                   <div style={{
@@ -302,6 +217,7 @@ const AdminUsers: React.FC = () => {
           )}
         </div>
       </IonContent>
+      <BottomNav type="admin" activeTab="users" />
     </IonPage>
   );
 };

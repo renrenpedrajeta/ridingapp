@@ -13,18 +13,21 @@ import {
   IonButton,
 } from '@ionic/react';
 import { timeOutline, navigateOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
+import { useIonRouter } from '@ionic/react';
 import BottomNav from '../../components/BottomNav';
 import LogoHeader from '../../components/LogoHeader';
+import StatusBadge from '../../components/StatusBadge';
 import { useAuth } from '../../context/AuthContext';
 import '../../styles/mobile-first-responsive.css';
 
 const RiderOrders: React.FC = () => {
-  const history = useHistory();
-  const { user } = useAuth();
+  const ionRouter = useIonRouter();
+  const { getAuthUser } = useAuth();
 
-  if (!user || user.role !== 'rider') {
-    history.replace('/rider/login');
+  const currentRider = getAuthUser('rider');
+
+  if (!currentRider) {
+    ionRouter.push('/rider/login');
     return null;
   }
 
@@ -36,7 +39,7 @@ const RiderOrders: React.FC = () => {
       stallName: 'Burger King',
       customerName: 'John Doe',
       customerNumber: '09123456789',
-      status: 'picking_up',
+      status: 'ready_for_pickup',
       fee: 45,
       estimatedTime: '12 min',
       deliveryAddress: 'Fort Bonifacio, Taguig',
@@ -46,7 +49,7 @@ const RiderOrders: React.FC = () => {
       stallName: 'Sushi Master',
       customerName: 'Jane Smith',
       customerNumber: '09987654321',
-      status: 'delivering',
+      status: 'ready_for_pickup',
       fee: 38,
       estimatedTime: '8 min',
       deliveryAddress: 'Paseo de Santa Rosa, Manila',
@@ -59,7 +62,7 @@ const RiderOrders: React.FC = () => {
       stallName: 'Pizza Palace',
       customerName: 'Mike Johnson',
       customerNumber: '09111222333',
-      status: 'delivered',
+      status: 'completed',
       fee: 52,
       completedAt: '2:30 PM',
       rating: 5,
@@ -69,7 +72,7 @@ const RiderOrders: React.FC = () => {
       stallName: 'Chicken Fried Shop',
       customerName: 'Sarah Lee',
       customerNumber: '09444555666',
-      status: 'delivered',
+      status: 'completed',
       fee: 40,
       completedAt: '1:15 PM',
       rating: 4.5,
@@ -78,18 +81,16 @@ const RiderOrders: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'picking_up': return '#F59E0B';
-      case 'delivering': return '#6366F1';
-      case 'delivered': return '#10B981';
+      case 'ready_for_pickup': return '#F59E0B';
+      case 'completed': return '#10B981';
       default: return '#9CA3AF';
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'picking_up': return 'Picking Up';
-      case 'delivering': return 'On Delivery';
-      case 'delivered': return 'Delivered';
+      case 'ready_for_pickup': return 'Ready for Pickup';
+      case 'completed': return 'Completed';
       default: return status;
     }
   };
@@ -104,7 +105,7 @@ const RiderOrders: React.FC = () => {
         <div className="mobile-container">
           <div className="quick-access-grid">
             <div 
-              onClick={() => history.push('/activities')}
+              onClick={() => ionRouter.push('/activities')}
               className="quick-access-item"
               style={{ background: 'linear-gradient(135deg, #6366F1 0%, #818CF8 100%)' }}
             >
@@ -112,7 +113,7 @@ const RiderOrders: React.FC = () => {
               <span className="quick-access-label">Activity</span>
             </div>
             <div 
-              onClick={() => history.push('/messages')}
+              onClick={() => ionRouter.push('/messages')}
               className="quick-access-item"
               style={{ background: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)' }}
             >
@@ -158,9 +159,7 @@ const RiderOrders: React.FC = () => {
                           {order.customerName}
                         </p>
                       </div>
-                      <IonBadge style={{ '--background': getStatusColor(order.status), color: 'white' }}>
-                        {getStatusLabel(order.status)}
-                      </IonBadge>
+                      <StatusBadge status={order.status} />
                     </div>
 
                     <div style={{ padding: '12px', background: 'var(--ion-background-color)', borderRadius: '8px', marginBottom: '12px', fontSize: '13px' }}>

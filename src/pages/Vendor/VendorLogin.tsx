@@ -18,13 +18,13 @@ import {
   IonFooter,
 } from '@ionic/react';
 import { mailOutline, lockClosedOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
-import { useVendorAuth } from '../../context/VendorAuthContext';
+import { useIonRouter } from '@ionic/react';
+import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 
 const VendorLogin: React.FC = () => {
-  const history = useHistory();
-  const { vendorLogin, isVendorLoggedIn } = useVendorAuth();
+  const ionRouter = useIonRouter();
+  const { login, isRoleAuthenticated } = useAuth();
   const { isDarkMode } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,12 +33,13 @@ const VendorLogin: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Redirect if already logged in - using useEffect to avoid render issues
-  useEffect(() => {
-    if (isVendorLoggedIn) {
-      history.replace('/vendor/dashboard');
-    }
-  }, [isVendorLoggedIn, history]);
+  const isVendorAuthenticated = isRoleAuthenticated('vendor');
+
+  // Redirect if already logged in as vendor
+  if (isVendorAuthenticated) {
+    ionRouter.push('/vendor/dashboard');
+    return null;
+  }
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -54,16 +55,16 @@ const VendorLogin: React.FC = () => {
     setLoading(true);
     setError('');
     try {
-      await vendorLogin(email, password, rememberMe);
-      // useEffect will handle the redirect when isVendorLoggedIn updates
-    } catch (err: any) {
-      setError(err.message || 'Invalid credentials. Try demo: vendor@pizza.com / Vendor@123');
+      await login(email, password, 'vendor');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Invalid credentials. Try demo: vendor@pizza.com / Vendor@123';
+      setError(message);
       setLoading(false);
     }
   };
 
   const handleForgotPassword = () => {
-    history.push('/vendor/forgot-password');
+    ionRouter.push('/vendor/forgot-password');
   };
 
   const loadDemoCredentials = async () => {
@@ -72,16 +73,16 @@ const VendorLogin: React.FC = () => {
     setLoading(true);
     setError('');
     try {
-      await vendorLogin('vendor@pizza.com', 'Vendor@123', false);
-      // useEffect will handle the redirect when isVendorLoggedIn updates
-    } catch (err: any) {
-      setError(err.message || 'Demo login failed');
+      await login('vendor@pizza.com', 'Vendor@123', 'vendor');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Demo login failed';
+      setError(message);
       setLoading(false);
     }
   };
 
-  // If already logged in, show nothing while redirect happens
-  if (isVendorLoggedIn) {
+  // If already logged in as vendor, show nothing while redirect happens
+  if (isVendorAuthenticated) {
     return <IonPage><IonContent></IonContent></IonPage>;
   }
 
@@ -208,7 +209,7 @@ const VendorLogin: React.FC = () => {
               expand="block"
               fill="outline"
               className="mobile-button"
-              onClick={() => history.push('/vendor/register')}
+              onClick={() => ionRouter.push('/vendor/register')}
               style={{ '--color': '#8b5cf6', '--border-color': '#8b5cf6' }}
             >
               Create Account

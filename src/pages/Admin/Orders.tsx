@@ -14,17 +14,21 @@ import {
   IonButton,
 } from '@ionic/react';
 import { cartOutline, timeOutline, checkmarkCircleOutline, closeCircleOutline } from 'ionicons/icons';
-import { useHistory } from 'react-router-dom';
-import AdminNavBar from '../../components/Navbar/AdminNavBar';
+import { useIonRouter } from '@ionic/react';
+import BottomNav from '../../components/BottomNav';
+import LogoHeader from '../../components/LogoHeader';
+import StatusBadge from '../../components/StatusBadge';
 import { useAuth } from '../../context/AuthContext';
 
 const AdminOrders: React.FC = () => {
-  const history = useHistory();
-  const { user, logout } = useAuth();
+  const ionRouter = useIonRouter();
+  const { getAuthUser } = useAuth();
+
+  const currentAdmin = getAuthUser('admin');
 
   // Protect this page - redirect if not admin
-  if (!user || user.role !== 'admin') {
-    history.replace('/login');
+  if (!currentAdmin) {
+    ionRouter.push('/admin/login');
     return null;
   }
   const [searchQuery, setSearchQuery] = useState('');
@@ -36,9 +40,9 @@ const AdminOrders: React.FC = () => {
       customerName: 'Maria Santos',
       riderName: 'Juan Dela Cruz',
       total: 450.50,
-      status: 'delivered',
+      status: 'completed',
       createdAt: '2024-03-04 10:30 AM',
-      deliveredAt: '2024-03-04 10:45 AM',
+      completedAt: '2024-03-04 10:45 AM',
       rating: 5,
       estimatedDeliveryTime: undefined,
       cancelledAt: undefined,
@@ -49,11 +53,11 @@ const AdminOrders: React.FC = () => {
       customerName: 'Carlos Rodriguez',
       riderName: 'Maria Gonzales',
       total: 620.75,
-      status: 'delivering',
+      status: 'ready_for_pickup',
       createdAt: '2024-03-04 11:15 AM',
       estimatedDeliveryTime: '11:45 AM',
       rating: null,
-      deliveredAt: undefined,
+      completedAt: undefined,
       cancelledAt: undefined,
     },
     {
@@ -66,7 +70,7 @@ const AdminOrders: React.FC = () => {
       createdAt: '2024-03-04 11:30 AM',
       estimatedDeliveryTime: '12:15 PM',
       rating: null,
-      deliveredAt: undefined,
+      completedAt: undefined,
       cancelledAt: undefined,
     },
     {
@@ -80,7 +84,7 @@ const AdminOrders: React.FC = () => {
       cancelledAt: '2024-03-04 09:45 AM',
       rating: null,
       estimatedDeliveryTime: undefined,
-      deliveredAt: undefined,
+      completedAt: undefined,
     },
   ]);
 
@@ -98,8 +102,9 @@ const AdminOrders: React.FC = () => {
     switch (status) {
       case 'pending': return '#F59E0B';
       case 'preparing': return '#3B82F6';
-      case 'delivering': return '#6366F1';
-      case 'delivered': return '#10B981';
+      case 'ready_for_pickup': return '#F59E0B';
+      case 'completed': return '#10B981';
+      case 'rejected': return '#EF4444';
       case 'cancelled': return '#EF4444';
       default: return '#9CA3AF';
     }
@@ -117,95 +122,12 @@ const AdminOrders: React.FC = () => {
 
   return (
     <IonPage>
-      <AdminNavBar title="Orders" />
-
-      <IonContent style={{ '--background': 'var(--ion-background-color)' } as any}>
-        {/* Admin Navigation */}
-        <div className="nav-tabs">
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '90px'
-            }}
-            onClick={() => history.push('/admin/dashboard')}
-          >
-            📊 Dashboard
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-            onClick={() => history.push('/admin/users')}
-          >
-            👥 Users
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '90px'
-            }}
-            onClick={() => history.push('/admin/riders')}
-          >
-            🚴 Riders
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': '#6366F1',
-              '--color': '#FFFFFF',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '80px'
-            }}
-          >
-            📦 Orders
-          </IonButton>
-          <IonButton
-            expand="block"
-            style={{
-              '--background': 'transparent',
-              '--color': 'var(--ion-text-color)',
-              height: '40px',
-              fontSize: '12px',
-              fontWeight: 600,
-              textTransform: 'none',
-              flex: '1',
-              minWidth: '90px'
-            }}
-            onClick={() => history.push('/admin/reports')}
-          >
-            ⚠️ Reports
-          </IonButton>
-        </div>
-
+      <IonContent className="ion-page-with-bottom-nav">
+        <LogoHeader />
+        
         {/* Header */}
-        <div style={{ padding: '16px' }}>
-          <h2 style={{ margin: '0 0 16px', fontSize: '24px', fontWeight: 700, color: 'var(--ion-text-color)' }}>
+        <div className="mobile-container">
+          <h2 className="section-title" style={{ margin: '0 0 16px' }}>
             Manage Orders
           </h2>
           <IonSearchbar
@@ -242,11 +164,11 @@ const AdminOrders: React.FC = () => {
             <IonSegmentButton value="preparing" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px', whiteSpace: 'nowrap' }}>
               <IonLabel style={{ fontSize: '12px' }}>Preparing</IonLabel>
             </IonSegmentButton>
-            <IonSegmentButton value="delivering" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px', whiteSpace: 'nowrap' }}>
-              <IonLabel style={{ fontSize: '12px' }}>Delivering</IonLabel>
+            <IonSegmentButton value="ready_for_pickup" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px', whiteSpace: 'nowrap' }}>
+              <IonLabel style={{ fontSize: '12px' }}>Ready for Pickup</IonLabel>
             </IonSegmentButton>
-            <IonSegmentButton value="delivered" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px', whiteSpace: 'nowrap' }}>
-              <IonLabel style={{ fontSize: '12px' }}>Delivered</IonLabel>
+            <IonSegmentButton value="completed" style={{ '--color-checked': '#FFFFFF', '--border-radius': '8px', whiteSpace: 'nowrap' }}>
+              <IonLabel style={{ fontSize: '12px' }}>Completed</IonLabel>
             </IonSegmentButton>
           </IonSegment>
         </div>
@@ -267,9 +189,7 @@ const AdminOrders: React.FC = () => {
                         <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 700, color: 'var(--ion-text-color)' }}>
                           Order #{order.id}
                         </h3>
-                        <IonBadge style={{ '--background': getStatusColor(order.status), color: 'white' }}>
-                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                        </IonBadge>
+                        <StatusBadge status={order.status} />
                       </div>
                       <p style={{ margin: 0, fontSize: '13px', color: 'var(--ion-text-color-secondary)' }}>
                         {order.stallName}
@@ -327,6 +247,7 @@ const AdminOrders: React.FC = () => {
           )}
         </div>
       </IonContent>
+      <BottomNav type="admin" activeTab="orders" />
     </IonPage>
   );
 };

@@ -17,7 +17,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ item, onAdd, quantity, inStock = tr
     <div className="menu-item-card" style={{ opacity: !inStock ? 0.6 : 1 }}>
       {/* Image Container */}
       <div className="menu-item-image-wrapper">
-        <img src={item.image} alt={item.name} className="menu-item-image" />
+        <img src={item.image} alt={item.name} className="menu-item-image" crossOrigin="anonymous" />
         <div className="menu-item-overlay"></div>
         
         {/* Popular Badge */}
